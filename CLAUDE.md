@@ -9,6 +9,7 @@ A personal Python + Streamlit application to track a portfolio of Mexican FIBRAs
 - **Small, verifiable features** — never full modules at once
 - Confirm each piece works before moving to the next
 - Ask before implementing if there is any ambiguity in the requirement
+- **Docstrings are mandatory** — every class, method, and function must have a docstring describing its purpose
 
 ## Architecture
 
@@ -23,14 +24,19 @@ fibras-tracker/
 ├── modules/                ← business logic
 │   ├── common/
 │   ├── portfolio/
+│   │   ├── models/          ← domain entities (Position, Distribution, Portfolio)
 │   │   ├── repositories/
+│   │   │   ├── base/        ← abstract interfaces (ABC)
+│   │   │   ├── json_positions_read_repository.py
+│   │   │   └── json_distributions_read_repository.py
 │   │   ├── processors/
-│   │   ├── services/
-│   │   └── schemas/
+│   │   ├── schemas/         ← future input/output contracts
+│   │   └── services/
 │   ├── fundamentals/
 │   └── radar/
 └── data/
-    ├── portfolio.json
+    ├── positions.json
+    ├── distributions.json
     └── historical/
 ```
 
@@ -44,9 +50,10 @@ pages/ → services/ → repositories/ → data source
 
 - `pages/` only calls methods from `services/`. Never touches repos or data directly.
 - `services/` orchestrates: fetches data from the repo, transforms it with the processor, returns a UI-ready result.
-- `repositories/` implements data access. Each domain has a `base.py` with an abstract interface (ABC).
+- `repositories/` implements data access. Abstract interfaces live in `repositories/base/`. Concrete implementations are named `json_<entity>_read_repository.py`, `api_<entity>_read_repository.py`, etc.
 - `processors/` contains pure logic: calculations, aggregations, filters. No knowledge of data sources.
-- `schemas/` defines data contracts between layers using Pydantic.
+- `models/` defines domain entities as Pydantic models. No methods, no computed fields, no validators — pure data contracts.
+- `schemas/` reserved for future input/output contracts between layers.
 
 ## Repository pattern
 
@@ -54,9 +61,9 @@ The goal is that switching the data source (JSON → API) requires no changes to
 
 Repository structure per domain:
 
-- `base.py` → abstract interface (ABC)
-- `json_repo.py` → concrete implementation for JSON files
-- `api_repo.py` → future implementation for external APIs
+- `base/` → one abstract interface file per entity (e.g. `base_positions_read_repository.py`)
+- `json_<entity>_read_repository.py` → concrete JSON implementation
+- `api_<entity>_read_repository.py` → future API implementation
 
 ## Stack
 
@@ -77,26 +84,36 @@ Repository structure per domain:
 
 yfinance tickers: append `.MX` suffix (e.g. `FMTY14.MX`)
 
-## Data structure — portfolio.json
+## Data files
+
+### `data/positions.json`
 
 ```json
 {
-  "posiciones": [
+  "positions": [
     {
       "ticker": "FMTY14",
-      "nombre": "Fibra Mty",
+      "name": "Fibra Mty",
       "sector": "Industrial / Offices",
       "cbfis": 1500,
-      "precio_promedio_compra": 9.58,
-      "frecuencia_pago": "Monthly",
-      "distribuciones": [
-        {
-          "fecha_pago": "2026-03-06",
-          "monto_por_cbfi_reembolso": 0.0331,
-          "monto_por_cbfi_resultado": 0.0483,
-          "cbfis_al_momento": 1500
-        }
-      ]
+      "average_purchase_price": 9.58,
+      "payment_frequency": "Monthly"
+    }
+  ]
+}
+```
+
+### `data/distributions.json`
+
+```json
+{
+  "distributions": [
+    {
+      "ticker": "FMTY14",
+      "payment_date": "2026-03-06",
+      "reimbursement_per_cbfi": 0.0331,
+      "fiscal_result_per_cbfi": 0.0483,
+      "cbfis_at_time": 1500
     }
   ]
 }
@@ -104,23 +121,24 @@ yfinance tickers: append `.MX` suffix (e.g. `FMTY14.MX`)
 
 Distribution fields:
 
-- `fecha_pago`: date the payment was credited by the broker
-- `monto_por_cbfi_reembolso`: capital reimbursement (not taxable when received)
-- `monto_por_cbfi_resultado`: fiscal result (subject to 30% ISR withholding)
-- `cbfis_al_momento`: CBFIs held at the time of payment
+- `payment_date`: date the payment was credited by the broker
+- `reimbursement_per_cbfi`: capital reimbursement (not taxable when received)
+- `fiscal_result_per_cbfi`: fiscal result (subject to 30% ISR withholding)
+- `cbfis_at_time`: CBFIs held at the time of payment
 
 ## Current project state
 
-- Directory structure created with empty files
-- `portfolio.json` populated with real portfolio data
-- No layer has any implementation yet
-- **Next step**: define Pydantic schemas in `modules/portfolio/schemas/`
+- `data/positions.json` and `data/distributions.json` populated with real data
+- Domain models implemented in `modules/portfolio/models/`
+- Base read repository interfaces implemented in `modules/portfolio/repositories/base/`
+- JSON read repositories implemented in `modules/portfolio/repositories/`
+- **Next step**: processors (calculations)
 
 ## Agreed implementation order
 
-1. Schemas (`modules/portfolio/schemas/`)
-2. Repository interface (`modules/portfolio/repositories/base.py`)
-3. JSON repository implementation
+1. ~~Models (`modules/portfolio/models/`)~~ ✓
+2. ~~Repository interfaces (`modules/portfolio/repositories/base/`)~~ ✓
+3. ~~JSON repository implementations~~ ✓
 4. Processors (calculations)
 5. Service
 6. Page (UI)
