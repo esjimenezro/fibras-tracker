@@ -1,0 +1,53 @@
+{
+  "distributions": [
+    {
+      "ticker": "FMTY14",
+      "payment_date": "2026-03-06",
+      "reimbursement_per_cbfi": 0.0331,
+      "fiscal_result_per_cbfi": 0.0483,
+      "cbfis_at_time": 1500
+    },
+    {
+      "ticker": "FMTY14",
+      "payment_date": "2026-03-06",
+      "reimbursement_per_cbfi": 0.0807,
+      "fiscal_result_per_cbfi": 0.0,
+      "cbfis_at_time": 1500
+    },
+    {
+      "ticker": "FMTY14",
+      "payment_date": "2026-03-06",
+      "reimbursement_per_cbfi": 0.0807,
+      "fiscal_result_per_cbfi": 0.0,
+      "cbfis_at_time": 1500
+    },
+    {
+      "ticker": "DANHOS13",
+      "payment_date": "2026-03-13",
+      "reimbursement_per_cbfi": 0.1532,
+      "fiscal_result_per_cbfi": 0.2967,
+      "cbfis_at_time": 900
+    },
+    {
+      "ticker": "DANHOS13",
+      "payment_date": "2026-06-14",
+      "reimbursement_per_cbfi": 0.2175,
+      "fiscal_result_per_cbfi": 0.2325,
+      "cbfis_at_time": 900
+    },
+    {
+      "ticker": "FSHOP13",
+      "payment_date": "2026-03-05",
+      "reimbursement_per_cbfi": 0.1750,
+      "fiscal_result_per_cbfi": 0.0054,
+      "cbfis_at_time": 1000
+    },
+    {
+      "ticker": "FSHOP13",
+      "payment_date": "2026-05-12",
+      "reimbursement_per_cbfi": 0.19619,
+      "fiscal_result_per_cbfi": 0.0,
+      "cbfis_at_time": 1000
+    }
+  ]
+}

@@ -1,79 +1,36 @@
 {
-  "posiciones": [
+  "portfolio": [
     {
       "ticker": "FMTY14",
-      "nombre": "Fibra Mty",
-      "sector": "Industrial / Oficinas",
+      "name": "Fibra Mty",
+      "sector": "Industrial / Offices",
       "cbfis": 1500,
-      "precio_promedio_compra": 9.58,
-      "frecuencia_pago": "Mensual",
-      "distribuciones": [
-        {
-          "fecha_pago": "2026-03-06",
-          "monto_por_cbfi_reembolso": 0.0331,
-          "monto_por_cbfi_resultado": 0.0483,
-          "cbfis_al_momento": 1500
-        },
-        {
-          "fecha_pago": "2026-03-06",
-          "monto_por_cbfi_reembolso": 0.0807,
-          "monto_por_cbfi_resultado": 0.0,
-          "cbfis_al_momento": 1500
-        },
-        {
-          "fecha_pago": "2026-03-06",
-          "monto_por_cbfi_reembolso": 0.0807,
-          "monto_por_cbfi_resultado": 0.0,
-          "cbfis_al_momento": 1500
-        }
-      ]
+      "average_purchase_price": 9.58,
+      "payment_frequency": "Monthly"
     },
     {
       "ticker": "DANHOS13",
-      "nombre": "Fibra Danhos",
-      "sector": "Usos mixtos / Retail premium",
+      "name": "Fibra Danhos",
+      "sector": "Mixed-use / Retail",
       "cbfis": 900,
-      "precio_promedio_compra": 21.06,
-      "frecuencia_pago": "Trimestral",
-      "distribuciones": [
-        {
-          "fecha_pago": "2026-03-13",
-          "monto_por_cbfi_reembolso": 0.1532,
-          "monto_por_cbfi_resultado": 0.2967,
-          "cbfis_al_momento": 900
-        }
-      ]
+      "average_purchase_price": 21.06,
+      "payment_frequency": "Quarterly"
     },
     {
       "ticker": "FIBRAPL14",
-      "nombre": "Fibra Prologis",
-      "sector": "Industrial / Logística",
+      "name": "Fibra Prologis",
+      "sector": "Industrial / Logistics",
       "cbfis": 100,
-      "precio_promedio_compra": 82.70,
-      "frecuencia_pago": "Trimestral",
-      "distribuciones": []
+      "average_purchase_price": 82.70,
+      "payment_frequency": "Quarterly"
     },
     {
       "ticker": "FSHOP13",
-      "nombre": "Fibra Shop",
-      "sector": "Retail / Centros comerciales",
+      "name": "Fibra Shop",
+      "sector": "Retail / Shopping centers",
       "cbfis": 1000,
-      "precio_promedio_compra": 9.59,
-      "frecuencia_pago": "Trimestral",
-      "distribuciones": [
-        {
-          "fecha_pago": "2026-03-05",
-          "monto_por_cbfi_reembolso": 0.1750,
-          "monto_por_cbfi_resultado": 0.0054,
-          "cbfis_al_momento": 1000
-        },
-        {
-          "fecha_pago": "2026-05-12",
-          "monto_por_cbfi_reembolso": 0.19619,
-          "monto_por_cbfi_resultado": 0.0,
-          "cbfis_al_momento": 1000
-        }
-      ]
+      "average_purchase_price": 9.59,
+      "payment_frequency": "Quarterly"
     }
   ]
 }
