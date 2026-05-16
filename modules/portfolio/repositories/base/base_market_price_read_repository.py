@@ -6,21 +6,14 @@ from modules.portfolio.models.market_price import MarketPrice
 class BaseMarketPriceReadRepository(ABC):
     """Abstract interface for fetching live market prices from any data source."""
 
-    def __init__(self, tickers: list[str]) -> None:
-        """Store the list of BMV tickers to fetch prices for.
+    @abstractmethod
+    def retrieve_data(self, tickers: list[str]) -> list[MarketPrice]:
+        """Return market prices for the given tickers.
 
         Args:
-            tickers: BMV tickers without the .MX suffix
-                (e.g. ["FMTY14", "DANHOS13"]).
-        """
-        self.tickers = tickers
-
-    @abstractmethod
-    def retrieve_data(self) -> list[MarketPrice]:
-        """Return market prices for all configured tickers.
+            tickers: BMV tickers without the .MX suffix (e.g. ["FMTY14", "DANHOS13"]).
 
         Returns:
-            list[MarketPrice]: One entry per ticker, in the same order
-                as the tickers passed at construction time.
+            list[MarketPrice]: One entry per ticker, in the same order as tickers.
         """
         ...

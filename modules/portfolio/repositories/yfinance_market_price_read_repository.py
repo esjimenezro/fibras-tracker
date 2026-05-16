@@ -10,15 +10,18 @@ from modules.portfolio.repositories.base.base_market_price_read_repository impor
 class YFinanceMarketPriceReadRepository(BaseMarketPriceReadRepository):
     """Fetches live market prices from Yahoo Finance via yfinance (>=1.0.0)."""
 
-    def retrieve_data(self) -> list[MarketPrice]:
-        """Return the latest market price for each configured ticker.
+    def retrieve_data(self, tickers: list[str]) -> list[MarketPrice]:
+        """Return the latest market price for each given ticker.
+
+        Args:
+            tickers: BMV tickers without the .MX suffix (e.g. ["FMTY14", "DANHOS13"]).
 
         Returns:
             list[MarketPrice]: One entry per ticker, using the .MX suffix internally
                 to query BMV prices via Yahoo Finance.
         """
         retrieved_at = datetime.now(timezone.utc)
-        return [self._fetch(ticker, retrieved_at) for ticker in self.tickers]
+        return [self._fetch(ticker, retrieved_at) for ticker in tickers]
 
     def _fetch(self, ticker: str, retrieved_at: datetime) -> MarketPrice:
         """Fetch price and currency for a single ticker from Yahoo Finance.
