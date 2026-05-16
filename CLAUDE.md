@@ -10,6 +10,7 @@ A personal Python + Streamlit application to track a portfolio of Mexican FIBRAs
 - Confirm each piece works before moving to the next
 - Ask before implementing if there is any ambiguity in the requirement
 - **Docstrings are mandatory** — every class, method, and function must have a docstring describing its purpose
+- **Docstrings follow Google style** — classes document fields under `Attributes:`, methods and functions document parameters under `Args:` and return values under `Returns:`
 
 ## Architecture
 
@@ -72,6 +73,12 @@ Repository structure per domain:
 - Pydantic (schemas and validation)
 - yfinance (market prices, tickers with `.MX` suffix)
 - pandas (transformations)
+
+## Dependencies notes
+
+- yfinance: use version >=1.0.0. Versions 0.2.x have known compatibility
+  issues with Yahoo Finance API and may return "possibly delisted" errors
+  even for valid tickers.
 
 ## FIBRAs in the portfolio
 

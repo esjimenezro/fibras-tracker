@@ -8,5 +8,9 @@ class BaseDistributionsReadRepository(ABC):
 
     @abstractmethod
     def retrieve_data(self) -> list[Distribution]:
-        """Return all distribution records."""
+        """Return all distribution records.
+
+        Returns:
+            list[Distribution]: All distribution records from the data source.
+        """
         ...

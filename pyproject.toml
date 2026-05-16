@@ -9,5 +9,5 @@ dependencies = [
     "plotly==6.7.0",
     "pydantic>=2.13.4",
     "streamlit==1.56.0",
-    "yfinance==0.2.51",
+    "yfinance==1.2.0",
 ]

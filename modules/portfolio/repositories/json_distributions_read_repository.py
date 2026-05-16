@@ -9,7 +9,11 @@ class JsonDistributionsReadRepository(BaseDistributionsReadRepository):
     """Reads distribution records from the local distributions.json file."""
 
     def retrieve_data(self) -> list[Distribution]:
-        """Load and parse distributions from distributions.json, returning them as Distribution models."""
+        """Load and parse all distribution records from distributions.json.
+
+        Returns:
+            list[Distribution]: All distribution records parsed from the JSON file.
+        """
         with open(DISTRIBUTIONS_FILE) as f:
             data = json.load(f)
         return [Distribution(**item) for item in data["distributions"]]
