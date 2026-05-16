@@ -5,7 +5,23 @@ from modules.portfolio.models.position import Position
 
 
 class PositionsProcessor:
-    """Processes Position, MarketPrice, and EnrichedDistribution records into EnrichedPosition output models."""
+    """Enriches Position records with market data and distribution history into EnrichedPosition output models.
+
+    Transformation: Position + MarketPrice + list[EnrichedDistribution] → EnrichedPosition
+
+    Formulas implemented:
+        purchase_cost                        = average_purchase_cost * cbfis
+        market_value                         = market_price * cbfis
+        return_per_cbfi                      = market_price - average_purchase_cost
+        return_pct                           = return_per_cbfi / average_purchase_cost
+        total_return                         = return_per_cbfi * cbfis
+        total_net_fiscal_result_received     = sum(d.net_fiscal_result_income for d in distributions)
+        total_return_including_distributions = total_return + total_net_fiscal_result_received
+
+    Invariant: average_purchase_cost is the broker-adjusted cost base. It must NOT be
+        reduced by reimbursements received — those are accounted for separately via
+        total_net_fiscal_result_received.
+    """
 
     def enrich(
         self,
@@ -21,7 +37,18 @@ class PositionsProcessor:
             distributions: Enriched distribution records already filtered to this ticker.
 
         Returns:
-            EnrichedPosition: The position with all market, calculated, and distribution fields populated.
+            EnrichedPosition with the following derived fields:
+                purchase_cost                        = average_purchase_cost * cbfis
+                market_value                         = market_price * cbfis
+                return_per_cbfi                      = market_price - average_purchase_cost
+                return_pct                           = return_per_cbfi / average_purchase_cost
+                total_return                         = return_per_cbfi * cbfis
+                total_net_fiscal_result_received     = sum(d.net_fiscal_result_income for d in distributions)
+                total_return_including_distributions = total_return + total_net_fiscal_result_received
+
+            Note: average_purchase_cost is the broker-adjusted cost base and must NOT be
+            reduced by reimbursements. Capital reimbursements are already captured in
+            total_net_fiscal_result_received via each distribution's net_fiscal_result_income.
         """
         return_per_cbfi = market_price.price - position.average_purchase_cost
         total_net_fiscal_result_received = sum(d.net_fiscal_result_income for d in distributions)
