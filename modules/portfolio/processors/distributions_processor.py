@@ -1,3 +1,4 @@
+from config import FISCAL_RESULT_WITHHOLDING_RATE
 from modules.portfolio.models.distribution import Distribution
 from modules.portfolio.models.enriched_distribution import EnrichedDistribution
 
@@ -32,7 +33,7 @@ class DistributionsProcessor:
         total_reimbursement_income = distribution.reimbursement_per_cbfi * distribution.cbfis_at_time
         total_fiscal_result_income = distribution.fiscal_result_per_cbfi * distribution.cbfis_at_time
         total_income = total_reimbursement_income + total_fiscal_result_income
-        fiscal_result_withholding = 0.30 * total_fiscal_result_income
+        fiscal_result_withholding = FISCAL_RESULT_WITHHOLDING_RATE * total_fiscal_result_income
         net_income = total_income - fiscal_result_withholding
 
         return EnrichedDistribution(

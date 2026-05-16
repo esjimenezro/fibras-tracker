@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 
 import yfinance as yf
 
+from config import TICKER_SUFFIX
 from modules.portfolio.models.market_price import MarketPrice
 from modules.portfolio.repositories.base.base_market_price_read_repository import BaseMarketPriceReadRepository
 
@@ -29,10 +30,13 @@ class YFinanceMarketPriceReadRepository(BaseMarketPriceReadRepository):
         Returns:
             MarketPrice: Populated model with the latest price data.
         """
-        info = yf.Ticker(f"{ticker}.MX").fast_info
+        info = yf.Ticker(f"{ticker}{TICKER_SUFFIX}").fast_info
+        last_price = info.last_price
+        if last_price is None:
+            raise ValueError(f"Failed to fetch price for ticker {ticker} from Yahoo Finance.")
         return MarketPrice(
             ticker=ticker,
-            price=info.last_price,
+            price=last_price,
             currency=info.currency,
             retrieved_at=retrieved_at,
         )
