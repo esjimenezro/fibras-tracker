@@ -74,6 +74,11 @@ Repository structure per domain:
 - yfinance (market prices, tickers with `.MX` suffix)
 - pandas (transformations)
 
+## Linting
+
+- **Tool**: flake8
+- **Max line length**: 200 characters (`max-line-length = 200` in `.flake8`)
+
 ## Dependencies notes
 
 - yfinance: use version >=1.0.0. Versions 0.2.x have known compatibility
