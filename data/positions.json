@@ -5,7 +5,7 @@
       "name": "Fibra Mty",
       "sector": "Industrial / Offices",
       "cbfis": 1500,
-      "average_purchase_price": 9.58,
+      "average_purchase_cost": 9.58,
       "payment_frequency": "Monthly"
     },
     {
@@ -13,7 +13,7 @@
       "name": "Fibra Danhos",
       "sector": "Mixed-use / Retail",
       "cbfis": 900,
-      "average_purchase_price": 21.06,
+      "average_purchase_cost": 21.06,
       "payment_frequency": "Quarterly"
     },
     {
@@ -21,7 +21,7 @@
       "name": "Fibra Prologis",
       "sector": "Industrial / Logistics",
       "cbfis": 100,
-      "average_purchase_price": 82.70,
+      "average_purchase_cost": 82.70,
       "payment_frequency": "Quarterly"
     },
     {
@@ -29,7 +29,7 @@
       "name": "Fibra Shop",
       "sector": "Retail / Shopping centers",
       "cbfis": 1000,
-      "average_purchase_price": 9.59,
+      "average_purchase_cost": 9.59,
       "payment_frequency": "Quarterly"
     }
   ]

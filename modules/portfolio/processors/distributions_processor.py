@@ -30,18 +30,20 @@ class DistributionsProcessor:
         Returns:
             EnrichedDistribution: The distribution with all calculated fields populated.
         """
-        total_reimbursement_income = distribution.reimbursement_per_cbfi * distribution.cbfis_at_time
-        total_fiscal_result_income = distribution.fiscal_result_per_cbfi * distribution.cbfis_at_time
-        total_income = total_reimbursement_income + total_fiscal_result_income
-        fiscal_result_withholding = FISCAL_RESULT_WITHHOLDING_RATE * total_fiscal_result_income
-        net_income = total_income - fiscal_result_withholding
+        gross_fiscal_result_income = distribution.fiscal_result_per_cbfi * distribution.cbfis_at_time
+        net_reimbursement_income = distribution.reimbursement_per_cbfi * distribution.cbfis_at_time
+        gross_income = net_reimbursement_income + gross_fiscal_result_income
+        fiscal_result_withholding = FISCAL_RESULT_WITHHOLDING_RATE * gross_fiscal_result_income
+        net_fiscal_result_income = gross_fiscal_result_income - fiscal_result_withholding
+        net_income = gross_income - fiscal_result_withholding
 
         return EnrichedDistribution(
             **distribution.model_dump(),
-            total_reimbursement_income=total_reimbursement_income,
-            total_fiscal_result_income=total_fiscal_result_income,
-            total_income=total_income,
+            gross_fiscal_result_income=gross_fiscal_result_income,
+            net_reimbursement_income=net_reimbursement_income,
+            gross_income=gross_income,
             fiscal_result_withholding=fiscal_result_withholding,
+            net_fiscal_result_income=net_fiscal_result_income,
             net_income=net_income,
         )
 
@@ -57,7 +59,7 @@ class DistributionsProcessor:
         return sum(e.net_income for e in enriched)
 
     def total_gross_income(self, enriched: list[EnrichedDistribution]) -> float:
-        """Sum total_income across all enriched distribution records.
+        """Sum gross_income across all enriched distribution records.
 
         Args:
             enriched: Enriched distribution records.
@@ -65,7 +67,7 @@ class DistributionsProcessor:
         Returns:
             float: Total gross income in MXN before withholding.
         """
-        return sum(e.total_income for e in enriched)
+        return sum(e.gross_income for e in enriched)
 
     def total_withholding(self, enriched: list[EnrichedDistribution]) -> float:
         """Sum fiscal_result_withholding across all enriched distribution records.

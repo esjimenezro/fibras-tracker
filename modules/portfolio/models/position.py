@@ -23,7 +23,7 @@ class Position(BaseModel):
         name: Full name of the FIBRA (e.g. "Fibra Mty").
         sector: Market sector (e.g. "Industrial / Offices").
         cbfis: Number of CBFIs held.
-        average_purchase_price: Weighted average purchase price per CBFI in MXN.
+        average_purchase_cost: Weighted average purchase cost per CBFI in MXN.
         payment_frequency: Distribution payment frequency.
     """
 
@@ -31,5 +31,5 @@ class Position(BaseModel):
     name: str
     sector: str
     cbfis: int
-    average_purchase_price: float
+    average_purchase_cost: float
     payment_frequency: PaymentFrequency
