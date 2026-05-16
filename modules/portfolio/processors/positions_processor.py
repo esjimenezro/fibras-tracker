@@ -31,7 +31,7 @@ class PositionsProcessor:
             **position.model_dump(),
             market_price=market_price.price,
             price_updated_at=market_price.retrieved_at,
-            total_purchase_cost=position.average_purchase_cost * position.cbfis,
+            purchase_cost=position.average_purchase_cost * position.cbfis,
             market_value=market_price.price * position.cbfis,
             return_per_cbfi=return_per_cbfi,
             return_pct=return_per_cbfi / position.average_purchase_cost,

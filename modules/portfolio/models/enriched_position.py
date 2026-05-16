@@ -12,7 +12,7 @@ class EnrichedPosition(Position):
     Attributes:
         market_price: Last known market price per CBFI in MXN.
         price_updated_at: UTC timestamp when the market price was fetched.
-        total_purchase_cost: Total amount invested in MXN (average_purchase_cost * cbfis).
+        purchase_cost: Total amount invested in MXN (average_purchase_cost * cbfis).
         market_value: Current market value of the position in MXN (market_price * cbfis).
         return_per_cbfi: Unrealised gain or loss per CBFI in MXN (market_price - average_purchase_cost).
         return_pct: Unrealised return as a fraction of average purchase cost (return_per_cbfi / average_purchase_cost).
@@ -26,7 +26,7 @@ class EnrichedPosition(Position):
 
     market_price: float
     price_updated_at: datetime
-    total_purchase_cost: float
+    purchase_cost: float
     market_value: float
     return_per_cbfi: float
     return_pct: float
