@@ -5,7 +5,8 @@ from modules.portfolio.models.enriched_position import EnrichedPosition
 from modules.portfolio.models.portfolio import PositionShare
 from ui.styles.theme import color_return, format_mxn, format_pct
 
-_RETURN_COLS = ["Retorno/CBFI", "Retorno %", "Retorno Total", "Retorno + Distrib."]
+
+RETURN_COLS = ["Retorno/CBFI", "Retorno %", "Retorno Total", "Retorno + Distrib."]
 
 
 def render_positions_table(
@@ -29,7 +30,7 @@ def render_positions_table(
             "Sector": pos.sector,
             "CBFIs": pos.cbfis,
             "Frec. Pago": pos.payment_frequency.value,
-            "Precio Promedio": pos.average_purchase_cost,
+            "Costo Promedio": pos.average_purchase_cost,
             "Precio Mercado": pos.market_price,
             "Costo Total": pos.purchase_cost,
             "Valor Mercado": pos.market_value,
@@ -47,7 +48,7 @@ def render_positions_table(
 
     styled = (
         df.style
-        .map(color_return, subset=_RETURN_COLS)
+        .map(color_return, subset=RETURN_COLS)
         .format({
             "Precio Promedio": format_mxn,
             "Precio Mercado": format_mxn,

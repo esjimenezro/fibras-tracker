@@ -29,6 +29,12 @@ FIBRAs (Fideicomisos de Infraestructura y Bienes Raíces) are the Mexican equiva
 - Total net distributions received across all positions
 - Combined return (capital + distributions)
 
+**Portfolio page (`ui/pages/portfolio.py`)**
+- Summary metrics: market value (with unrealised MXN delta), purchase cost, total return %, net distributions, and total return including distributions
+- Allocation donut chart showing portfolio weight per FIBRA
+- Positions table: per-FIBRA breakdown with colour-coded return columns (green/red)
+- Distributions history: stacked bar chart grouped by FIBRA with a monthly/daily granularity toggle, plus a side-by-side summary table showing gross fiscal income, reimbursement, ISR withholding, and net income per period
+
 ---
 
 ## Architecture
@@ -70,12 +76,20 @@ Each entity has an abstract interface in `repositories/base/` that defines the `
 
 ```
 fibras-tracker/
-├── app.py                      ← Streamlit entry point
+├── app.py                      ← Streamlit entry point (registers pages via st.navigation)
 ├── config.py                   ← file paths and business constants
-├── pages/                      ← Streamlit pages (one per module)
-│   ├── portfolio.py
-│   ├── fundamentals.py
-│   └── radar.py
+├── ui/
+│   ├── assets/                 ← static files (SVG logo)
+│   ├── components/
+│   │   ├── common/             ← shared: page_header, error_banner
+│   │   └── portfolio/          ← domain: summary_card, positions_table, distributions_chart
+│   ├── pages/                  ← Streamlit page scripts (one per module)
+│   │   ├── home.py
+│   │   ├── portfolio.py
+│   │   ├── fundamentals.py
+│   │   └── radar.py
+│   └── styles/
+│       └── theme.py            ← color constants, number formatters, CSS injection
 ├── modules/
 │   └── portfolio/
 │       ├── models/             ← Pydantic data contracts (raw + enriched)
@@ -90,6 +104,39 @@ fibras-tracker/
     ├── positions.json          ← portfolio holdings
     └── distributions.json      ← distribution payment history
 ```
+
+---
+
+## UI layer
+
+### Directory layout
+
+| Path | Purpose |
+|---|---|
+| `ui/assets/` | Static files (SVG logo) |
+| `ui/components/common/` | Shared components reused across all pages (`page_header`, `error_banner`) |
+| `ui/components/<domain>/` | Domain-specific components (`portfolio/summary_card`, `positions_table`, `distributions_chart`) |
+| `ui/pages/` | One script per application page; these are the files Streamlit runs |
+| `ui/styles/theme.py` | Color constants, number formatters (`format_mxn`, `format_pct`), and CSS injection |
+
+### How to add a new page
+
+1. Create `ui/pages/<name>.py`. Follow the page convention:
+   - Call `render_page_header("Title", "icon")` at the top.
+   - Wrap the service call in `@st.cache_data(ttl=300)`.
+   - Check `result.status`; call `render_error_banner()` + `st.stop()` on error.
+   - Render components section by section with `st.divider()`.
+2. Register it in `app.py` inside `st.navigation([…])`:
+   ```python
+   st.Page("ui/pages/<name>.py", title="Page Title", icon="emoji")
+   ```
+
+### How to add a new component
+
+1. Create `ui/components/<domain>/<component_name>.py`.
+2. Expose a single `render_<component_name>(...)` function.
+3. Accept only the typed data the component needs — no service or repository calls inside.
+4. Import all formatters and colors from `ui.styles.theme`; never redefine them locally.
 
 ---
 
@@ -295,6 +342,7 @@ Tests use real Pydantic instances — no mocks, no network calls, no file I/O. E
 - Typed service output schema (`PortfolioDataRetrieverServiceSchema`)
 - Main orchestrator service (`PortfolioDataRetrieverService`)
 - Unit test suite — 37 tests covering all three processors
+- Portfolio page (`ui/pages/portfolio.py`) — summary metrics, positions table, allocation chart, distributions history
 
 **Next:**
-- Streamlit portfolio page (`pages/portfolio.py`) consuming `PortfolioDataRetrieverService`
+- Fundamentals page (`ui/pages/fundamentals.py`)

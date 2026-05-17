@@ -25,7 +25,7 @@
       "ticker": "DANHOS13",
       "payment_date": "2026-03-13",
       "reimbursement_per_cbfi": 0.1532,
-      "fiscal_result_per_cbfi": 0.2967,
+      "fiscal_result_per_cbfi": 0.2968,
       "cbfis_at_time": 900
     },
     {
@@ -45,7 +45,7 @@
     {
       "ticker": "FSHOP13",
       "payment_date": "2026-05-12",
-      "reimbursement_per_cbfi": 0.19619,
+      "reimbursement_per_cbfi": 0.1962,
       "fiscal_result_per_cbfi": 0.0,
       "cbfis_at_time": 1000
     }

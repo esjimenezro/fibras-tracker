@@ -16,12 +16,20 @@ A personal Python + Streamlit application to track a portfolio of Mexican FIBRAs
 
 ```
 fibras-tracker/
-├── app.py                  ← Streamlit entry point
+├── app.py                  ← Streamlit entry point (registers pages via st.navigation)
 ├── config.py               ← paths, titles, business constants (e.g. FISCAL_RESULT_WITHHOLDING_RATE)
-├── pages/                  ← Streamlit front-end (one page per module)
-│   ├── portfolio.py
-│   ├── fundamentals.py
-│   └── radar.py
+├── ui/
+│   ├── assets/             ← static files (SVG logo)
+│   ├── components/
+│   │   ├── common/         ← shared: page_header, error_banner
+│   │   └── portfolio/      ← domain: summary_card, positions_table, distributions_chart
+│   ├── pages/              ← Streamlit page scripts (one per module)
+│   │   ├── home.py
+│   │   ├── portfolio.py
+│   │   ├── fundamentals.py
+│   │   └── radar.py
+│   └── styles/
+│       └── theme.py        ← color constants, number formatters, CSS injection
 ├── modules/                ← business logic
 │   ├── common/
 │   ├── portfolio/
@@ -75,9 +83,16 @@ Position + MarketPrice + [EnrichedDistribution]
 [EnrichedPosition]──[PortfolioProcessor]─────▶ Portfolio
 ```
 
+## UI layer
+
+- `app.py` uses `st.navigation([st.Page("ui/pages/…")])` — pages are **not** auto-discovered; every page must be explicitly registered here.
+- Component convention: every component is a pure `render_<component>()` function. Stateless, no `st.session_state`. Receives exactly the typed data it needs; never calls services or repositories.
+- Page convention: call `render_page_header()` first → wrap service call in `@st.cache_data(ttl=300)` → check `result.status` and call `render_error_banner()` + `st.stop()` on error → render components section by section with `st.divider()`.
+- `theme.py` usage: always import `format_mxn`, `format_mxn_compact`, `format_pct`, `color_return`, `COLOR_POSITIVE/NEGATIVE/NEUTRAL` from here. Never redefine colors or formatters inside components. `load_custom_css()` is called once by `render_page_header()` — do not call it from individual components.
+
 ## Layer responsibilities
 
-- `pages/` only calls methods from `services/`. Never touches repos or data directly.
+- `ui/pages/` only calls methods from `services/`. Never touches repos or data directly.
 - `services/` orchestrates: fetches data from repos, transforms it via processors, returns a UI-ready result wrapped in a schema.
 - `repositories/` implements data access. Abstract interfaces live in `repositories/base/`. Concrete implementations are named `<source>_<entity>_read_repository.py` (e.g. `json_positions_read_repository.py`, `yfinance_market_price_read_repository.py`).
 - `processors/` contains pure logic: calculations, aggregations, filters. No knowledge of data sources or services. Processors fail loud — raise `ValueError` on invalid input (e.g. `PositionsProcessor` raises if any position has no matching market price; `PortfolioProcessor` raises on an empty positions list).
@@ -114,6 +129,7 @@ A service is the only entry point a `page/` is allowed to call. It:
 - Pydantic (models and schemas)
 - yfinance (market prices, tickers with `.MX` suffix)
 - pandas (transformations)
+- Plotly Express (charts in UI components)
 
 ## Linting
 
@@ -158,10 +174,11 @@ Complete:
 - Unit tests (`tests/portfolio/`) — 37 tests covering all three processors
 - Processor docstrings — formula-complete Google-style docstrings on all processor classes and methods
 - `README.md` — human-readable developer documentation
+- Portfolio page (`ui/pages/portfolio.py`) — summary metrics, positions table, allocation pie, distributions chart
 
 Real data populated in `data/positions.json` and `data/distributions.json`.
 
-**Next step**: Streamlit page (`pages/portfolio.py`) consuming `PortfolioDataRetrieverService`.
+**Next step**: Fundamentals page (`ui/pages/fundamentals.py`).
 
 ## Agreed implementation order
 
@@ -170,6 +187,12 @@ Real data populated in `data/positions.json` and `data/distributions.json`.
 3. ~~Concrete repositories (`json_*`, `yfinance_*`)~~ ✓
 4. ~~Processors (calculations)~~ ✓
 5. ~~Service (orchestrator) + schemas~~ ✓
-6. Page (UI)
+6. ~~Portfolio page (`ui/pages/portfolio.py`)~~ ✓
+7. Models (`modules/fundamentals/models/`)
+8. Repository interfaces (`modules/fundamentals/repositories/base/`)
+9. Concrete repositories
+10. Processors (`modules/fundamentals/processors/`)
+11. Service and Schema (`modules/fundamentals/services/` and `modules/fundamentals/schemas/`)
+12. Fundamentals page (`ui/pages/fundamentals.py`)
 
 Implement and verify one layer at a time before moving to the next.
