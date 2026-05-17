@@ -1,5 +1,6 @@
 import streamlit as st
 
+
 COLOR_POSITIVE = "#2E7D32"
 COLOR_NEGATIVE = "#C62828"
 COLOR_NEUTRAL = "#1565C0"

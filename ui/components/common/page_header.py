@@ -1,10 +1,7 @@
 import streamlit as st
 
+from config import PAGE_ICON, PAGE_TITLE, PAGE_LEGEND
 from ui.styles.theme import load_custom_css
-
-_LOGO_PATH = "ui/assets/fibralens_logo_light_v2.svg"
-_BRAND_TITLE = "FIBRALens"
-_BRAND_SUBTITLE = "Tu herramienta de análisis para FIBRAs mexicanas"
 
 
 def render_page_header(page_title: str, page_icon: str) -> None:
@@ -18,14 +15,14 @@ def render_page_header(page_title: str, page_icon: str) -> None:
 
     logo_col, brand_col, _ = st.columns(3)
     with logo_col:
-        st.image(_LOGO_PATH, width="content")
+        st.image(PAGE_ICON, width="content")
     with brand_col:
         st.markdown(
-            f"<h1 style='margin-top: 20px; margin-bottom: 4px;'>{_BRAND_TITLE}</h1>",
+            f"<h1 style='margin-top: 20px; margin-bottom: 4px;'>{PAGE_TITLE}</h1>",
             unsafe_allow_html=True,
         )
         st.markdown(
-            f"<p style='color: #6c757d; font-size: 1rem; margin-top: 0;'>{_BRAND_SUBTITLE}</p>",
+            f"<p style='color: #6c757d; font-size: 1rem; margin-top: 0;'>{PAGE_LEGEND}</p>",
             unsafe_allow_html=True,
         )
         st.markdown(

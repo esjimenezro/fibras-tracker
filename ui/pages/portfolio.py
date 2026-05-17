@@ -1,7 +1,8 @@
 import streamlit as st
 
-from modules.portfolio.schemas.portfolio_schemas import PortfolioDataRetrieverServiceSchema, PortfolioDataRetrieverStatus
-from modules.portfolio.services.portfolio_data_retriever_service import PortfolioDataRetrieverService
+from modules.portfolio.models import Portfolio
+from modules.portfolio.schemas import PortfolioDataRetrieverServiceSchema, PortfolioDataRetrieverStatus
+from modules.portfolio.services import PortfolioDataRetrieverService
 from ui.components.common.error_banner import render_error_banner
 from ui.components.common.page_header import render_page_header
 from ui.components.portfolio.distributions_chart import render_distributions_chart
@@ -9,7 +10,7 @@ from ui.components.portfolio.positions_table import render_positions_table
 from ui.components.portfolio.summary_card import render_summary_card
 
 
-@st.cache_data(ttl=300)
+@st.cache_data(ttl=300, show_spinner="Cargando datos del portafolio...")
 def _load_portfolio() -> PortfolioDataRetrieverServiceSchema:
     """Fetch and assemble the portfolio, cached for 5 minutes to avoid live-price re-fetches.
 
@@ -26,7 +27,7 @@ if result.status == PortfolioDataRetrieverStatus.ERROR:
     render_error_banner(result.error_message)
     st.stop()
 
-portfolio = result.data
+portfolio: Portfolio = result.data
 
 st.divider()
 render_summary_card(
