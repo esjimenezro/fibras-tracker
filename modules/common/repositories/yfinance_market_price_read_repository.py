@@ -3,8 +3,8 @@ from datetime import datetime, timezone
 import yfinance as yf
 
 from config import TICKER_SUFFIX
-from modules.portfolio.models.market_price import MarketPrice
-from modules.portfolio.repositories.base.base_market_price_read_repository import BaseMarketPriceReadRepository
+from modules.common.models.market_price import MarketPrice
+from modules.common.repositories.base.base_market_price_read_repository import BaseMarketPriceReadRepository
 
 
 class YFinanceMarketPriceReadRepository(BaseMarketPriceReadRepository):

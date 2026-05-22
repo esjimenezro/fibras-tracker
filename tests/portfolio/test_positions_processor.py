@@ -2,8 +2,9 @@ from datetime import date, datetime, timezone
 
 import pytest
 
+from modules.common.models.market_price import MarketPrice
+
 from modules.portfolio.models.enriched_distribution import EnrichedDistribution
-from modules.portfolio.models.market_price import MarketPrice
 from modules.portfolio.models.position import PaymentFrequency, Position
 from modules.portfolio.processors.positions_processor import PositionsProcessor
 

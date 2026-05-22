@@ -16,6 +16,7 @@
   },
   "periods": [
     {
+      "ticker": "FSHOP13",
       "period": "1T2021",
       "report_date": "2021-04-28",
       "total_revenues": 336330000,
@@ -32,6 +33,7 @@
       "occupancy_rate": 0.9213
     },
     {
+      "ticker": "FSHOP13",
       "period": "2T2021",
       "report_date": "2021-07-26",
       "total_revenues": 341980000,
@@ -48,6 +50,7 @@
       "occupancy_rate": 0.9233
     },
     {
+      "ticker": "FSHOP13",
       "period": "3T2021",
       "report_date": "2021-10-25",
       "total_revenues": 360050000,
@@ -64,6 +67,7 @@
       "occupancy_rate": 0.9251
     },
     {
+      "ticker": "FSHOP13",
       "period": "4T2021",
       "report_date": "2022-02-23",
       "total_revenues": 387270000,
@@ -80,6 +84,7 @@
       "occupancy_rate": 0.9241
     },
     {
+      "ticker": "FSHOP13",
       "period": "1T2022",
       "report_date": "2022-04-27",
       "total_revenues": 362060000,
@@ -96,6 +101,7 @@
       "occupancy_rate": 0.9256
     },
     {
+      "ticker": "FSHOP13",
       "period": "2T2022",
       "report_date": "2022-07-25",
       "total_revenues": 380520000,
@@ -112,6 +118,7 @@
       "occupancy_rate": 0.9307
     },
     {
+      "ticker": "FSHOP13",
       "period": "3T2022",
       "report_date": "2022-10-26",
       "total_revenues": 417160000,
@@ -128,6 +135,7 @@
       "occupancy_rate": 0.9352
     },
     {
+      "ticker": "FSHOP13",
       "period": "4T2022",
       "report_date": "2023-02-27",
       "total_revenues": 512780000,
@@ -144,6 +152,7 @@
       "occupancy_rate": 0.9244
     },
     {
+      "ticker": "FSHOP13",
       "period": "1T2023",
       "report_date": "2023-04-24",
       "total_revenues": 523320000,
@@ -160,6 +169,7 @@
       "occupancy_rate": 0.9245
     },
     {
+      "ticker": "FSHOP13",
       "period": "2T2023",
       "report_date": "2023-07-24",
       "total_revenues": 544330000,
@@ -176,6 +186,7 @@
       "occupancy_rate": 0.9266
     },
     {
+      "ticker": "FSHOP13",
       "period": "3T2023",
       "report_date": "2023-10-23",
       "total_revenues": 620630000,
@@ -192,6 +203,7 @@
       "occupancy_rate": 0.9329
     },
     {
+      "ticker": "FSHOP13",
       "period": "4T2023",
       "report_date": "2024-02-12",
       "total_revenues": 571550000,
@@ -208,6 +220,7 @@
       "occupancy_rate": 0.9331
     },
     {
+      "ticker": "FSHOP13",
       "period": "1T2024",
       "report_date": "2024-04-18",
       "total_revenues": 559470000,
@@ -224,6 +237,7 @@
       "occupancy_rate": 0.933
     },
     {
+      "ticker": "FSHOP13",
       "period": "2T2024",
       "report_date": "2024-07-25",
       "total_revenues": 591280000,
@@ -240,6 +254,7 @@
       "occupancy_rate": 0.9221
     },
     {
+      "ticker": "FSHOP13",
       "period": "3T2024",
       "report_date": "2024-10-21",
       "total_revenues": 626600000,
@@ -256,6 +271,7 @@
       "occupancy_rate": 0.925
     },
     {
+      "ticker": "FSHOP13",
       "period": "4T2024",
       "report_date": "2025-02-20",
       "total_revenues": 646800000,
@@ -272,6 +288,7 @@
       "occupancy_rate": 0.9325
     },
     {
+      "ticker": "FSHOP13",
       "period": "1T2025",
       "report_date": "2025-04-24",
       "total_revenues": 625040000,
@@ -288,6 +305,7 @@
       "occupancy_rate": 0.9318
     },
     {
+      "ticker": "FSHOP13",
       "period": "2T2025",
       "report_date": "2025-07-21",
       "total_revenues": 650250000,
@@ -304,6 +322,7 @@
       "occupancy_rate": 0.9311
     },
     {
+      "ticker": "FSHOP13",
       "period": "3T2025",
       "report_date": "2025-10-20",
       "total_revenues": 656320000,
@@ -320,6 +339,7 @@
       "occupancy_rate": 0.9413
     },
     {
+      "ticker": "FSHOP13",
       "period": "4T2025",
       "report_date": "2026-02-19",
       "total_revenues": 674250000,
@@ -336,6 +356,7 @@
       "occupancy_rate": 0.9436
     },
     {
+      "ticker": "FSHOP13",
       "period": "1T2026",
       "report_date": "2026-04-23",
       "total_revenues": 670530000,

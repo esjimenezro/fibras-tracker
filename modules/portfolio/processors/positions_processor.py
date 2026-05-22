@@ -1,6 +1,6 @@
 from modules.portfolio.models.enriched_distribution import EnrichedDistribution
 from modules.portfolio.models.enriched_position import EnrichedPosition
-from modules.portfolio.models.market_price import MarketPrice
+from modules.common.models.market_price import MarketPrice
 from modules.portfolio.models.position import Position
 
 

@@ -16,6 +16,7 @@
   },
   "periods": [
     {
+      "ticker": "DANHOS13",
       "period": "1T2021",
       "report_date": "2021-03-31",
       "total_revenues": 1026081415,
@@ -32,6 +33,7 @@
       "occupancy_rate": 0.852
     },
     {
+      "ticker": "DANHOS13",
       "period": "2T2021",
       "report_date": "2021-06-30",
       "total_revenues": 1177504766,
@@ -48,6 +50,7 @@
       "occupancy_rate": 0.856
     },
     {
+      "ticker": "DANHOS13",
       "period": "3T2021",
       "report_date": "2021-09-30",
       "total_revenues": 1199039804,
@@ -64,6 +67,7 @@
       "occupancy_rate": 0.855
     },
     {
+      "ticker": "DANHOS13",
       "period": "4T2021",
       "report_date": "2021-12-31",
       "total_revenues": 1363553078,
@@ -80,6 +84,7 @@
       "occupancy_rate": 0.856
     },
     {
+      "ticker": "DANHOS13",
       "period": "1T2022",
       "report_date": "2022-03-31",
       "total_revenues": 1302299868,
@@ -96,6 +101,7 @@
       "occupancy_rate": 0.852
     },
     {
+      "ticker": "DANHOS13",
       "period": "2T2022",
       "report_date": "2022-06-30",
       "total_revenues": 1338116876,
@@ -112,6 +118,7 @@
       "occupancy_rate": 0.855
     },
     {
+      "ticker": "DANHOS13",
       "period": "3T2022",
       "report_date": "2022-09-30",
       "total_revenues": 1349098211,
@@ -128,6 +135,7 @@
       "occupancy_rate": 0.856
     },
     {
+      "ticker": "DANHOS13",
       "period": "4T2022",
       "report_date": "2022-12-31",
       "total_revenues": 1523560139,
@@ -144,6 +152,7 @@
       "occupancy_rate": 0.851
     },
     {
+      "ticker": "DANHOS13",
       "period": "1T2023",
       "report_date": "2023-03-31",
       "total_revenues": 1448207578,
@@ -160,6 +169,7 @@
       "occupancy_rate": 0.853
     },
     {
+      "ticker": "DANHOS13",
       "period": "2T2023",
       "report_date": "2023-06-30",
       "total_revenues": 1514440459,
@@ -176,6 +186,7 @@
       "occupancy_rate": 0.859
     },
     {
+      "ticker": "DANHOS13",
       "period": "3T2023",
       "report_date": "2023-09-30",
       "total_revenues": 1551593649,
@@ -192,6 +203,7 @@
       "occupancy_rate": 0.862
     },
     {
+      "ticker": "DANHOS13",
       "period": "4T2023",
       "report_date": "2023-12-31",
       "total_revenues": 1674747378,
@@ -208,6 +220,7 @@
       "occupancy_rate": 0.863
     },
     {
+      "ticker": "DANHOS13",
       "period": "1T2024",
       "report_date": "2024-03-31",
       "total_revenues": 1569540244,
@@ -224,6 +237,7 @@
       "occupancy_rate": 0.867
     },
     {
+      "ticker": "DANHOS13",
       "period": "2T2024",
       "report_date": "2024-06-30",
       "total_revenues": 1611671382,
@@ -240,6 +254,7 @@
       "occupancy_rate": 0.871
     },
     {
+      "ticker": "DANHOS13",
       "period": "3T2024",
       "report_date": "2024-09-30",
       "total_revenues": 1670386259,
@@ -256,6 +271,7 @@
       "occupancy_rate": 0.894
     },
     {
+      "ticker": "DANHOS13",
       "period": "4T2024",
       "report_date": "2024-12-31",
       "total_revenues": 1923050888,
@@ -272,6 +288,7 @@
       "occupancy_rate": 0.895
     },
     {
+      "ticker": "DANHOS13",
       "period": "1T2025",
       "report_date": "2025-03-31",
       "total_revenues": 1755908541,
@@ -288,6 +305,7 @@
       "occupancy_rate": 0.9
     },
     {
+      "ticker": "DANHOS13",
       "period": "2T2025",
       "report_date": "2025-06-30",
       "total_revenues": 1873622351,
@@ -304,6 +322,7 @@
       "occupancy_rate": 0.907
     },
     {
+      "ticker": "DANHOS13",
       "period": "3T2025",
       "report_date": "2025-09-30",
       "total_revenues": 1899612840,
@@ -320,6 +339,7 @@
       "occupancy_rate": 0.914
     },
     {
+      "ticker": "DANHOS13",
       "period": "4T2025",
       "report_date": "2025-12-31",
       "total_revenues": 2047283854,
@@ -336,6 +356,7 @@
       "occupancy_rate": 0.917
     },
     {
+      "ticker": "DANHOS13",
       "period": "1T2026",
       "report_date": "2026-03-31",
       "total_revenues": 1921718612,

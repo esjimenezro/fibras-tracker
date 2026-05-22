@@ -16,6 +16,7 @@
   },
   "periods": [
     {
+      "ticker": "FIBRAPL14",
       "period": "1T2021",
       "report_date": "2021-04-21",
       "total_revenues": 1208550000,
@@ -33,6 +34,7 @@
       "usd_mxn_exchange_rate": 20.6025
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "2T2021",
       "report_date": "2021-07-20",
       "total_revenues": 1202880000,
@@ -50,6 +52,7 @@
       "usd_mxn_exchange_rate": 19.8157
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "3T2021",
       "report_date": "2021-10-19",
       "total_revenues": 1221182000,
@@ -67,6 +70,7 @@
       "usd_mxn_exchange_rate": 20.4977
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "4T2021",
       "report_date": "2022-01-18",
       "total_revenues": 1273805000,
@@ -84,6 +88,7 @@
       "usd_mxn_exchange_rate": 20.5157
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "1T2022",
       "report_date": "2022-04-18",
       "total_revenues": 1386220000,
@@ -101,6 +106,7 @@
       "usd_mxn_exchange_rate": 19.8632
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "2T2022",
       "report_date": "2022-07-19",
       "total_revenues": 1350328000,
@@ -118,6 +124,7 @@
       "usd_mxn_exchange_rate": 20.1443
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "3T2022",
       "report_date": "2022-10-14",
       "total_revenues": 1396908000,
@@ -135,6 +142,7 @@
       "usd_mxn_exchange_rate": 20.1927
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "4T2022",
       "report_date": "2023-01-16",
       "total_revenues": 1409563000,
@@ -152,6 +160,7 @@
       "usd_mxn_exchange_rate": 19.3615
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "1T2023",
       "report_date": "2023-04-17",
       "total_revenues": 1421097000,
@@ -169,6 +178,7 @@
       "usd_mxn_exchange_rate": 18.0932
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "2T2023",
       "report_date": "2023-07-14",
       "total_revenues": 1355572000,
@@ -186,6 +196,7 @@
       "usd_mxn_exchange_rate": 17.1187
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "3T2023",
       "report_date": "2023-10-13",
       "total_revenues": 1365918000,
@@ -203,6 +214,7 @@
       "usd_mxn_exchange_rate": 17.6195
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "4T2023",
       "report_date": "2024-01-15",
       "total_revenues": 1463753000,
@@ -220,6 +232,7 @@
       "usd_mxn_exchange_rate": 16.8935
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "1T2024",
       "report_date": "2024-04-15",
       "total_revenues": 1512243000,
@@ -237,6 +250,7 @@
       "usd_mxn_exchange_rate": 16.678
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "2T2024",
       "report_date": "2024-07-17",
       "total_revenues": 1511958000,
@@ -254,6 +268,7 @@
       "usd_mxn_exchange_rate": 18.3773
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "3T2024",
       "report_date": "2024-10-29",
       "total_revenues": 2343948000,
@@ -271,6 +286,7 @@
       "usd_mxn_exchange_rate": 19.6697
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "4T2024",
       "report_date": "2025-02-21",
       "total_revenues": 3064078000,
@@ -288,6 +304,7 @@
       "usd_mxn_exchange_rate": 20.5103
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "1T2025",
       "report_date": "2025-04-25",
       "total_revenues": 3233264000,
@@ -305,6 +322,7 @@
       "usd_mxn_exchange_rate": 20.4003
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "2T2025",
       "report_date": "2025-07-28",
       "total_revenues": 3152007000,
@@ -322,6 +340,7 @@
       "usd_mxn_exchange_rate": 18.8483
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "3T2025",
       "report_date": "2025-10-28",
       "total_revenues": 3025976000,
@@ -339,6 +358,7 @@
       "usd_mxn_exchange_rate": 18.3507
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "4T2025",
       "report_date": "2026-02-13",
       "total_revenues": 3048263000,
@@ -356,6 +376,7 @@
       "usd_mxn_exchange_rate": 17.9528
     },
     {
+      "ticker": "FIBRAPL14",
       "period": "1T2026",
       "report_date": "2026-04-27",
       "total_revenues": 3200284000,
