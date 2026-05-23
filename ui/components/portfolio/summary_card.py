@@ -34,31 +34,31 @@ def render_summary_card(
     with col1:
         st.metric(
             label="Valor de Mercado",
-            value=format_mxn(total_market_value),
-            delta=format_mxn(total_return),
+            value=format_mxn(value=total_market_value),
+            delta=format_mxn(value=total_return),
         )
     with col2:
         st.metric(
             label="Costo de Compra",
-            value=format_mxn(total_purchase_cost),
+            value=format_mxn(value=total_purchase_cost),
         )
     with col3:
         st.metric(
             label="Retorno Total %",
-            value=format_pct(total_return_pct),
-            delta=format_mxn(total_return),
+            value=format_pct(value=total_return_pct),
+            delta=format_mxn(value=total_return),
         )
     with col4:
         st.metric(
             label="Distribuciones Netas",
-            value=format_mxn(total_net_fiscal_result_received),
+            value=format_mxn(value=total_net_fiscal_result_received),
         )
 
     left, right = st.columns([0.6, 0.4])
     with left:
         st.metric(
             label="Retorno Incl. Distribuciones",
-            value=format_mxn(total_return_including_distributions),
+            value=format_mxn(value=total_return_including_distributions),
         )
     with right:
         fig = px.pie(

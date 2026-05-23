@@ -33,7 +33,7 @@ def format_mxn_compact(value: float) -> str:
         return f"{sign}${abs_value / 1_000_000:,.2f} M MXN"
     if abs_value >= 1_000:
         return f"{sign}${abs_value / 1_000:,.2f} K MXN"
-    return format_mxn(value)
+    return format_mxn(value=value)
 
 
 def format_pct(value: float, include_sign: bool = True) -> str:

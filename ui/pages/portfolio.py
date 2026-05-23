@@ -21,11 +21,11 @@ def _load_portfolio() -> PortfolioDataRetrieverServiceSchema:
     return PortfolioDataRetrieverService().run()
 
 
-render_page_header("Mi Portafolio", "📊")
+render_page_header(page_title="Mi Portafolio", page_icon="📊")
 
 result = _load_portfolio()
 if result.status == PortfolioDataRetrieverStatus.ERROR:
-    render_error_banner(result.error_message)
+    render_error_banner(error_message=result.error_message)
     st.stop()
 
 portfolio: Portfolio = result.data
@@ -44,8 +44,8 @@ render_summary_card(
 
 st.divider()
 st.subheader("Posiciones")
-render_positions_table(portfolio.portfolio_positions, portfolio.positions_share)
+render_positions_table(positions=portfolio.portfolio_positions, positions_share=portfolio.positions_share)
 
 st.divider()
 st.subheader("Historial de Distribuciones")
-render_distributions_chart({pos.ticker: pos.distributions for pos in portfolio.portfolio_positions})
+render_distributions_chart(distributions_by_ticker={pos.ticker: pos.distributions for pos in portfolio.portfolio_positions})

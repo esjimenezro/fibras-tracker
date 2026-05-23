@@ -160,6 +160,16 @@ from modules.portfolio.models import Position, Distribution
 2. Third-party (`pydantic`, `pandas`, `streamlit`, …)
 3. Internal — `modules/common/` imports first, then other internal imports
 
+**Keyword arguments:** every function/method call must use explicit keyword arguments — never pass values by position:
+```python
+# correct
+render_summary_card(total_purchase_cost=portfolio.total_purchase_cost, total_market_value=portfolio.total_market_value)
+EnrichedPosition(ticker="FMTY14", cbfis=100, market_price=12.5)
+# wrong
+render_summary_card(portfolio.total_purchase_cost, portfolio.total_market_value)
+EnrichedPosition("FMTY14", 100, 12.5)
+```
+
 ## Dependencies notes
 
 - yfinance: use version >=1.0.0. Versions 0.2.x have known compatibility

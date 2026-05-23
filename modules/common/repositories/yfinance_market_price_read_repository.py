@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+from datetime import datetime
+from datetime import timezone
 
 import yfinance as yf
 
@@ -21,7 +22,7 @@ class YFinanceMarketPriceReadRepository(BaseMarketPriceReadRepository):
                 to query BMV prices via Yahoo Finance.
         """
         retrieved_at = datetime.now(timezone.utc)
-        return [self._fetch(ticker, retrieved_at) for ticker in tickers]
+        return [self._fetch(ticker=ticker, retrieved_at=retrieved_at) for ticker in tickers]
 
     def _fetch(self, ticker: str, retrieved_at: datetime) -> MarketPrice:
         """Fetch price and currency for a single ticker from Yahoo Finance.

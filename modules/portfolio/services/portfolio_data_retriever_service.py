@@ -51,9 +51,13 @@ class PortfolioDataRetrieverService:
             tickers = [p.ticker for p in positions]
             market_prices = self._market_price_repository.retrieve_data(tickers=tickers)
 
-            enriched_distributions = self._distributions_processor.process(distributions)
-            enriched_positions = self._positions_processor.process(positions, market_prices, enriched_distributions)
-            portfolio = self._portfolio_processor.process(enriched_positions)
+            enriched_distributions = self._distributions_processor.process(distributions=distributions)
+            enriched_positions = self._positions_processor.process(
+                positions=positions,
+                market_prices=market_prices,
+                distributions=enriched_distributions
+            )
+            portfolio = self._portfolio_processor.process(positions=enriched_positions)
 
             return PortfolioDataRetrieverServiceSchema(
                 status=PortfolioDataRetrieverStatus.OK,

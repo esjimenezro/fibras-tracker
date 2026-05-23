@@ -61,7 +61,7 @@ def render_positions_table(
             "Retorno Total": format_mxn,
             "Distrib. Netas": format_mxn,
             "Retorno + Distrib.": format_mxn,
-            "Peso": lambda v: format_pct(v, include_sign=False),
+            "Peso": lambda v: format_pct(value=v, include_sign=False),
         })
     )
 

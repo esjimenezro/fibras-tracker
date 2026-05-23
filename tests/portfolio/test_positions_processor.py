@@ -109,68 +109,68 @@ def dist_fshop13():
 
 def test_return_per_cbfi(processor, position_a, market_price_a):
     """return_per_cbfi = market_price - average_purchase_cost."""
-    result = processor.enrich(position_a, market_price_a, [])
+    result = processor.enrich(position=position_a, market_price=market_price_a, distributions=[])
     assert result.return_per_cbfi == pytest.approx(0.92, rel=1e-6)
 
 
 def test_purchase_cost(processor, position_a, market_price_a):
     """purchase_cost = average_purchase_cost * cbfis."""
-    result = processor.enrich(position_a, market_price_a, [])
+    result = processor.enrich(position=position_a, market_price=market_price_a, distributions=[])
     assert result.purchase_cost == pytest.approx(14_370.0, rel=1e-6)
 
 
 def test_market_value(processor, position_a, market_price_a):
     """market_value = market_price * cbfis."""
-    result = processor.enrich(position_a, market_price_a, [])
+    result = processor.enrich(position=position_a, market_price=market_price_a, distributions=[])
     assert result.market_value == pytest.approx(15_750.0, rel=1e-6)
 
 
 def test_return_pct(processor, position_a, market_price_a):
     """return_pct = return_per_cbfi / average_purchase_cost."""
-    result = processor.enrich(position_a, market_price_a, [])
+    result = processor.enrich(position=position_a, market_price=market_price_a, distributions=[])
     assert result.return_pct == pytest.approx(0.92 / 9.58, rel=1e-6)
 
 
 def test_total_return(processor, position_a, market_price_a):
     """total_return = return_per_cbfi * cbfis."""
-    result = processor.enrich(position_a, market_price_a, [])
+    result = processor.enrich(position=position_a, market_price=market_price_a, distributions=[])
     assert result.total_return == pytest.approx(1_380.0, rel=1e-6)
 
 
 def test_total_net_fiscal_result_received(processor, position_a, market_price_a, dist_fmty14):
     """total_net_fiscal_result_received = sum of net_fiscal_result_income for all distributions."""
-    result = processor.enrich(position_a, market_price_a, [dist_fmty14])
+    result = processor.enrich(position=position_a, market_price=market_price_a, distributions=[dist_fmty14])
     assert result.total_net_fiscal_result_received == pytest.approx(50.715, rel=1e-6)
 
 
 def test_total_return_including_distributions(processor, position_a, market_price_a, dist_fmty14):
     """total_return_including_distributions = total_return + total_net_fiscal_result_received."""
-    result = processor.enrich(position_a, market_price_a, [dist_fmty14])
+    result = processor.enrich(position=position_a, market_price=market_price_a, distributions=[dist_fmty14])
     assert result.total_return_including_distributions == pytest.approx(1_430.715, rel=1e-6)
 
 
 def test_price_updated_at_propagated(processor, position_a, market_price_a):
     """price_updated_at on the enriched position matches the market price timestamp."""
-    result = processor.enrich(position_a, market_price_a, [])
+    result = processor.enrich(position=position_a, market_price=market_price_a, distributions=[])
     assert result.price_updated_at == market_price_a.retrieved_at
 
 
 def test_missing_market_price_raises(processor, position_a):
     """process() raises ValueError when a position has no matching market price."""
     with pytest.raises(ValueError):
-        processor.process([position_a], [], [])
+        processor.process(positions=[position_a], market_prices=[], distributions=[])
 
 
 def test_no_distributions_gives_zero_fiscal(processor, position_a, market_price_a):
     """When distributions=[], total_net_fiscal_result_received=0 and total_return_including_distributions equals total_return."""
-    result = processor.enrich(position_a, market_price_a, [])
+    result = processor.enrich(position=position_a, market_price=market_price_a, distributions=[])
     assert result.total_net_fiscal_result_received == pytest.approx(0.0, abs=1e-9)
     assert result.total_return_including_distributions == pytest.approx(result.total_return, rel=1e-6)
 
 
 def test_process_multiple_positions(processor, position_a, position_b, market_price_a, market_price_b):
     """process() returns one enriched position per input position, joined by ticker."""
-    results = processor.process([position_a, position_b], [market_price_a, market_price_b], [])
+    results = processor.process(positions=[position_a, position_b], market_prices=[market_price_a, market_price_b], distributions=[])
     assert len(results) == 2
     assert results[0].ticker == "FMTY14"
     assert results[1].ticker == "FSHOP13"
@@ -179,9 +179,9 @@ def test_process_multiple_positions(processor, position_a, position_b, market_pr
 def test_distributions_filtered_by_ticker(processor, position_a, position_b, market_price_a, market_price_b, dist_fmty14, dist_fshop13):
     """Each enriched position only receives distributions whose ticker matches its own."""
     results = processor.process(
-        [position_a, position_b],
-        [market_price_a, market_price_b],
-        [dist_fmty14, dist_fshop13],
+        positions=[position_a, position_b],
+        market_prices=[market_price_a, market_price_b],
+        distributions=[dist_fmty14, dist_fshop13],
     )
     assert results[0].distributions == [dist_fmty14]
     assert results[1].distributions == [dist_fshop13]
