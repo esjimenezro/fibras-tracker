@@ -1,8 +1,8 @@
 import streamlit as st
 
 from modules.portfolio.models import Portfolio
+from modules.common.schemas import ServiceStatus
 from modules.portfolio.schemas import PortfolioDataRetrieverServiceSchema
-from modules.portfolio.schemas import PortfolioDataRetrieverStatus
 from modules.portfolio.services import PortfolioDataRetrieverService
 from ui.components.common.error_banner import render_error_banner
 from ui.components.common.page_header import render_page_header
@@ -24,7 +24,7 @@ def _load_portfolio() -> PortfolioDataRetrieverServiceSchema:
 render_page_header(page_title="Mi Portafolio", page_icon="📊")
 
 result = _load_portfolio()
-if result.status == PortfolioDataRetrieverStatus.ERROR:
+if result.status == ServiceStatus.ERROR:
     render_error_banner(error_message=result.error_message)
     st.stop()
 

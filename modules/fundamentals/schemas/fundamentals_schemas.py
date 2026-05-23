@@ -3,18 +3,18 @@ from typing import Optional
 from pydantic import BaseModel
 
 from modules.common.schemas import ServiceStatus
-from modules.portfolio.models import Portfolio
+from modules.fundamentals.models import FundamentalsHistory
 
 
-class PortfolioDataRetrieverServiceSchema(BaseModel):
-    """Output contract for PortfolioDataRetrieverService.
+class FundamentalsDataRetrieverServiceSchema(BaseModel):
+    """Output contract for FundamentalsDataRetrieverService.
 
     Attributes:
         status: Result status; always populated.
-        data: The assembled Portfolio on success; None on error.
+        data: The assembled FundamentalsHistory on success; None on error.
         error_message: Exception message on error; None on success.
     """
 
     status: ServiceStatus
-    data: Optional[Portfolio] = None
+    data: Optional[FundamentalsHistory] = None
     error_message: Optional[str] = None

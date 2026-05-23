@@ -2,6 +2,7 @@ from modules.common.repositories.base import BaseCatalogReadRepository
 from modules.common.repositories.base import BaseMarketPriceReadRepository
 from modules.common.repositories import JsonCatalogReadRepository
 from modules.common.repositories import YFinanceMarketPriceReadRepository
+from modules.common.schemas import ServiceStatus
 
 from modules.portfolio.processors import DistributionsProcessor
 from modules.portfolio.processors import PortfolioProcessor
@@ -11,7 +12,6 @@ from modules.portfolio.repositories.base import BasePositionsReadRepository
 from modules.portfolio.repositories import JsonDistributionsReadRepository
 from modules.portfolio.repositories import JsonPositionsReadRepository
 from modules.portfolio.schemas import PortfolioDataRetrieverServiceSchema
-from modules.portfolio.schemas import PortfolioDataRetrieverStatus
 
 
 class PortfolioDataRetrieverService:
@@ -68,13 +68,13 @@ class PortfolioDataRetrieverService:
             portfolio = self._portfolio_processor.process(positions=enriched_positions)
 
             return PortfolioDataRetrieverServiceSchema(
-                status=PortfolioDataRetrieverStatus.OK,
+                status=ServiceStatus.OK,
                 data=portfolio
             )
 
         except Exception as e:
 
             return PortfolioDataRetrieverServiceSchema(
-                status=PortfolioDataRetrieverStatus.ERROR,
+                status=ServiceStatus.ERROR,
                 error_message=str(e)
             )
