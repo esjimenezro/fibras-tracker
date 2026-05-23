@@ -1,7 +1,8 @@
 import streamlit as st
 
 from modules.portfolio.models import Portfolio
-from modules.portfolio.schemas import PortfolioDataRetrieverServiceSchema, PortfolioDataRetrieverStatus
+from modules.portfolio.schemas import PortfolioDataRetrieverServiceSchema
+from modules.portfolio.schemas import PortfolioDataRetrieverStatus
 from modules.portfolio.services import PortfolioDataRetrieverService
 from ui.components.common.error_banner import render_error_banner
 from ui.components.common.page_header import render_page_header

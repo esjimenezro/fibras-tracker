@@ -2,8 +2,8 @@ from datetime import date
 
 import pytest
 
-from modules.portfolio.models.distribution import Distribution
-from modules.portfolio.processors.distributions_processor import DistributionsProcessor
+from modules.portfolio.models import Distribution
+from modules.portfolio.processors import DistributionsProcessor
 
 
 @pytest.fixture

@@ -3,7 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from modules.portfolio.models.portfolio import Portfolio
+from modules.portfolio.models import Portfolio
 
 
 class PortfolioDataRetrieverStatus(StrEnum):

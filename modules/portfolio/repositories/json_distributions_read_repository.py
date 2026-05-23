@@ -1,8 +1,8 @@
 import json
 
-from config import DISTRIBUTIONS_FILE
-from modules.portfolio.models.distribution import Distribution
-from modules.portfolio.repositories.base.base_distributions_read_repository import BaseDistributionsReadRepository
+from config import DISTRIBUTIONS_DATA_PATH
+from modules.portfolio.models import Distribution
+from modules.portfolio.repositories.base import BaseDistributionsReadRepository
 
 
 class JsonDistributionsReadRepository(BaseDistributionsReadRepository):
@@ -14,6 +14,8 @@ class JsonDistributionsReadRepository(BaseDistributionsReadRepository):
         Returns:
             list[Distribution]: All distribution records parsed from the JSON file.
         """
-        with open(DISTRIBUTIONS_FILE) as f:
+        if not DISTRIBUTIONS_DATA_PATH.exists():
+            raise FileNotFoundError(f"Distributions data file not found: {DISTRIBUTIONS_DATA_PATH}")
+        with open(DISTRIBUTIONS_DATA_PATH) as f:
             data = json.load(f)
         return [Distribution(**item) for item in data["distributions"]]

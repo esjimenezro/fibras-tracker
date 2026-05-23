@@ -3,8 +3,9 @@ from datetime import datetime
 import plotly.express as px
 import streamlit as st
 
-from modules.portfolio.models.portfolio import PositionShare
-from ui.styles.theme import format_mxn, format_pct
+from modules.portfolio.models import PositionShare
+from ui.styles.theme import format_mxn
+from ui.styles.theme import format_pct
 
 
 def render_summary_card(

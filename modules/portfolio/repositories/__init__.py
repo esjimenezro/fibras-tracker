@@ -1,6 +1,7 @@
+from modules.common.repositories import YFinanceMarketPriceReadRepository
+
 from modules.portfolio.repositories.json_distributions_read_repository import JsonDistributionsReadRepository
 from modules.portfolio.repositories.json_positions_read_repository import JsonPositionsReadRepository
-from modules.common.repositories.yfinance_market_price_read_repository import YFinanceMarketPriceReadRepository
 
 
 __all__ = [

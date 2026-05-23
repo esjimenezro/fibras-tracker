@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from modules.common.models.market_price import MarketPrice
+from modules.common.models import MarketPrice
 
 
 class BaseMarketPriceReadRepository(ABC):

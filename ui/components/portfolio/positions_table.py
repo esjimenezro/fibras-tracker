@@ -1,9 +1,11 @@
 import pandas as pd
 import streamlit as st
 
-from modules.portfolio.models.enriched_position import EnrichedPosition
-from modules.portfolio.models.portfolio import PositionShare
-from ui.styles.theme import color_return, format_mxn, format_pct
+from modules.portfolio.models import EnrichedPosition
+from modules.portfolio.models import PositionShare
+from ui.styles.theme import color_return
+from ui.styles.theme import format_mxn
+from ui.styles.theme import format_pct
 
 
 RETURN_COLS = ["Retorno/CBFI", "Retorno %", "Retorno Total", "Retorno + Distrib."]

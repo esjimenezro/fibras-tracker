@@ -1,5 +1,6 @@
-from modules.portfolio.models.enriched_position import EnrichedPosition
-from modules.portfolio.models.portfolio import Portfolio, PositionShare
+from modules.portfolio.models import EnrichedPosition
+from modules.portfolio.models import Portfolio
+from modules.portfolio.models import PositionShare
 
 
 class PortfolioProcessor:

@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-from modules.portfolio.models.enriched_distribution import EnrichedDistribution
+from modules.portfolio.models import EnrichedDistribution
 
 
 def render_distributions_chart(

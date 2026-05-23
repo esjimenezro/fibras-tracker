@@ -1,8 +1,8 @@
 import json
 
-from config import POSITIONS_FILE
-from modules.portfolio.models.position import Position
-from modules.portfolio.repositories.base.base_positions_read_repository import BasePositionsReadRepository
+from config import POSITIONS_DATA_PATH
+from modules.portfolio.models import Position
+from modules.portfolio.repositories.base import BasePositionsReadRepository
 
 
 class JsonPositionsReadRepository(BasePositionsReadRepository):
@@ -14,6 +14,8 @@ class JsonPositionsReadRepository(BasePositionsReadRepository):
         Returns:
             list[Position]: All positions parsed from the JSON file.
         """
-        with open(POSITIONS_FILE) as f:
+        if not POSITIONS_DATA_PATH.exists():
+            raise FileNotFoundError(f"Positions data file not found: {POSITIONS_DATA_PATH}")
+        with open(POSITIONS_DATA_PATH) as f:
             data = json.load(f)
         return [Position(**item) for item in data["positions"]]

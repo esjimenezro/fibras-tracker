@@ -1,6 +1,7 @@
 import streamlit as st
 
-from config import PAGE_ICON, PAGE_TITLE
+from config import PAGE_ICON
+from config import PAGE_TITLE
 
 pg = st.navigation([
     st.Page("ui/pages/home.py",         title="Inicio",        icon="🏠"),

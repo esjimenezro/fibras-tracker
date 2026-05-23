@@ -1,7 +1,8 @@
-from modules.portfolio.models.enriched_distribution import EnrichedDistribution
-from modules.portfolio.models.enriched_position import EnrichedPosition
-from modules.common.models.market_price import MarketPrice
-from modules.portfolio.models.position import Position
+from modules.common.models import MarketPrice
+
+from modules.portfolio.models import EnrichedDistribution
+from modules.portfolio.models import EnrichedPosition
+from modules.portfolio.models import Position
 
 
 class PositionsProcessor:

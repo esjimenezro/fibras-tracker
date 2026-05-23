@@ -136,6 +136,30 @@ A service is the only entry point a `page/` is allowed to call. It:
 - **Tool**: flake8
 - **Max line length**: 200 characters (`max-line-length = 200` in `.flake8`)
 
+## Code style
+
+**Exports:** every class and model must be exported from its package's `__init__.py`. All imports must reference the package, not the file:
+```python
+# correct
+from modules.fundamentals.models import FundamentalsRecord
+# wrong
+from modules.fundamentals.models.fundamentals_record import FundamentalsRecord
+```
+
+**One import per line:** never combine multiple names on a single `from … import` line:
+```python
+# correct
+from modules.portfolio.models import Position
+from modules.portfolio.models import Distribution
+# wrong
+from modules.portfolio.models import Position, Distribution
+```
+
+**Import order** (one blank line between each group):
+1. Standard library (`datetime`, `abc`, `json`, …)
+2. Third-party (`pydantic`, `pandas`, `streamlit`, …)
+3. Internal — `modules/common/` imports first, then other internal imports
+
 ## Dependencies notes
 
 - yfinance: use version >=1.0.0. Versions 0.2.x have known compatibility

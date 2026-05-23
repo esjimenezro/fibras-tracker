@@ -1,6 +1,8 @@
 import streamlit as st
 
-from config import PAGE_ICON, PAGE_TITLE, PAGE_LEGEND
+from config import PAGE_ICON
+from config import PAGE_LEGEND
+from config import PAGE_TITLE
 from ui.styles.theme import load_custom_css
 
 

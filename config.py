@@ -6,9 +6,9 @@ BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
 HISTORICO_DIR = DATA_DIR / "historico"
 
-POSITIONS_FILE = DATA_DIR / "positions.json"
-DISTRIBUTIONS_FILE = DATA_DIR / "distributions.json"
-FUNDAMENTALES_FILE = HISTORICO_DIR / "fundamentales.csv"
+POSITIONS_DATA_PATH = DATA_DIR / "positions.json"
+DISTRIBUTIONS_DATA_PATH = DATA_DIR / "distributions.json"
+FUNDAMENTALS_DATA_PATH = DATA_DIR / "historical" / "fundamentals.json"
 
 # yfinance adds suffix .MX for BMV
 TICKER_SUFFIX = ".MX"

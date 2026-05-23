@@ -1,10 +1,11 @@
-from datetime import datetime, timezone
+from datetime import datetime
+from datetime import timezone
 
 import pytest
 
-from modules.portfolio.models.enriched_position import EnrichedPosition
-from modules.portfolio.models.position import PaymentFrequency
-from modules.portfolio.processors.portfolio_processor import PortfolioProcessor
+from modules.portfolio.models import EnrichedPosition
+from modules.portfolio.models import PaymentFrequency
+from modules.portfolio.processors import PortfolioProcessor
 
 
 def _make_enriched_position(

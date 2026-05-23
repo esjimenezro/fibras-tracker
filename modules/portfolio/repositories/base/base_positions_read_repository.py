@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from modules.portfolio.models.position import Position
+from modules.portfolio.models import Position
 
 
 class BasePositionsReadRepository(ABC):

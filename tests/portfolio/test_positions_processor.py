@@ -1,12 +1,14 @@
-from datetime import date, datetime, timezone
+from datetime import date
+from datetime import datetime
+from datetime import timezone
 
 import pytest
 
-from modules.common.models.market_price import MarketPrice
-
-from modules.portfolio.models.enriched_distribution import EnrichedDistribution
-from modules.portfolio.models.position import PaymentFrequency, Position
-from modules.portfolio.processors.positions_processor import PositionsProcessor
+from modules.common.models import MarketPrice
+from modules.portfolio.models import EnrichedDistribution
+from modules.portfolio.models import PaymentFrequency
+from modules.portfolio.models import Position
+from modules.portfolio.processors import PositionsProcessor
 
 
 @pytest.fixture

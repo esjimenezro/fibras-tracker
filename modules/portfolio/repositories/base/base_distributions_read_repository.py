@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from modules.portfolio.models.distribution import Distribution
+from modules.portfolio.models import Distribution
 
 
 class BaseDistributionsReadRepository(ABC):

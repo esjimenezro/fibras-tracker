@@ -1,6 +1,6 @@
 from config import FISCAL_RESULT_WITHHOLDING_RATE
-from modules.portfolio.models.distribution import Distribution
-from modules.portfolio.models.enriched_distribution import EnrichedDistribution
+from modules.portfolio.models import Distribution
+from modules.portfolio.models import EnrichedDistribution
 
 
 class DistributionsProcessor:
