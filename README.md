@@ -64,6 +64,12 @@ Position + MarketPrice + [EnrichedDistribution]
 
 [EnrichedPosition]
   → [PortfolioProcessor] → Portfolio
+
+FundamentalsRecord + list[MarketPrice]
+  → [FundamentalsProcessor] → EnrichedFundamentalsRecord
+
+list[EnrichedFundamentalsRecord] + list[Fibra]
+  → [FundamentalsHistoryProcessor] → FundamentalsHistory
 ```
 
 ### Repository pattern
@@ -91,18 +97,34 @@ fibras-tracker/
 │   └── styles/
 │       └── theme.py            ← color constants, number formatters, CSS injection
 ├── modules/
-│   └── portfolio/
-│       ├── models/             ← Pydantic data contracts (raw + enriched)
-│       ├── repositories/       ← data access layer
-│       │   └── base/           ← abstract interfaces
-│       ├── processors/         ← pure business logic and calculations
-│       ├── schemas/            ← service input/output contracts
-│       └── services/           ← orchestration layer
+│   ├── common/
+│   │   ├── models/             ← Sector, SectorExposure, Fibra, PaymentFrequency, MarketPrice
+│   │   ├── repositories/       ← catalog and market price repositories
+│   │   │   └── base/           ← abstract interfaces
+│   │   └── schemas/            ← ServiceStatus (shared across all modules)
+│   ├── portfolio/
+│   │   ├── models/             ← Pydantic data contracts (raw + enriched + aggregate)
+│   │   ├── repositories/       ← data access layer
+│   │   │   └── base/           ← abstract interfaces
+│   │   ├── processors/         ← pure business logic and calculations
+│   │   ├── schemas/            ← service input/output contracts
+│   │   └── services/           ← orchestration layer
+│   ├── fundamentals/
+│   │   ├── models/             ← FundamentalsRecord, EnrichedFundamentalsRecord, FundamentalsHistory
+│   │   ├── repositories/       ← data access layer
+│   │   │   └── base/           ← abstract interfaces
+│   │   ├── processors/         ← FundamentalsProcessor, FundamentalsHistoryProcessor
+│   │   ├── schemas/            ← FundamentalsDataRetrieverServiceSchema
+│   │   └── services/           ← FundamentalsDataRetrieverService
+│   └── radar/
 ├── tests/
-│   └── portfolio/              ← unit tests for all three processors
+│   └── portfolio/              ← unit tests for all three portfolio processors
 └── data/
+    ├── catalog.json            ← static FIBRA catalog (name, frequency, sector weights)
     ├── positions.json          ← portfolio holdings
-    └── distributions.json      ← distribution payment history
+    ├── distributions.json      ← distribution payment history
+    └── historical/
+        └── fundamentals.json   ← quarterly KPI history per FIBRA
 ```
 
 ---
@@ -206,6 +228,99 @@ To record a new distribution: append a new object to the `"distributions"` array
 
 ---
 
+### `data/catalog.json`
+
+The static FIBRA catalog — source of truth for FIBRA metadata and sector exposure weights.
+The catalog drives the `Fibra` domain model and is consumed by both the Portfolio and Fundamentals pipelines.
+
+```json
+{
+  "sectors": ["Industrial", "Comercial", "Oficinas", "Hotelero", "Hipotecario", "Educativo", "Almacenaje"],
+  "fibras": [
+    {
+      "ticker": "FMTY14",
+      "name": "Fibra Mty",
+      "payment_frequency": "Monthly",
+      "sector_exposure": [
+        {"sector": "Industrial", "weight": 0.88},
+        {"sector": "Oficinas",   "weight": 0.10},
+        {"sector": "Comercial",  "weight": 0.02}
+      ]
+    }
+  ]
+}
+```
+
+| Field | Description |
+|---|---|
+| `sectors` | Exhaustive list of valid sector names |
+| `ticker` | BMV ticker without the `.MX` suffix |
+| `name` | Full display name of the FIBRA |
+| `payment_frequency` | `"Monthly"` or `"Quarterly"` |
+| `sector_exposure` | List of `{sector, weight}` pairs; weights must sum to 1.0 |
+| `sector_exposure[].sector` | Sector name — must be one of the values in `sectors` |
+| `sector_exposure[].weight` | Fraction of GLA belonging to this sector (0.0–1.0) |
+
+To add a new FIBRA: append a new object to the `"fibras"` array. All positions and
+fundamentals records that reference this ticker will be matched automatically.
+
+---
+
+### `data/historical/fundamentals.json`
+
+Quarterly KPI history per FIBRA, manually populated from each FIBRA's quarterly reports.
+All monetary values are in MXN; area values are in m².
+
+```json
+{
+  "fundamentals": [
+    {
+      "ticker": "DANHOS13",
+      "period": "1T2021",
+      "report_date": "2021-03-31",
+      "total_revenues": 1026081415,
+      "noi": 846464090,
+      "ebitda": 661660469,
+      "ffo": 583299253,
+      "affo": 612406341,
+      "distribution_per_cbfi": 0.4,
+      "gross_leasable_area_m2": 891800,
+      "cbfis_outstanding": 1493866919,
+      "total_equity": 59657284544,
+      "total_debt": 7453116781,
+      "financial_debt": 7453116781,
+      "total_assets": 67110401325,
+      "occupancy_rate": 0.852,
+      "usd_mxn_exchange_rate": null
+    }
+  ]
+}
+```
+
+| Field | Description |
+|---|---|
+| `ticker` | BMV ticker matching a FIBRA in `catalog.json` |
+| `period` | Reporting quarter in `QT{YEAR}` format (e.g. `"1T2021"` = Q1 2021) |
+| `report_date` | Last day of the quarter covered by the report (`YYYY-MM-DD`) |
+| `total_revenues` | Total revenues for the quarter (MXN) |
+| `noi` | Net Operating Income for the quarter (MXN) |
+| `ebitda` | EBITDA for the quarter (MXN) |
+| `ffo` | Funds From Operations for the quarter (MXN) |
+| `affo` | Adjusted Funds From Operations for the quarter (MXN) |
+| `distribution_per_cbfi` | Distribution declared for the quarter per CBFI (MXN) |
+| `gross_leasable_area_m2` | Total gross leasable area at end of period (m²) |
+| `cbfis_outstanding` | CBFIs in circulation at end of period |
+| `total_equity` | Total stockholders' equity (MXN) |
+| `total_debt` | Total financial obligations including lease liabilities (MXN) |
+| `financial_debt` | Interest-bearing financial debt only (MXN) — currently equals `total_debt`; will be corrected when accurate data is available |
+| `total_assets` | Total assets (MXN) |
+| `occupancy_rate` | Occupancy rate as a decimal (e.g. `0.852` = 85.2%) |
+| `usd_mxn_exchange_rate` | Exchange rate used in the report, or `null` if not applicable |
+
+To add a new quarterly record: append a new object to the `"fundamentals"` array.
+
+---
+
 ## Business rules
 
 Tax constants are defined in `config.py`:
@@ -255,6 +370,51 @@ sector_share.weight(sector)       = sum(sector_contribution across all positions
 ```
 
 `positions_share` always sums to exactly 1.0 across all positions. Only sectors with a non-zero contribution are included in `sector_shares`; it sums to exactly 1.0 when all positions have `sector_exposure` weights summing to 1.0.
+
+### Fundamentals pipeline (`FundamentalsProcessor` → `EnrichedFundamentalsRecord`)
+
+**Operational metrics:**
+```
+noi_margin              = noi / total_revenues
+ebitda_margin           = ebitda / total_revenues
+revenue_per_m2          = total_revenues / gross_leasable_area_m2
+affo_per_m2             = affo / gross_leasable_area_m2
+```
+
+**Per CBFI:**
+```
+ffo_per_cbfi            = ffo / cbfis_outstanding
+affo_per_cbfi           = affo / cbfis_outstanding
+nav_per_cbfi            = total_equity / cbfis_outstanding
+```
+
+**Capital structure:**
+```
+ltv                     = financial_debt / total_assets
+affo_payout_ratio       = (distribution_per_cbfi × cbfis_outstanding) / affo
+```
+
+**Market metrics (null when market_price is None):**
+```
+market_cap              = market_price × cbfis_outstanding
+price_to_ffo            = market_price / ffo_per_cbfi
+price_to_affo           = market_price / affo_per_cbfi
+dividend_yield          = (distribution_per_cbfi × 4) / market_price
+price_to_nav            = market_price / nav_per_cbfi
+```
+
+`dividend_yield` annualises the quarterly distribution (×4). For monthly payers the formula remains the same — the declared `distribution_per_cbfi` field stores the quarterly equivalent amount from the quarterly report.
+
+### Fundamentals aggregation (`FundamentalsHistoryProcessor` → `FundamentalsHistory`)
+
+```
+records          = all EnrichedFundamentalsRecord sorted by (ticker asc, year asc, quarter asc)
+latest_by_ticker = most recent record per ticker, keyed by ticker string.
+                   None if no record exists for a catalog ticker.
+fibras           = list[Fibra] sourced from the catalog
+```
+
+Period sort order is determined by parsing `"QT{YEAR}"` into `(year, quarter)` integer pairs — never lexicographically. Every ticker from the catalog appears as a key in `latest_by_ticker`; tickers with no history have the value `None`.
 
 ---
 
@@ -338,12 +498,11 @@ Tests use real Pydantic instances — no mocks, no network calls, no file I/O. E
 ## Current status
 
 **Complete:**
-- Domain models — raw (`Position`, `Distribution`, `MarketPrice`) and enriched (`EnrichedPosition`, `EnrichedDistribution`, `Portfolio`)
-- Repository interfaces (`base/`) and concrete implementations (`json_*`, `yfinance_*`)
-- Three processors implementing the full data pipeline
-- Typed service output schema (`PortfolioDataRetrieverServiceSchema`)
-- Main orchestrator service (`PortfolioDataRetrieverService`)
-- Unit test suite — 37 tests covering all three processors
+- `modules/common/` — `Sector`, `SectorExposure`, `Fibra`, `PaymentFrequency`, `MarketPrice`, `ServiceStatus`; catalog and market price repositories (`JsonCatalogReadRepository`, `YFinanceMarketPriceReadRepository`)
+- `modules/portfolio/` — full pipeline: models (raw + enriched + `Portfolio` with `SectorShare`), repositories, three processors, service, schema
+- `modules/fundamentals/` — full pipeline: models (`FundamentalsRecord`, `EnrichedFundamentalsRecord`, `FundamentalsHistory`), repositories, two processors (`FundamentalsProcessor`, `FundamentalsHistoryProcessor`), service, schema
+- `data/catalog.json` and `data/historical/fundamentals.json` populated with real data
+- Unit test suite — 62 tests: 37 covering all three portfolio processors (`tests/portfolio/`), 25 covering both fundamentals processors (`tests/fundamentals/`)
 - Portfolio page (`ui/pages/portfolio.py`) — summary metrics, positions table, allocation chart, distributions history
 
 **Next:**

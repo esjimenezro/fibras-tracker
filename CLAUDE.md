@@ -32,36 +32,61 @@ fibras-tracker/
 │       └── theme.py        ← color constants, number formatters, CSS injection
 ├── modules/                ← business logic
 │   ├── common/
+│   │   ├── models/
+│   │   │   ├── fibra.py                         ← Fibra, Sector, SectorExposure, PaymentFrequency
+│   │   │   └── market_price.py                  ← MarketPrice (live price snapshot)
+│   │   ├── repositories/
+│   │   │   ├── base/
+│   │   │   │   ├── base_catalog_read_repository.py
+│   │   │   │   └── base_market_price_read_repository.py
+│   │   │   ├── json_catalog_read_repository.py
+│   │   │   └── yfinance_market_price_read_repository.py
+│   │   └── schemas/
+│   │       └── base_service_schema.py           ← ServiceStatus (shared StrEnum: OK / ERROR)
 │   ├── portfolio/
 │   │   ├── models/
-│   │   │   ├── position.py                  ← raw Position + PaymentFrequency enum
-│   │   │   ├── enriched_position.py         ← EnrichedPosition(Position) with computed fields
-│   │   │   ├── distribution.py              ← raw Distribution
-│   │   │   ├── enriched_distribution.py     ← EnrichedDistribution(Distribution) with computed fields
-│   │   │   ├── market_price.py              ← MarketPrice (live price snapshot)
-│   │   │   └── portfolio.py                 ← Portfolio + PositionShare (aggregated output)
+│   │   │   ├── position.py                      ← raw Position
+│   │   │   ├── enriched_position.py             ← EnrichedPosition(Position) with computed fields
+│   │   │   ├── distribution.py                  ← raw Distribution
+│   │   │   ├── enriched_distribution.py         ← EnrichedDistribution(Distribution) with computed fields
+│   │   │   └── portfolio.py                     ← Portfolio + PositionShare + SectorShare
 │   │   ├── repositories/
 │   │   │   ├── base/
 │   │   │   │   ├── base_positions_read_repository.py
-│   │   │   │   ├── base_distributions_read_repository.py
-│   │   │   │   └── base_market_price_read_repository.py
+│   │   │   │   └── base_distributions_read_repository.py
 │   │   │   ├── json_positions_read_repository.py
-│   │   │   ├── json_distributions_read_repository.py
-│   │   │   └── yfinance_market_price_read_repository.py
+│   │   │   └── json_distributions_read_repository.py
 │   │   ├── processors/
-│   │   │   ├── distributions_processor.py   ← Distribution → EnrichedDistribution
-│   │   │   ├── positions_processor.py       ← Position + MarketPrice + [EnrichedDistribution] → EnrichedPosition
-│   │   │   └── portfolio_processor.py       ← [EnrichedPosition] → Portfolio
+│   │   │   ├── distributions_processor.py       ← Distribution → EnrichedDistribution
+│   │   │   ├── positions_processor.py           ← Position + MarketPrice + [EnrichedDistribution] → EnrichedPosition
+│   │   │   └── portfolio_processor.py           ← [EnrichedPosition] → Portfolio
 │   │   ├── schemas/
-│   │   │   └── portfolio_schemas.py         ← service input/output contracts
+│   │   │   └── portfolio_schemas.py             ← service input/output contracts
 │   │   └── services/
 │   │       └── portfolio_data_retriever_service.py  ← main orchestrator
 │   ├── fundamentals/
+│   │   ├── models/
+│   │   │   ├── fundamentals_record.py           ← raw FundamentalsRecord
+│   │   │   ├── enriched_fundamentals_record.py  ← EnrichedFundamentalsRecord with computed fields
+│   │   │   └── fundamentals_history.py          ← FundamentalsHistory (aggregated output)
+│   │   ├── repositories/
+│   │   │   ├── base/
+│   │   │   │   └── base_fundamentals_read_repository.py
+│   │   │   └── json_fundamentals_read_repository.py
+│   │   ├── processors/
+│   │   │   ├── fundamentals_processor.py        ← FundamentalsRecord + MarketPrice → EnrichedFundamentalsRecord
+│   │   │   └── fundamentals_history_processor.py ← [EnrichedFundamentalsRecord] + [Fibra] → FundamentalsHistory
+│   │   ├── schemas/
+│   │   │   └── fundamentals_schemas.py          ← service input/output contracts
+│   │   └── services/
+│   │       └── fundamentals_data_retriever_service.py  ← main orchestrator
 │   └── radar/
 └── data/
+    ├── catalog.json            ← static FIBRA catalog (name, frequency, sector weights)
     ├── positions.json
     ├── distributions.json
     └── historical/
+        └── fundamentals.json   ← quarterly KPI history per FIBRA
 ```
 
 ## Layer flow
@@ -81,6 +106,11 @@ Distribution      ──[DistributionsProcessor]──▶ EnrichedDistribution
 Position + MarketPrice + [EnrichedDistribution]
                   ──[PositionsProcessor]─────▶ EnrichedPosition
 [EnrichedPosition]──[PortfolioProcessor]─────▶ Portfolio
+
+FundamentalsRecord + list[MarketPrice]
+                  ──[FundamentalsProcessor]───▶ EnrichedFundamentalsRecord
+[EnrichedFundamentalsRecord] + list[Fibra]
+                  ──[FundamentalsHistoryProcessor]─▶ FundamentalsHistory
 ```
 
 ## UI layer
@@ -197,20 +227,28 @@ Critical invariants to preserve in any new processor or formula:
 - `average_purchase_cost` is the broker-adjusted cost base — never subtract reimbursements from it.
 - Use `net_fiscal_result_income`, never `net_income`, when aggregating fiscal result income. `net_income` includes the non-taxable reimbursement component.
 
+Fundamentals pipeline formulas (operational metrics, per-CBFI ratios, capital structure,
+and market multiples) are documented in `FundamentalsProcessor` docstrings and `README.md`.
+
 ## Current project state
 
 Complete:
-- Domain models (`modules/portfolio/models/`) — raw + enriched + aggregate
-- Repository interfaces (`repositories/base/`) and concrete implementations (`json_*`, `yfinance_*`)
-- Processors (`processors/`) — three processors implementing the data pipeline
-- Schemas (`schemas/`) — `PortfolioDataRetrieverServiceSchema` and `PortfolioDataRetrieverStatus`
-- Main orchestrator service: `PortfolioDataRetrieverService`
-- Unit tests (`tests/portfolio/`) — 37 tests covering all three processors
+- `modules/common/` — `Fibra`, `Sector`, `SectorExposure`, `PaymentFrequency` (all in `fibra.py`);
+  `MarketPrice`; `ServiceStatus` (centralized `StrEnum` used by all modules);
+  `JsonCatalogReadRepository`, `YFinanceMarketPriceReadRepository`
+- `modules/portfolio/` — full pipeline: raw + enriched models, `Portfolio` (with `SectorShare`),
+  repositories, three processors, `PortfolioDataRetrieverService`, `PortfolioDataRetrieverServiceSchema`
+- `modules/fundamentals/` — full pipeline: `FundamentalsRecord`, `EnrichedFundamentalsRecord`,
+  `FundamentalsHistory`; `JsonFundamentalsReadRepository`; `FundamentalsProcessor`,
+  `FundamentalsHistoryProcessor`; `FundamentalsDataRetrieverService`,
+  `FundamentalsDataRetrieverServiceSchema`
+- Unit tests — 62 tests: 37 in `tests/portfolio/` covering all three portfolio processors; 25 in `tests/fundamentals/` covering both fundamentals processors
 - Processor docstrings — formula-complete Google-style docstrings on all processor classes and methods
 - `README.md` — human-readable developer documentation
 - Portfolio page (`ui/pages/portfolio.py`) — summary metrics, positions table, allocation pie, distributions chart
 
-Real data populated in `data/positions.json` and `data/distributions.json`.
+Real data populated in `data/positions.json`, `data/distributions.json`, `data/catalog.json`,
+and `data/historical/fundamentals.json`.
 
 **Next step**: Fundamentals page (`ui/pages/fundamentals.py`).
 
@@ -222,11 +260,11 @@ Real data populated in `data/positions.json` and `data/distributions.json`.
 4. ~~Processors (calculations)~~ ✓
 5. ~~Service (orchestrator) + schemas~~ ✓
 6. ~~Portfolio page (`ui/pages/portfolio.py`)~~ ✓
-7. Models (`modules/fundamentals/models/`)
-8. Repository interfaces (`modules/fundamentals/repositories/base/`)
-9. Concrete repositories
-10. Processors (`modules/fundamentals/processors/`)
-11. Service and Schema (`modules/fundamentals/services/` and `modules/fundamentals/schemas/`)
-12. Fundamentals page (`ui/pages/fundamentals.py`)
+7. ~~Models (`modules/fundamentals/models/`)~~ ✓
+8. ~~Repository interfaces (`modules/fundamentals/repositories/base/`)~~ ✓
+9. ~~Concrete repositories~~ ✓
+10. ~~Processors (`modules/fundamentals/processors/`)~~ ✓
+11. ~~Service and Schema (`modules/fundamentals/services/` and `modules/fundamentals/schemas/`)~~ ✓
+12. **Fundamentals page (`ui/pages/fundamentals.py`)** ← current next step
 
 Implement and verify one layer at a time before moving to the next.
