@@ -1,0 +1,42 @@
+{
+  "sectors": ["Industrial", "Comercial", "Oficinas", "Hotelero", "Hipotecario", "Educativo", "Almacenaje"],
+  "fibras": [
+    {
+      "ticker": "FMTY14",
+      "name": "Fibra Mty",
+      "payment_frequency": "Monthly",
+      "sector_exposure": [
+        {"sector": "Industrial", "weight": 0.88},
+        {"sector": "Oficinas",   "weight": 0.10},
+        {"sector": "Comercial",  "weight": 0.02}
+      ]
+    },
+    {
+      "ticker": "DANHOS13",
+      "name": "Fibra Danhos",
+      "payment_frequency": "Quarterly",
+      "sector_exposure": [
+        {"sector": "Comercial",  "weight": 0.72},
+        {"sector": "Oficinas",   "weight": 0.25},
+        {"sector": "Hotelero",   "weight": 0.02},
+        {"sector": "Industrial", "weight": 0.01}
+      ]
+    },
+    {
+      "ticker": "FIBRAPL14",
+      "name": "Fibra Prologis",
+      "payment_frequency": "Quarterly",
+      "sector_exposure": [
+        {"sector": "Industrial", "weight": 1.00}
+      ]
+    },
+    {
+      "ticker": "FSHOP13",
+      "name": "Fibra Shop",
+      "payment_frequency": "Quarterly",
+      "sector_exposure": [
+        {"sector": "Comercial", "weight": 1.00}
+      ]
+    }
+  ]
+}

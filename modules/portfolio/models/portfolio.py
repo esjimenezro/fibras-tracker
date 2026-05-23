@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from modules.common.models import Sector
 from modules.portfolio.models.enriched_position import EnrichedPosition
 
 
@@ -17,12 +18,26 @@ class PositionShare(BaseModel):
     share: float
 
 
+class SectorShare(BaseModel):
+    """Portfolio weight for a single real-estate sector.
+
+    Attributes:
+        sector: The real-estate sector.
+        weight: Sector weight as a fraction of total market value (0.0 to 1.0).
+    """
+
+    sector: Sector
+    weight: float
+
+
 class Portfolio(BaseModel):
     """Aggregated enriched portfolio with all positions and summary metrics.
 
     Attributes:
         portfolio_positions: All enriched FIBRA positions.
         positions_share: Portfolio weight per position; sums to 1.0 across all entries.
+        sector_shares: Portfolio weight per real-estate sector; sums to 1.0 when all
+            positions have fully-specified sector exposures.
         total_purchase_cost: Total amount invested across all positions in MXN.
         total_market_value: Current total market value across all positions in MXN.
         total_return: Unrealised gain or loss in MXN (total_market_value - total_purchase_cost).
@@ -35,6 +50,7 @@ class Portfolio(BaseModel):
 
     portfolio_positions: list[EnrichedPosition]
     positions_share: list[PositionShare]
+    sector_shares: list[SectorShare]
     total_purchase_cost: float
     total_market_value: float
     total_return: float

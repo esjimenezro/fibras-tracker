@@ -1,15 +1,22 @@
 from datetime import datetime
 
+from modules.common.models import PaymentFrequency
+from modules.common.models import SectorExposure
+
 from modules.portfolio.models.enriched_distribution import EnrichedDistribution
 from modules.portfolio.models.position import Position
 
 
 class EnrichedPosition(Position):
-    """A FIBRA position enriched with current market data and distribution history.
+    """A FIBRA position enriched with catalog metadata, market data, and distribution history.
 
-    Extends Position with market, calculated, and distribution fields produced by PositionProcessor.
+    Extends Position with fields injected by PositionsProcessor from the FIBRA catalog,
+    live market prices, and enriched distribution records.
 
     Attributes:
+        name: Full commercial name of the FIBRA (e.g. "Fibra Mty").
+        payment_frequency: Distribution payment frequency (injected from catalog).
+        sector_exposure: Portfolio breakdown by real-estate sector (injected from catalog).
         market_price: Last known market price per CBFI in MXN.
         price_updated_at: UTC timestamp when the market price was fetched.
         purchase_cost: Total amount invested in MXN (average_purchase_cost * cbfis).
@@ -24,6 +31,9 @@ class EnrichedPosition(Position):
             (total_return + total_net_fiscal_result_received).
     """
 
+    name: str
+    payment_frequency: PaymentFrequency
+    sector_exposure: list[SectorExposure]
     market_price: float
     price_updated_at: datetime
     purchase_cost: float

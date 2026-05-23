@@ -9,6 +9,7 @@ HISTORICO_DIR = DATA_DIR / "historico"
 POSITIONS_DATA_PATH = DATA_DIR / "positions.json"
 DISTRIBUTIONS_DATA_PATH = DATA_DIR / "distributions.json"
 FUNDAMENTALS_DATA_PATH = DATA_DIR / "historical" / "fundamentals.json"
+CATALOG_DATA_PATH = DATA_DIR / "catalog.json"
 
 # yfinance adds suffix .MX for BMV
 TICKER_SUFFIX = ".MX"

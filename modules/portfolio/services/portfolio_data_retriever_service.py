@@ -1,4 +1,6 @@
+from modules.common.repositories.base import BaseCatalogReadRepository
 from modules.common.repositories.base import BaseMarketPriceReadRepository
+from modules.common.repositories import JsonCatalogReadRepository
 from modules.common.repositories import YFinanceMarketPriceReadRepository
 
 from modules.portfolio.processors import DistributionsProcessor
@@ -20,6 +22,7 @@ class PortfolioDataRetrieverService:
         position_repository: BasePositionsReadRepository | None = None,
         distribution_repository: BaseDistributionsReadRepository | None = None,
         market_price_repository: BaseMarketPriceReadRepository | None = None,
+        catalog_repository: BaseCatalogReadRepository | None = None,
     ) -> None:
         """Initialise repositories and processors.
 
@@ -27,8 +30,10 @@ class PortfolioDataRetrieverService:
             position_repository: Repository for raw positions. Defaults to JsonPositionsReadRepository.
             distribution_repository: Repository for raw distributions. Defaults to JsonDistributionsReadRepository.
             market_price_repository: Repository for live market prices. Defaults to YFinanceMarketPriceReadRepository.
+            catalog_repository: Repository for the FIBRA catalog. Defaults to JsonCatalogReadRepository.
         """
 
+        self._catalog_repository = catalog_repository or JsonCatalogReadRepository()
         self._position_repository = position_repository or JsonPositionsReadRepository()
         self._distribution_repository = distribution_repository or JsonDistributionsReadRepository()
         self._market_price_repository = market_price_repository or YFinanceMarketPriceReadRepository()
@@ -46,8 +51,10 @@ class PortfolioDataRetrieverService:
         """
         try:
 
+            fibras = self._catalog_repository.retrieve_data()
             positions = self._position_repository.retrieve_data()
             distributions = self._distribution_repository.retrieve_data()
+
             tickers = [p.ticker for p in positions]
             market_prices = self._market_price_repository.retrieve_data(tickers=tickers)
 
@@ -55,7 +62,8 @@ class PortfolioDataRetrieverService:
             enriched_positions = self._positions_processor.process(
                 positions=positions,
                 market_prices=market_prices,
-                distributions=enriched_distributions
+                distributions=enriched_distributions,
+                fibras=fibras,
             )
             portfolio = self._portfolio_processor.process(positions=enriched_positions)
 

@@ -1,5 +1,3 @@
-from modules.common.repositories import YFinanceMarketPriceReadRepository
-
 from modules.portfolio.repositories.json_distributions_read_repository import JsonDistributionsReadRepository
 from modules.portfolio.repositories.json_positions_read_repository import JsonPositionsReadRepository
 
@@ -7,5 +5,4 @@ from modules.portfolio.repositories.json_positions_read_repository import JsonPo
 __all__ = [
     "JsonPositionsReadRepository",
     "JsonDistributionsReadRepository",
-    "YFinanceMarketPriceReadRepository",
 ]

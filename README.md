@@ -250,9 +250,11 @@ total_net_fiscal_result_received  = sum(p.total_net_fiscal_result_received for p
 total_return_including_distributions = total_return + total_net_fiscal_result_received
 positions_share                   = p.market_value / total_market_value  (per position)
 last_updated_at                   = max(p.price_updated_at for p in positions)
+sector_contribution(position, s)  = p.market_value × sector_exposure.weight  (per matching sector)
+sector_share.weight(sector)       = sum(sector_contribution across all positions) / total_market_value
 ```
 
-`positions_share` always sums to exactly 1.0 across all positions.
+`positions_share` always sums to exactly 1.0 across all positions. Only sectors with a non-zero contribution are included in `sector_shares`; it sums to exactly 1.0 when all positions have `sector_exposure` weights summing to 1.0.
 
 ---
 

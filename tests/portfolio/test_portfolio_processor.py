@@ -3,8 +3,11 @@ from datetime import timezone
 
 import pytest
 
+from modules.common.models import PaymentFrequency
+from modules.common.models import Sector
+from modules.common.models import SectorExposure
+
 from modules.portfolio.models import EnrichedPosition
-from modules.portfolio.models import PaymentFrequency
 from modules.portfolio.processors import PortfolioProcessor
 
 
@@ -17,6 +20,7 @@ def _make_enriched_position(
     market_value: float,
     total_net_fiscal_result_received: float,
     price_updated_at: datetime,
+    sector_exposure: list[SectorExposure] | None = None,
 ) -> EnrichedPosition:
     """Build an EnrichedPosition with computed fields set explicitly for test control.
 
@@ -29,19 +33,22 @@ def _make_enriched_position(
         market_value: Current market value (market_price * cbfis).
         total_net_fiscal_result_received: Sum of net fiscal distributions received.
         price_updated_at: UTC timestamp of the market price fetch.
+        sector_exposure: Real-estate sector breakdown for this position. Defaults to empty list.
 
     Returns:
         EnrichedPosition: Fully populated model ready for PortfolioProcessor input.
     """
+    if sector_exposure is None:
+        sector_exposure = []
     return_per_cbfi = market_price - average_purchase_cost
     total_return = return_per_cbfi * cbfis
     return EnrichedPosition(
         ticker=ticker,
         name=ticker,
-        sector="Test sector",
         cbfis=cbfis,
         average_purchase_cost=average_purchase_cost,
         payment_frequency=PaymentFrequency.QUARTERLY,
+        sector_exposure=sector_exposure,
         market_price=market_price,
         price_updated_at=price_updated_at,
         purchase_cost=purchase_cost,
@@ -77,6 +84,7 @@ def enriched_a():
         market_value=15_750.0,
         total_net_fiscal_result_received=50.715,
         price_updated_at=T1,
+        sector_exposure=[SectorExposure(sector=Sector.INDUSTRIAL, weight=1.0)],
     )
 
 
@@ -92,6 +100,7 @@ def enriched_b():
         market_value=11_000.0,
         total_net_fiscal_result_received=30.0,
         price_updated_at=T2,
+        sector_exposure=[SectorExposure(sector=Sector.COMERCIAL, weight=1.0)],
     )
 
 
@@ -141,6 +150,7 @@ def test_positions_share_sums_to_one(processor, enriched_a, enriched_b):
     """Sum of all position shares equals 1.0."""
     portfolio = processor.process(positions=[enriched_a, enriched_b])
     assert sum(ps.share for ps in portfolio.positions_share) == pytest.approx(1.0, rel=1e-6)
+    assert sum(ss.weight for ss in portfolio.sector_shares) == pytest.approx(1.0, rel=1e-6)
 
 
 def test_positions_share_per_ticker(processor, enriched_a, enriched_b):
@@ -149,6 +159,9 @@ def test_positions_share_per_ticker(processor, enriched_a, enriched_b):
     shares = {ps.ticker: ps.share for ps in portfolio.positions_share}
     assert shares["FMTY14"] == pytest.approx(15_750.0 / 26_750.0, rel=1e-6)
     assert shares["FSHOP13"] == pytest.approx(11_000.0 / 26_750.0, rel=1e-6)
+    sector_weights = {ss.sector: ss.weight for ss in portfolio.sector_shares}
+    assert sector_weights[Sector.INDUSTRIAL] == pytest.approx(15_750.0 / 26_750.0, rel=1e-6)
+    assert sector_weights[Sector.COMERCIAL] == pytest.approx(11_000.0 / 26_750.0, rel=1e-6)
 
 
 def test_last_updated_at(processor, enriched_a, enriched_b):
@@ -168,3 +181,6 @@ def test_single_position_share_is_one(processor, enriched_a):
     """A portfolio with one position has a positions_share of exactly 1.0."""
     portfolio = processor.process(positions=[enriched_a])
     assert portfolio.positions_share[0].share == pytest.approx(1.0, rel=1e-6)
+    assert len(portfolio.sector_shares) == 1
+    assert portfolio.sector_shares[0].sector == Sector.INDUSTRIAL
+    assert portfolio.sector_shares[0].weight == pytest.approx(1.0, rel=1e-6)

@@ -2,35 +2,23 @@
   "positions": [
     {
       "ticker": "FMTY14",
-      "name": "Fibra Mty",
-      "sector": "Industrial / Offices",
       "cbfis": 1500,
-      "average_purchase_cost": 9.586,
-      "payment_frequency": "Monthly"
+      "average_purchase_cost": 9.586
     },
     {
       "ticker": "DANHOS13",
-      "name": "Fibra Danhos",
-      "sector": "Mixed-use / Retail",
       "cbfis": 900,
-      "average_purchase_cost": 20.847,
-      "payment_frequency": "Quarterly"
+      "average_purchase_cost": 20.847
     },
     {
       "ticker": "FIBRAPL14",
-      "name": "Fibra Prologis",
-      "sector": "Industrial / Logistics",
       "cbfis": 100,
-      "average_purchase_cost": 82.700,
-      "payment_frequency": "Quarterly"
+      "average_purchase_cost": 82.700
     },
     {
       "ticker": "FSHOP13",
-      "name": "Fibra Shop",
-      "sector": "Retail / Shopping centers",
       "cbfis": 1000,
-      "average_purchase_cost": 9.599,
-      "payment_frequency": "Quarterly"
+      "average_purchase_cost": 9.599
     }
   ]
 }
