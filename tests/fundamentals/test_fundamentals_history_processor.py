@@ -61,6 +61,12 @@ def record_danhos13_2t2026():
 
 
 @pytest.fixture
+def record_fmty14_1t2025():
+    """FMTY14 Q1 2025 — prior-year counterpart of record_fmty14_1t2026."""
+    return _make_enriched_record(ticker="FMTY14", period="1T2025", report_date=date(2025, 4, 20))
+
+
+@pytest.fixture
 def fibra_fmty14():
     """Catalog entry for FMTY14."""
     return Fibra(
@@ -219,3 +225,49 @@ def test_empty_records_raises(processor, fibra_fmty14):
     """process() raises ValueError when the records list is empty."""
     with pytest.raises(ValueError):
         processor.process(records=[], fibras=[fibra_fmty14])
+
+
+def test_prior_year_by_ticker_found(
+    processor,
+    record_fmty14_1t2025,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+):
+    """prior_year_by_ticker holds the same-quarter prior-year record when it exists."""
+    result = processor.process(
+        records=[record_fmty14_1t2025, record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+    )
+    assert result.prior_year_by_ticker["FMTY14"] is record_fmty14_1t2025
+
+
+def test_prior_year_by_ticker_none_when_not_found(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+):
+    """prior_year_by_ticker is None when the same-quarter prior-year record does not exist."""
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+    )
+    assert result.prior_year_by_ticker["FMTY14"] is None
+
+
+def test_prior_year_by_ticker_none_for_missing_ticker(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+):
+    """prior_year_by_ticker is None for a catalog ticker that has no fundamentals records."""
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+    )
+    assert result.prior_year_by_ticker["FIBRAPL14"] is None

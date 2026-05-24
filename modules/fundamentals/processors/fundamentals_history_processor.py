@@ -30,11 +30,13 @@ class FundamentalsHistoryProcessor:
 
         Returns:
             FundamentalsHistory with the following fields:
-                records          = all records sorted by ticker asc, then period asc
-                                   (year first, then quarter — never lexicographic)
-                latest_by_ticker = most recent record per ticker, keyed from catalog fibras;
-                                   None if no record exists for that ticker
-                fibras           = the catalog Fibra list passed in directly
+                records              = all records sorted by ticker asc, then period asc
+                                       (year first, then quarter — never lexicographic)
+                latest_by_ticker     = most recent record per ticker, keyed from catalog fibras;
+                                       None if no record exists for that ticker
+                prior_year_by_ticker = record for the same quarter one year prior per ticker;
+                                       None if no such record exists or the ticker has no records
+                fibras               = the catalog Fibra list passed in directly
 
         Raises:
             ValueError: If records is empty.
@@ -52,9 +54,22 @@ class FundamentalsHistoryProcessor:
             if record.ticker in latest_by_ticker:
                 latest_by_ticker[record.ticker] = record
 
+        prior_year_by_ticker: dict[str, EnrichedFundamentalsRecord | None] = {}
+        for ticker, latest in latest_by_ticker.items():
+            if latest is None:
+                prior_year_by_ticker[ticker] = None
+            else:
+                year, quarter = self._parse_period(period=latest.period)
+                prior_period = f"{quarter}T{year - 1}"
+                prior_year_by_ticker[ticker] = next(
+                    (r for r in sorted_records if r.ticker == ticker and r.period == prior_period),
+                    None,
+                )
+
         return FundamentalsHistory(
             records=sorted_records,
             latest_by_ticker=latest_by_ticker,
+            prior_year_by_ticker=prior_year_by_ticker,
             fibras=fibras,
         )
 

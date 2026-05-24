@@ -17,9 +17,13 @@ class FundamentalsHistory(BaseModel):
         latest_by_ticker: Most recent EnrichedFundamentalsRecord per ticker, keyed by ticker string.
             Every ticker present in fibras appears as a key; value is None if no record exists
             for that ticker.
+        prior_year_by_ticker: Record for the same quarter one year prior to the latest, per ticker.
+            Every ticker present in fibras appears as a key; value is None if no such record exists
+            or the ticker has no records at all.
         fibras: FIBRA catalog entries that define which tickers appear in latest_by_ticker.
     """
 
     records: list[EnrichedFundamentalsRecord]
     latest_by_ticker: dict[str, Optional[EnrichedFundamentalsRecord]]
+    prior_year_by_ticker: dict[str, Optional[EnrichedFundamentalsRecord]]
     fibras: list[Fibra]
