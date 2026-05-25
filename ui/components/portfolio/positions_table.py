@@ -29,7 +29,10 @@ def render_positions_table(
         {
             "Ticker": pos.ticker,
             "FIBRA": pos.name,
-            "Sector": pos.sector,
+            "Sector": (
+                f"{(dom := max(pos.sector_exposure, key=lambda se: se.weight)).sector} ({dom.weight:.0%})"
+                if pos.sector_exposure else "N/D"
+            ),
             "CBFIs": pos.cbfis,
             "Frec. Pago": pos.payment_frequency.value,
             "Costo Promedio": pos.average_purchase_cost,

@@ -16,13 +16,15 @@ class FundamentalsProcessor:
         ebitda_margin           = ebitda / total_revenues
         revenue_per_m2          = total_revenues / gross_leasable_area_m2
         affo_per_m2             = affo / gross_leasable_area_m2
+        cbfis_per_m2            = cbfis_outstanding / gross_leasable_area_m2
 
         ffo_per_cbfi            = ffo / cbfis_with_rights
         affo_per_cbfi           = affo / cbfis_with_rights
         nav_per_cbfi            = total_equity / cbfis_outstanding
 
         ltv                     = financial_debt / total_assets
-        affo_payout_ratio       = (distribution_per_cbfi * cbfis_outstanding) / affo
+        affo_payout_ratio       = distribution_per_cbfi / affo_per_cbfi
+        total_distribution      = distribution_per_cbfi * cbfis_with_rights
 
         market_cap              = market_price * cbfis_outstanding
         price_to_ffo            = market_price / ffo_per_cbfi
@@ -55,13 +57,15 @@ class FundamentalsProcessor:
                 ebitda_margin           = ebitda / total_revenues
                 revenue_per_m2          = total_revenues / gross_leasable_area_m2
                 affo_per_m2             = affo / gross_leasable_area_m2
+                cbfis_per_m2            = cbfis_outstanding / gross_leasable_area_m2
 
                 ffo_per_cbfi            = ffo / cbfis_with_rights
                 affo_per_cbfi           = affo / cbfis_with_rights
                 nav_per_cbfi            = total_equity / cbfis_outstanding
 
                 ltv                     = financial_debt / total_assets
-                affo_payout_ratio       = (distribution_per_cbfi * cbfis_outstanding) / affo
+                affo_payout_ratio       = distribution_per_cbfi / affo_per_cbfi
+                total_distribution      = distribution_per_cbfi * cbfis_with_rights
 
                 market_cap              = market_price * cbfis_outstanding
                 price_to_ffo            = market_price / ffo_per_cbfi
@@ -113,12 +117,6 @@ class FundamentalsProcessor:
             denominator=record.cbfis_outstanding,
         )
 
-        affo_payout_numerator = (
-            record.distribution_per_cbfi * record.cbfis_outstanding
-            if record.distribution_per_cbfi is not None and record.cbfis_outstanding is not None
-            else None
-        )
-
         return EnrichedFundamentalsRecord(
             **record.model_dump(),
             market_price=market_price,
@@ -138,6 +136,10 @@ class FundamentalsProcessor:
                 numerator=record.affo,
                 denominator=record.gross_leasable_area_m2,
             ),
+            cbfis_per_m2=self._safe_div(
+                numerator=record.cbfis_outstanding,
+                denominator=record.gross_leasable_area_m2,
+            ),
             ffo_per_cbfi=ffo_per_cbfi,
             affo_per_cbfi=affo_per_cbfi,
             nav_per_cbfi=nav_per_cbfi,
@@ -146,8 +148,13 @@ class FundamentalsProcessor:
                 denominator=record.total_assets,
             ),
             affo_payout_ratio=self._safe_div(
-                numerator=affo_payout_numerator,
-                denominator=record.affo,
+                numerator=record.distribution_per_cbfi,
+                denominator=affo_per_cbfi,
+            ),
+            total_distribution=(
+                record.distribution_per_cbfi * record.cbfis_with_rights
+                if record.distribution_per_cbfi is not None and record.cbfis_with_rights is not None
+                else None
             ),
             market_cap=(
                 market_price * record.cbfis_outstanding

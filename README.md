@@ -379,6 +379,7 @@ noi_margin              = noi / total_revenues
 ebitda_margin           = ebitda / total_revenues
 revenue_per_m2          = total_revenues / gross_leasable_area_m2
 affo_per_m2             = affo / gross_leasable_area_m2
+cbfis_per_m2            = cbfis_outstanding / gross_leasable_area_m2
 ```
 
 **Per CBFI:**
@@ -397,7 +398,8 @@ nav_per_cbfi            = total_equity / cbfis_outstanding
 **Capital structure:**
 ```
 ltv                     = financial_debt / total_assets
-affo_payout_ratio       = (distribution_per_cbfi × cbfis_outstanding) / affo
+affo_payout_ratio       = distribution_per_cbfi / affo_per_cbfi
+total_distribution      = distribution_per_cbfi × cbfis_with_rights
 ```
 
 **Market metrics (null when market_price is None):**

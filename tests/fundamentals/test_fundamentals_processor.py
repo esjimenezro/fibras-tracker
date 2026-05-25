@@ -149,7 +149,7 @@ def test_ltv(processor, record_full):
 
 
 def test_affo_payout_ratio(processor, record_full):
-    """affo_payout_ratio = (distribution_per_cbfi * cbfis_outstanding) / affo."""
+    """affo_payout_ratio = distribution_per_cbfi / affo_per_cbfi."""
     result = processor._enrich(record=record_full, market_price=10.50)
     assert result.affo_payout_ratio == pytest.approx(1.0, rel=1e-6)
 
@@ -223,3 +223,51 @@ def test_empty_records_raises(processor):
     """process() raises ValueError when the records list is empty."""
     with pytest.raises(ValueError):
         processor.process(records=[], market_prices=[])
+
+
+def test_total_distribution(processor, record_full):
+    """total_distribution = distribution_per_cbfi * cbfis_with_rights."""
+    result = processor._enrich(record=record_full, market_price=10.50)
+    assert result.total_distribution == pytest.approx(600_000_000.0, rel=1e-6)
+
+
+def test_total_distribution_none_when_distribution_per_cbfi_none(processor, record_full):
+    """total_distribution is None when distribution_per_cbfi is None."""
+    record = FundamentalsRecord(
+        **{**record_full.model_dump(), "distribution_per_cbfi": None},
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.total_distribution is None
+
+
+def test_total_distribution_none_when_cbfis_with_rights_none(processor, record_full):
+    """total_distribution is None when cbfis_with_rights is None."""
+    record = FundamentalsRecord(
+        **{**record_full.model_dump(), "cbfis_with_rights": None},
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.total_distribution is None
+
+
+def test_cbfis_per_m2(processor, record_full):
+    """cbfis_per_m2 = cbfis_outstanding / gross_leasable_area_m2."""
+    result = processor._enrich(record=record_full, market_price=10.50)
+    assert result.cbfis_per_m2 == pytest.approx(1_500.0, rel=1e-6)
+
+
+def test_cbfis_per_m2_none_when_gla_none(processor, record_full):
+    """cbfis_per_m2 is None when gross_leasable_area_m2 is None."""
+    record = FundamentalsRecord(
+        **{**record_full.model_dump(), "gross_leasable_area_m2": None},
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.cbfis_per_m2 is None
+
+
+def test_cbfis_per_m2_none_when_gla_zero(processor, record_full):
+    """cbfis_per_m2 is None when gross_leasable_area_m2 is zero (avoids division by zero)."""
+    record = FundamentalsRecord(
+        **{**record_full.model_dump(), "gross_leasable_area_m2": 0},
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.cbfis_per_m2 is None

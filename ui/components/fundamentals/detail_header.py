@@ -20,6 +20,29 @@ def _pct(value: Optional[float]) -> str:
     return format_pct(value=value, include_sign=False) if value is not None else "N/D"
 
 
+def _traffic_light(value: Optional[float], thresholds: tuple, inverse: bool = False) -> str:
+    """Format a fractional metric as '🟢/🟡/🔴 pct%' based on thresholds, or 'N/D' if None.
+
+    Args:
+        value: Fractional value (e.g. 0.75 for 75%), or None.
+        thresholds: Tuple of (lower, upper) — boundaries between the red/yellow and
+            yellow/green zones respectively.
+        inverse: When True the metric is lower-is-better: value < lower → 🟢,
+            value > upper → 🔴. Defaults to False (higher-is-better).
+
+    Returns:
+        Emoji-prefixed percentage string (e.g. '🟢 82.3%'), or 'N/D' when value is None.
+    """
+    if value is None:
+        return "N/D"
+    lower, upper = thresholds
+    if not inverse:
+        emoji = "🟢" if value > upper else "🔴" if value < lower else "🟡"
+    else:
+        emoji = "🟢" if value < lower else "🔴" if value > upper else "🟡"
+    return f"{emoji} {_pct(value=value)}"
+
+
 def _mxn(value: Optional[float]) -> str:
     """Format a float as MXN currency, or return 'N/D' if None.
 
@@ -89,7 +112,7 @@ def render_detail_header(
     with col1:
         st.metric(
             label="Margen NOI",
-            value=_pct(value=record.noi_margin),
+            value=_traffic_light(value=record.noi_margin, thresholds=(0.70, 0.80)),
             help=(
                 "Ingreso Operativo Neto / Ingresos Totales. Mide qué proporción de los ingresos "
                 "se convierte en flujo operativo después de gastos directos. Márgenes superiores "
@@ -99,7 +122,7 @@ def render_detail_header(
     with col2:
         st.metric(
             label="Margen EBITDA",
-            value=_pct(value=record.ebitda_margin),
+            value=_traffic_light(value=record.ebitda_margin, thresholds=(0.60, 0.70)),
             help=(
                 "EBITDA / Ingresos Totales. Aproxima la eficiencia operativa antes de "
                 "financiamiento e impuestos."
@@ -108,7 +131,7 @@ def render_detail_header(
     with col3:
         st.metric(
             label="Ocupación",
-            value=_pct(value=record.occupancy_rate),
+            value=_traffic_light(value=record.occupancy_rate, thresholds=(0.80, 0.85)),
             help=(
                 "Porcentaje del Área Bruta Rentable efectivamente arrendada. "
                 "Por encima del 90% se considera saludable."
@@ -117,7 +140,7 @@ def render_detail_header(
     with col4:
         st.metric(
             label="LTV",
-            value=_pct(value=record.ltv),
+            value=_traffic_light(value=record.ltv, thresholds=(0.35, 0.45), inverse=True),
             help=(
                 "Deuda financiera / Activos totales. Mide el apalancamiento. "
                 "Por debajo del 40% se considera conservador en FIBRAs mexicanas."

@@ -15,6 +15,8 @@ class EnrichedFundamentalsRecord(FundamentalsRecord):
         ebitda_margin: EBITDA as a fraction of total revenues (ebitda / total_revenues).
         revenue_per_m2: Total revenues per square metre of GLA (total_revenues / gross_leasable_area_m2).
         affo_per_m2: AFFO per square metre of GLA (affo / gross_leasable_area_m2).
+        cbfis_per_m2: CBFI emission density — CBFIs outstanding per square metre of GLA
+            (cbfis_outstanding / gross_leasable_area_m2).
 
         ffo_per_cbfi: FFO per CBFI (ffo / cbfis_with_rights).
         affo_per_cbfi: AFFO per CBFI (affo / cbfis_with_rights).
@@ -22,7 +24,9 @@ class EnrichedFundamentalsRecord(FundamentalsRecord):
 
         ltv: Loan-to-Value ratio (financial_debt / total_assets).
         affo_payout_ratio: Fraction of AFFO distributed to holders
-            ((distribution_per_cbfi * cbfis_outstanding) / affo).
+            (distribution_per_cbfi / affo_per_cbfi).
+        total_distribution: Total cash distributed to holders in the period
+            (distribution_per_cbfi * cbfis_with_rights).
 
         market_cap: Total market capitalisation in MXN (market_price * cbfis_outstanding).
         price_to_ffo: Price-to-FFO multiple (market_price / ffo_per_cbfi).
@@ -37,6 +41,7 @@ class EnrichedFundamentalsRecord(FundamentalsRecord):
     ebitda_margin: Optional[float] = None
     revenue_per_m2: Optional[float] = None
     affo_per_m2: Optional[float] = None
+    cbfis_per_m2: Optional[float] = None
 
     ffo_per_cbfi: Optional[float] = None
     affo_per_cbfi: Optional[float] = None
@@ -44,6 +49,7 @@ class EnrichedFundamentalsRecord(FundamentalsRecord):
 
     ltv: Optional[float] = None
     affo_payout_ratio: Optional[float] = None
+    total_distribution: Optional[float] = None
 
     market_cap: Optional[float] = None
     price_to_ffo: Optional[float] = None
