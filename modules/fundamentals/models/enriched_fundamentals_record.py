@@ -16,8 +16,8 @@ class EnrichedFundamentalsRecord(FundamentalsRecord):
         revenue_per_m2: Total revenues per square metre of GLA (total_revenues / gross_leasable_area_m2).
         affo_per_m2: AFFO per square metre of GLA (affo / gross_leasable_area_m2).
 
-        ffo_per_cbfi: FFO per CBFI (ffo / cbfis_outstanding).
-        affo_per_cbfi: AFFO per CBFI (affo / cbfis_outstanding).
+        ffo_per_cbfi: FFO per CBFI (ffo / cbfis_with_rights).
+        affo_per_cbfi: AFFO per CBFI (affo / cbfis_with_rights).
         nav_per_cbfi: Net Asset Value per CBFI (total_equity / cbfis_outstanding).
 
         ltv: Loan-to-Value ratio (financial_debt / total_assets).

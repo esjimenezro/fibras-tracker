@@ -17,8 +17,8 @@ class FundamentalsProcessor:
         revenue_per_m2          = total_revenues / gross_leasable_area_m2
         affo_per_m2             = affo / gross_leasable_area_m2
 
-        ffo_per_cbfi            = ffo / cbfis_outstanding
-        affo_per_cbfi           = affo / cbfis_outstanding
+        ffo_per_cbfi            = ffo / cbfis_with_rights
+        affo_per_cbfi           = affo / cbfis_with_rights
         nav_per_cbfi            = total_equity / cbfis_outstanding
 
         ltv                     = financial_debt / total_assets
@@ -56,8 +56,8 @@ class FundamentalsProcessor:
                 revenue_per_m2          = total_revenues / gross_leasable_area_m2
                 affo_per_m2             = affo / gross_leasable_area_m2
 
-                ffo_per_cbfi            = ffo / cbfis_outstanding
-                affo_per_cbfi           = affo / cbfis_outstanding
+                ffo_per_cbfi            = ffo / cbfis_with_rights
+                affo_per_cbfi           = affo / cbfis_with_rights
                 nav_per_cbfi            = total_equity / cbfis_outstanding
 
                 ltv                     = financial_debt / total_assets
@@ -102,11 +102,11 @@ class FundamentalsProcessor:
         """
         ffo_per_cbfi = self._safe_div(
             numerator=record.ffo,
-            denominator=record.cbfis_outstanding,
+            denominator=record.cbfis_with_rights,
         )
         affo_per_cbfi = self._safe_div(
             numerator=record.affo,
-            denominator=record.cbfis_outstanding,
+            denominator=record.cbfis_with_rights,
         )
         nav_per_cbfi = self._safe_div(
             numerator=record.total_equity,

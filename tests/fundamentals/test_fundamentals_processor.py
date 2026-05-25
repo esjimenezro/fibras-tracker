@@ -27,6 +27,7 @@ def record_full():
         distribution_per_cbfi=0.40,
         gross_leasable_area_m2=1_000_000,
         cbfis_outstanding=1_500_000_000,
+        cbfis_with_rights=1_500_000_000,
         total_equity=20_000_000_000,
         total_debt=4_000_000_000,
         financial_debt=4_000_000_000,
@@ -51,6 +52,7 @@ def record_null_affo():
         distribution_per_cbfi=0.40,
         gross_leasable_area_m2=1_000_000,
         cbfis_outstanding=1_500_000_000,
+        cbfis_with_rights=1_500_000_000,
         total_equity=20_000_000_000,
         total_debt=4_000_000_000,
         financial_debt=4_000_000_000,
@@ -91,15 +93,44 @@ def test_affo_per_m2(processor, record_full):
 
 
 def test_ffo_per_cbfi(processor, record_full):
-    """ffo_per_cbfi = ffo / cbfis_outstanding."""
+    """ffo_per_cbfi = ffo / cbfis_with_rights."""
     result = processor._enrich(record=record_full, market_price=10.50)
     assert result.ffo_per_cbfi == pytest.approx(0.40, rel=1e-6)
 
 
 def test_affo_per_cbfi(processor, record_full):
-    """affo_per_cbfi = affo / cbfis_outstanding."""
+    """affo_per_cbfi = affo / cbfis_with_rights."""
     result = processor._enrich(record=record_full, market_price=10.50)
     assert result.affo_per_cbfi == pytest.approx(0.40, rel=1e-6)
+
+
+def test_cbfis_with_rights_used_for_per_cbfi_metrics(processor):
+    """ffo_per_cbfi and affo_per_cbfi use cbfis_with_rights; market_cap and nav_per_cbfi use cbfis_outstanding."""
+    record = FundamentalsRecord(
+        ticker="FMTY14",
+        period="3T2026",
+        report_date=date(2026, 9, 30),
+        total_revenues=1_000_000_000,
+        noi=800_000_000,
+        ebitda=700_000_000,
+        ffo=600_000_000,
+        affo=600_000_000,
+        distribution_per_cbfi=0.40,
+        gross_leasable_area_m2=1_000_000,
+        cbfis_outstanding=1_500_000_000,
+        cbfis_with_rights=1_200_000_000,
+        total_equity=20_000_000_000,
+        total_debt=4_000_000_000,
+        financial_debt=4_000_000_000,
+        total_assets=24_000_000_000,
+        occupancy_rate=0.95,
+        usd_mxn_exchange_rate=17.50,
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.ffo_per_cbfi == pytest.approx(600_000_000 / 1_200_000_000, rel=1e-6)
+    assert result.affo_per_cbfi == pytest.approx(600_000_000 / 1_200_000_000, rel=1e-6)
+    assert result.market_cap == pytest.approx(10.50 * 1_500_000_000, rel=1e-6)
+    assert result.nav_per_cbfi == pytest.approx(20_000_000_000 / 1_500_000_000, rel=1e-6)
 
 
 def test_nav_per_cbfi(processor, record_full):

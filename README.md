@@ -383,10 +383,16 @@ affo_per_m2             = affo / gross_leasable_area_m2
 
 **Per CBFI:**
 ```
-ffo_per_cbfi            = ffo / cbfis_outstanding
-affo_per_cbfi           = affo / cbfis_outstanding
+ffo_per_cbfi            = ffo / cbfis_with_rights
+affo_per_cbfi           = affo / cbfis_with_rights
 nav_per_cbfi            = total_equity / cbfis_outstanding
 ```
+
+> **`cbfis_outstanding` vs `cbfis_with_rights`**
+> `cbfis_outstanding` is the total CBFIs in circulation at quarter close — used for balance-sheet
+> metrics (`market_cap`, `nav_per_cbfi`). `cbfis_with_rights` is the CBFIs that held economic
+> rights during the period; it may differ in quarters with mid-period capital raises or buybacks.
+> For all existing historical records the two values are equal.
 
 **Capital structure:**
 ```

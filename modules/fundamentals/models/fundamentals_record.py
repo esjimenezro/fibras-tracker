@@ -18,7 +18,9 @@ class FundamentalsRecord(BaseModel):
         affo: Adjusted Funds From Operations in MXN.
         distribution_per_cbfi: Cash distributed per CBFI in MXN.
         gross_leasable_area_m2: Gross leasable area in square metres.
-        cbfis_outstanding: Total CBFIs outstanding.
+        cbfis_outstanding: Total CBFIs outstanding at quarter close.
+        cbfis_with_rights: CBFIs with economic rights during the period. May differ from
+            cbfis_outstanding in quarters with capital raises or buybacks.
         total_equity: Total equity (NAV) in MXN.
         total_debt: Total debt in MXN.
         financial_debt: Financial (interest-bearing) debt in MXN.
@@ -38,6 +40,7 @@ class FundamentalsRecord(BaseModel):
     distribution_per_cbfi: Optional[float] = None
     gross_leasable_area_m2: Optional[int] = None
     cbfis_outstanding: Optional[int] = None
+    cbfis_with_rights: Optional[int] = None
     total_equity: Optional[int] = None
     total_debt: Optional[int] = None
     financial_debt: Optional[int] = None

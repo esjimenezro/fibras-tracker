@@ -147,8 +147,8 @@ def render_detail_header(
             value=_mxn(value=record.affo_per_cbfi),
             delta=yoy_affo,
             help=(
-                "AFFO / CBFIs en circulación. Ajusta el FFO por capex de mantenimiento. "
-                "Es el flujo más cercano al efectivo real disponible para distribución."
+                "AFFO / CBFIs en circulación. Métrica ajustada de generación de flujo por certificado. "
+                "La metodología de cálculo puede variar entre FIBRAs según su glosario de reportes."
             ),
         )
     with col3:
