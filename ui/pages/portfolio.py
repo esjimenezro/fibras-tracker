@@ -4,11 +4,11 @@ from modules.portfolio.models import Portfolio
 from modules.common.schemas import ServiceStatus
 from modules.portfolio.schemas import PortfolioDataRetrieverServiceSchema
 from modules.portfolio.services import PortfolioDataRetrieverService
-from ui.components.common.error_banner import render_error_banner
-from ui.components.common.page_header import render_page_header
-from ui.components.portfolio.distributions_chart import render_distributions_chart
-from ui.components.portfolio.positions_table import render_positions_table
-from ui.components.portfolio.summary_card import render_summary_card
+from ui.components.common import render_error_banner
+from ui.components.common import render_page_header
+from ui.components.portfolio import render_distributions_chart
+from ui.components.portfolio import render_positions_table
+from ui.components.portfolio import render_summary_card
 
 
 @st.cache_data(ttl=300, show_spinner="Cargando datos del portafolio...")

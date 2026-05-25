@@ -7,9 +7,10 @@ from modules.fundamentals.models import EnrichedFundamentalsRecord
 from modules.fundamentals.models import FundamentalsHistory
 from modules.fundamentals.schemas import FundamentalsDataRetrieverServiceSchema
 from modules.fundamentals.services import FundamentalsDataRetrieverService
-from ui.components.common.error_banner import render_error_banner
-from ui.components.common.page_header import render_page_header
-from ui.components.fundamentals.detail_header import render_detail_header
+from ui.components.common import render_error_banner
+from ui.components.common import render_page_header
+from ui.components.fundamentals import render_detail_chart
+from ui.components.fundamentals import render_detail_header
 
 
 @st.cache_data(ttl=300, show_spinner="Cargando datos fundamentales...")
@@ -53,6 +54,13 @@ with detalle_tab:
         record=latest_record,
         fibra=fibra,
         prior_year_record=prior_year_record,
+    )
+
+    st.divider()
+    ticker_records = [r for r in history.records if r.ticker == selected_ticker]
+    render_detail_chart(
+        records=ticker_records,
+        selected_ticker=selected_ticker,
     )
 
 with comparativo_tab:
