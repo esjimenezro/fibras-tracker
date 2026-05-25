@@ -68,6 +68,6 @@ def render_summary_card(
             hole=0.4,
         )
         fig.update_layout(margin=dict(t=40, b=0, l=0, r=0), height=220)
-        st.plotly_chart(fig, width="content")
+        st.plotly_chart(fig, width="stretch")
 
     st.caption(f"Actualizado: {last_updated_at.strftime('%Y-%m-%d %H:%M:%S')} UTC")

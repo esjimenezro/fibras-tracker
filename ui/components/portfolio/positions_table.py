@@ -68,4 +68,4 @@ def render_positions_table(
         })
     )
 
-    st.dataframe(styled, width="content", hide_index=True)
+    st.dataframe(styled, width="stretch", hide_index=True)

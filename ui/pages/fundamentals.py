@@ -59,8 +59,7 @@ with detalle_tab:
     st.divider()
     ticker_records = [r for r in history.records if r.ticker == selected_ticker]
     render_detail_chart(
-        records=ticker_records,
-        selected_ticker=selected_ticker,
+        records=ticker_records
     )
 
 with comparativo_tab:

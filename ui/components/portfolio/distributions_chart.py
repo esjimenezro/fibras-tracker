@@ -106,6 +106,6 @@ def render_distributions_chart(
 
     chart_col, table_col = st.columns(2)
     with chart_col:
-        st.plotly_chart(fig, width="content")
+        st.plotly_chart(fig, width="stretch")
     with table_col:
-        st.dataframe(df_display, width="content", hide_index=True)
+        st.dataframe(df_display, width="stretch", hide_index=True)

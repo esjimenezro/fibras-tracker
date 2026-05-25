@@ -1,4 +1,5 @@
 from typing import Optional
+from typing import Any
 
 import plotly.graph_objects as go
 import streamlit as st
@@ -6,7 +7,7 @@ import streamlit as st
 from modules.fundamentals.models import EnrichedFundamentalsRecord
 
 
-KPI_CONFIG: dict = {
+KPI_CONFIG: dict[str, dict[str, Any]] = {
     "flujo_operativo": {
         "label": "Flujo Operativo (FFO / AFFO / Distribución)",
         "group": "Operación",
@@ -140,7 +141,7 @@ _FORMAT_SCALE: dict[str, float] = {
     "mxn_thousands": 1 / 1_000,
 }
 
-_YAXIS_FORMAT: dict[str, dict] = {
+_YAXIS_FORMAT: dict[str, dict[str, str]] = {
     "pct":           {"tickformat": ".1%"},
     "mxn":           {"tickprefix": "$", "ticksuffix": " MXN", "tickformat": ",.2f"},
     "float":         {"tickformat": ",.2f"},
@@ -224,7 +225,7 @@ def _apply_yaxis_format(fig: go.Figure, fmt: str, axis: str = "yaxis") -> None:
     fig.update_layout({axis: _YAXIS_FORMAT.get(fmt, {})})
 
 
-def _base_layout(title: str, show_legend: bool) -> dict:
+def _base_layout(title: str, show_legend: bool) -> dict[str, Any]:
     """Return common Plotly layout kwargs for title, axis grid style, and legend visibility.
 
     Args:
@@ -246,7 +247,7 @@ def _base_layout(title: str, show_legend: bool) -> dict:
 
 def _render_single(
     sorted_records: list[EnrichedFundamentalsRecord],
-    config: dict,
+    config: dict[str, Any],
 ) -> go.Figure:
     """Build a single-line Plotly figure with optional traffic-light threshold bands.
 
@@ -282,7 +283,7 @@ def _render_single(
 
 def _render_combined(
     sorted_records: list[EnrichedFundamentalsRecord],
-    config: dict,
+    config: dict[str, Any],
     chart_key: str,
 ) -> go.Figure:
     """Build a multi-line Plotly figure with a view-mode radio toggle rendered above the chart.
@@ -343,7 +344,7 @@ def _render_combined(
 
 def _render_dual_axis(
     sorted_records: list[EnrichedFundamentalsRecord],
-    config: dict,
+    config: dict[str, Any],
 ) -> go.Figure:
     """Build a dual-Y-axis Plotly figure with a CBFIs/m² text annotation at top-left.
 
@@ -396,7 +397,6 @@ def _render_dual_axis(
 
 def render_detail_chart(
     records: list[EnrichedFundamentalsRecord],
-    selected_ticker: str,
 ) -> None:
     """Render an interactive historical KPI chart for a single FIBRA's fundamentals.
 
@@ -409,8 +409,6 @@ def render_detail_chart(
     Args:
         records: Enriched fundamentals records pre-filtered to selected_ticker, in any
             order; sorted internally before plotting.
-        selected_ticker: BMV ticker of the selected FIBRA (e.g. "FMTY14"); used to scope
-            Streamlit radio widget keys and ensure uniqueness across re-renders.
     """
     if not records:
         st.info(body="No hay datos históricos disponibles.")
@@ -436,4 +434,4 @@ def render_detail_chart(
     else:
         fig = _render_dual_axis(sorted_records=sorted_records, config=config)
 
-    st.plotly_chart(figure_or_data=fig, width="content")
+    st.plotly_chart(figure_or_data=fig, width="stretch")

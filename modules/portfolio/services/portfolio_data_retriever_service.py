@@ -1,3 +1,5 @@
+from typing import Optional
+
 from modules.common.repositories.base import BaseCatalogReadRepository
 from modules.common.repositories.base import BaseMarketPriceReadRepository
 from modules.common.repositories import JsonCatalogReadRepository
@@ -19,10 +21,10 @@ class PortfolioDataRetrieverService:
 
     def __init__(
         self,
-        position_repository: BasePositionsReadRepository | None = None,
-        distribution_repository: BaseDistributionsReadRepository | None = None,
-        market_price_repository: BaseMarketPriceReadRepository | None = None,
-        catalog_repository: BaseCatalogReadRepository | None = None,
+        position_repository: Optional[BasePositionsReadRepository] = None,
+        distribution_repository: Optional[BaseDistributionsReadRepository] = None,
+        market_price_repository: Optional[BaseMarketPriceReadRepository] = None,
+        catalog_repository: Optional[BaseCatalogReadRepository] = None,
     ) -> None:
         """Initialise repositories and processors.
 

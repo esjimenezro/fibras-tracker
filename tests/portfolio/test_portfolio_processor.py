@@ -1,5 +1,6 @@
 from datetime import datetime
 from datetime import timezone
+from typing import Optional
 
 import pytest
 
@@ -20,7 +21,7 @@ def _make_enriched_position(
     market_value: float,
     total_net_fiscal_result_received: float,
     price_updated_at: datetime,
-    sector_exposure: list[SectorExposure] | None = None,
+    sector_exposure: Optional[list[SectorExposure]] = None,
 ) -> EnrichedPosition:
     """Build an EnrichedPosition with computed fields set explicitly for test control.
 

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from modules.common.repositories.base import BaseCatalogReadRepository
 from modules.common.repositories.base import BaseMarketPriceReadRepository
 from modules.common.repositories import JsonCatalogReadRepository
@@ -16,9 +18,9 @@ class FundamentalsDataRetrieverService:
 
     def __init__(
         self,
-        fundamentals_repository: BaseFundamentalsReadRepository | None = None,
-        market_price_repository: BaseMarketPriceReadRepository | None = None,
-        catalog_repository: BaseCatalogReadRepository | None = None,
+        fundamentals_repository: Optional[BaseFundamentalsReadRepository] = None,
+        market_price_repository: Optional[BaseMarketPriceReadRepository] = None,
+        catalog_repository: Optional[BaseCatalogReadRepository] = None,
     ) -> None:
         """Initialise repositories and processors.
 

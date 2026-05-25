@@ -1,3 +1,5 @@
+from typing import Optional
+
 from modules.common.models import Fibra
 from modules.fundamentals.models import EnrichedFundamentalsRecord
 from modules.fundamentals.models import FundamentalsHistory
@@ -49,12 +51,12 @@ class FundamentalsHistoryProcessor:
             key=lambda r: (r.ticker, *self._parse_period(period=r.period)),
         )
 
-        latest_by_ticker: dict[str, EnrichedFundamentalsRecord | None] = {f.ticker: None for f in fibras}
+        latest_by_ticker: dict[str, Optional[EnrichedFundamentalsRecord]] = {f.ticker: None for f in fibras}
         for record in sorted_records:
             if record.ticker in latest_by_ticker:
                 latest_by_ticker[record.ticker] = record
 
-        prior_year_by_ticker: dict[str, EnrichedFundamentalsRecord | None] = {}
+        prior_year_by_ticker: dict[str, Optional[EnrichedFundamentalsRecord]] = {}
         for ticker, latest in latest_by_ticker.items():
             if latest is None:
                 prior_year_by_ticker[ticker] = None
