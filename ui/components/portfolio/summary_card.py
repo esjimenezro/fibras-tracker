@@ -4,6 +4,8 @@ import plotly.express as px
 import streamlit as st
 
 from modules.portfolio.models import PositionShare
+from modules.portfolio.models import SectorShare
+from ui.components.portfolio import render_sector_chart
 from ui.styles.theme import format_mxn
 from ui.styles.theme import format_pct
 
@@ -17,8 +19,9 @@ def render_summary_card(
     total_return_including_distributions: float,
     last_updated_at: datetime,
     positions_share: list[PositionShare],
+    sector_shares: list[SectorShare],
 ) -> None:
-    """Render portfolio-level summary metrics and an allocation pie chart.
+    """Render portfolio-level summary metrics and allocation pie charts.
 
     Args:
         total_purchase_cost: Total invested amount in MXN.
@@ -28,7 +31,8 @@ def render_summary_card(
         total_net_fiscal_result_received: Net fiscal distributions received in MXN.
         total_return_including_distributions: Total return including distributions in MXN.
         last_updated_at: UTC timestamp of the most recently fetched market price.
-        positions_share: Portfolio weight per position; used for the allocation pie.
+        positions_share: Portfolio weight per position; used for the FIBRA allocation donut.
+        sector_shares: Portfolio weight per sector; used for the sector allocation donut.
     """
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -54,13 +58,13 @@ def render_summary_card(
             value=format_mxn(value=total_net_fiscal_result_received),
         )
 
-    left, right = st.columns([0.6, 0.4])
+    left, middle, right = st.columns([0.25, 0.375, 0.375])
     with left:
         st.metric(
             label="Retorno Incl. Distribuciones",
             value=format_mxn(value=total_return_including_distributions),
         )
-    with right:
+    with middle:
         fig = px.pie(
             names=[ps.ticker for ps in positions_share],
             values=[ps.share for ps in positions_share],
@@ -69,5 +73,7 @@ def render_summary_card(
         )
         fig.update_layout(margin=dict(t=40, b=0, l=0, r=0), height=220)
         st.plotly_chart(fig, width="stretch")
+    with right:
+        render_sector_chart(sector_shares=sector_shares)
 
     st.caption(f"Actualizado: {last_updated_at.strftime('%Y-%m-%d %H:%M:%S')} UTC")

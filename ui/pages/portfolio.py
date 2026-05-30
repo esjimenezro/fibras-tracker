@@ -40,6 +40,7 @@ render_summary_card(
     total_return_including_distributions=portfolio.total_return_including_distributions,
     last_updated_at=portfolio.last_updated_at,
     positions_share=portfolio.positions_share,
+    sector_shares=portfolio.sector_shares,
 )
 
 st.divider()

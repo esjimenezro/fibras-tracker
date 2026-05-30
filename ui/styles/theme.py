@@ -18,6 +18,20 @@ def format_mxn(value: float) -> str:
     return f"${value:,.2f} MXN"
 
 
+def format_mxn_label(value: float) -> str:
+    """Format a float as a MXN currency string safe for use in Streamlit widget labels.
+
+    Escapes the dollar sign to prevent Streamlit from interpreting it as LaTeX.
+
+    Args:
+        value: Numeric value in MXN.
+
+    Returns:
+        Formatted string with escaped dollar sign, e.g. '\\$1,234.56 MXN'.
+    """
+    return f"\\${value:,.2f} MXN"
+
+
 def format_mxn_compact(value: float) -> str:
     """Format large MXN values in compact notation.
 
