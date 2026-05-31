@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 from modules.common.models import Fibra
 from modules.fundamentals.models.enriched_fundamentals_record import EnrichedFundamentalsRecord
+from modules.fundamentals.models.fibra_metrics import FibraMetrics
 
 
 class FundamentalsHistory(BaseModel):
@@ -20,10 +21,13 @@ class FundamentalsHistory(BaseModel):
         prior_year_by_ticker: Record for the same quarter one year prior to the latest, per ticker.
             Every ticker present in fibras appears as a key; value is None if no such record exists
             or the ticker has no records at all.
+        fibra_metrics: Per-FIBRA aggregate metrics keyed by ticker string. Every ticker present
+            in fibras appears as a key.
         fibras: FIBRA catalog entries that define which tickers appear in latest_by_ticker.
     """
 
     records: list[EnrichedFundamentalsRecord]
     latest_by_ticker: dict[str, Optional[EnrichedFundamentalsRecord]]
     prior_year_by_ticker: dict[str, Optional[EnrichedFundamentalsRecord]]
+    fibra_metrics: dict[str, FibraMetrics]
     fibras: list[Fibra]
