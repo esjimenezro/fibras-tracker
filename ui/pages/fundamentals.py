@@ -9,6 +9,8 @@ from modules.fundamentals.schemas import FundamentalsDataRetrieverServiceSchema
 from modules.fundamentals.services import FundamentalsDataRetrieverService
 from ui.components.common import render_error_banner
 from ui.components.common import render_page_header
+from ui.components.fundamentals import render_comparison_chart
+from ui.components.fundamentals import render_comparison_table
 from ui.components.fundamentals import render_detail_chart
 from ui.components.fundamentals import render_detail_header
 
@@ -32,7 +34,7 @@ if result.status == ServiceStatus.ERROR:
 
 history: FundamentalsHistory = result.data
 
-[detalle_tab, comparativo_tab] = st.tabs(["Detalle", "Comparativo (próximamente)"])
+[detalle_tab, comparativa_tab] = st.tabs(["Detalle", "Comparativa"])
 
 with detalle_tab:
     fibra = st.selectbox(
@@ -62,5 +64,16 @@ with detalle_tab:
         records=ticker_records
     )
 
-with comparativo_tab:
-    st.info("Esta sección estará disponible próximamente. ¡Mantente atento a las actualizaciones!")
+with comparativa_tab:
+    st.divider()
+    render_comparison_table(
+        latest_by_ticker=history.latest_by_ticker,
+        prior_year_by_ticker=history.prior_year_by_ticker,
+        fibras=history.fibras,
+        fibra_metrics=history.fibra_metrics,
+    )
+    st.divider()
+    render_comparison_chart(
+        records=history.records,
+        fibras=history.fibras,
+    )

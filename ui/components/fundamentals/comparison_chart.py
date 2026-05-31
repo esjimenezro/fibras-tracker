@@ -5,7 +5,6 @@ import streamlit as st
 
 from modules.common.models import Fibra
 from modules.fundamentals.models import EnrichedFundamentalsRecord
-from modules.fundamentals.models import FundamentalsHistory
 from ui.components.fundamentals.detail_chart import _GROUP_ORDER
 from ui.components.fundamentals.detail_chart import _add_threshold_bands
 from ui.components.fundamentals.detail_chart import _apply_yaxis_format
@@ -30,7 +29,6 @@ def _sort_key_period(period: str) -> tuple[int, int]:
 def render_comparison_chart(
     records: list[EnrichedFundamentalsRecord],
     fibras: list[Fibra],
-    history: FundamentalsHistory,
 ) -> None:
     """Render an interactive multi-FIBRA KPI trend chart with FIBRA and KPI selectors.
 
@@ -43,7 +41,6 @@ def render_comparison_chart(
     Args:
         records: All enriched fundamentals records across all tickers, in any order.
         fibras: FIBRA catalog entries used to populate the FIBRA selector.
-        history: Full fundamentals history (available for future extensions; not used directly).
     """
     selected_fibras: list[Fibra] = st.multiselect(
         label="FIBRAs",
