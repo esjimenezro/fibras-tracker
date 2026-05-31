@@ -30,6 +30,35 @@ def _make_enriched_record(ticker: str, period: str, report_date: date) -> Enrich
     )
 
 
+def _make_enriched_record_with_affo(
+    ticker: str,
+    period: str,
+    affo: int | None,
+    affo_per_cbfi: float | None,
+) -> EnrichedFundamentalsRecord:
+    """Build an EnrichedFundamentalsRecord with AFFO fields populated.
+
+    All other fields default to None. The report_date is fixed to avoid
+    test noise — history-processor tests do not use it.
+
+    Args:
+        ticker: BMV ticker string.
+        period: Period label (e.g. "1T2023").
+        affo: AFFO value in MXN; may be None.
+        affo_per_cbfi: AFFO per CBFI; may be None.
+
+    Returns:
+        EnrichedFundamentalsRecord with affo and affo_per_cbfi set.
+    """
+    return EnrichedFundamentalsRecord(
+        ticker=ticker,
+        period=period,
+        report_date=date(2023, 1, 1),
+        affo=affo,
+        affo_per_cbfi=affo_per_cbfi,
+    )
+
+
 @pytest.fixture
 def processor():
     """Return a FundamentalsHistoryProcessor instance."""
@@ -271,3 +300,151 @@ def test_prior_year_by_ticker_none_for_missing_ticker(
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
     )
     assert result.prior_year_by_ticker["FIBRAPL14"] is None
+
+
+def test_fibra_metrics_cagr_computed_for_sufficient_history(
+    processor,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+):
+    """fibra_metrics computes CAGR correctly for a ticker with 4 records.
+
+    Four FMTY14 records spanning 1T2023–4T2023:
+      years_of_history = (2023 + 3/4) - (2023 + 0/4) = 0.75
+      affo: 1000 → 1331 (geometric: *1.1 each quarter)
+      affo_per_cbfi: 1.0 → 1.331 (same factor)
+      cagr = (1331/1000)^(1/0.75) - 1 = 1.1^4 - 1 = 0.4641
+    """
+    records = [
+        _make_enriched_record_with_affo(ticker="FMTY14", period="1T2023", affo=1000, affo_per_cbfi=1.0),
+        _make_enriched_record_with_affo(ticker="FMTY14", period="2T2023", affo=1100, affo_per_cbfi=1.1),
+        _make_enriched_record_with_affo(ticker="FMTY14", period="3T2023", affo=1210, affo_per_cbfi=1.21),
+        _make_enriched_record_with_affo(ticker="FMTY14", period="4T2023", affo=1331, affo_per_cbfi=1.331),
+    ]
+    result = processor.process(
+        records=records,
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+    )
+    metrics = result.fibra_metrics["FMTY14"]
+    assert metrics.ticker == "FMTY14"
+    assert metrics.periods_count == 4
+    assert metrics.years_of_history == pytest.approx(0.75, rel=1e-6)
+    assert metrics.affo_first == pytest.approx(1000.0, rel=1e-6)
+    assert metrics.affo_latest == pytest.approx(1331.0, rel=1e-6)
+    assert metrics.cagr_affo_total == pytest.approx(0.4641, rel=1e-4)
+    assert metrics.affo_per_cbfi_first == pytest.approx(1.0, rel=1e-6)
+    assert metrics.affo_per_cbfi_latest == pytest.approx(1.331, rel=1e-6)
+    assert metrics.cagr_affo_per_cbfi == pytest.approx(0.4641, rel=1e-4)
+
+
+def test_fibra_metrics_optional_fields_none_for_3_records(
+    processor,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+):
+    """All Optional fields are None when a ticker has exactly 3 records.
+
+    3 FMTY14 records spanning 1T2023–3T2023:
+      years_of_history = (2023 + 2/4) - (2023 + 0/4) = 0.5
+    """
+    records = [
+        _make_enriched_record_with_affo(ticker="FMTY14", period="1T2023", affo=1000, affo_per_cbfi=1.0),
+        _make_enriched_record_with_affo(ticker="FMTY14", period="2T2023", affo=1100, affo_per_cbfi=1.1),
+        _make_enriched_record_with_affo(ticker="FMTY14", period="3T2023", affo=1210, affo_per_cbfi=1.21),
+    ]
+    result = processor.process(
+        records=records,
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+    )
+    metrics = result.fibra_metrics["FMTY14"]
+    assert metrics.periods_count == 3
+    assert metrics.years_of_history == pytest.approx(0.5, rel=1e-6)
+    assert metrics.affo_first is None
+    assert metrics.affo_latest is None
+    assert metrics.cagr_affo_total is None
+    assert metrics.affo_per_cbfi_first is None
+    assert metrics.affo_per_cbfi_latest is None
+    assert metrics.cagr_affo_per_cbfi is None
+
+
+def test_fibra_metrics_optional_fields_none_for_no_records(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+):
+    """All Optional fields are None, periods_count=0, years_of_history=0.0 for a ticker with no records."""
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+    )
+    metrics = result.fibra_metrics["FIBRAPL14"]
+    assert metrics.ticker == "FIBRAPL14"
+    assert metrics.periods_count == 0
+    assert metrics.years_of_history == 0.0
+    assert metrics.affo_first is None
+    assert metrics.affo_latest is None
+    assert metrics.cagr_affo_total is None
+    assert metrics.affo_per_cbfi_first is None
+    assert metrics.affo_per_cbfi_latest is None
+    assert metrics.cagr_affo_per_cbfi is None
+
+
+def test_fibra_metrics_cagr_affo_total_none_when_affo_is_none_in_first_record(
+    processor,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+):
+    """cagr_affo_total is None when affo is None in the first record."""
+    records = [
+        _make_enriched_record_with_affo(ticker="FMTY14", period="1T2023", affo=None, affo_per_cbfi=1.0),
+        _make_enriched_record_with_affo(ticker="FMTY14", period="2T2023", affo=1100, affo_per_cbfi=1.1),
+        _make_enriched_record_with_affo(ticker="FMTY14", period="3T2023", affo=1210, affo_per_cbfi=1.21),
+        _make_enriched_record_with_affo(ticker="FMTY14", period="4T2023", affo=1331, affo_per_cbfi=1.331),
+    ]
+    result = processor.process(
+        records=records,
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+    )
+    assert result.fibra_metrics["FMTY14"].cagr_affo_total is None
+
+
+def test_fibra_metrics_cagr_affo_per_cbfi_none_when_affo_per_cbfi_is_none_in_last_record(
+    processor,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+):
+    """cagr_affo_per_cbfi is None when affo_per_cbfi is None in the last record."""
+    records = [
+        _make_enriched_record_with_affo(ticker="FMTY14", period="1T2023", affo=1000, affo_per_cbfi=1.0),
+        _make_enriched_record_with_affo(ticker="FMTY14", period="2T2023", affo=1100, affo_per_cbfi=1.1),
+        _make_enriched_record_with_affo(ticker="FMTY14", period="3T2023", affo=1210, affo_per_cbfi=1.21),
+        _make_enriched_record_with_affo(ticker="FMTY14", period="4T2023", affo=1331, affo_per_cbfi=None),
+    ]
+    result = processor.process(
+        records=records,
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+    )
+    assert result.fibra_metrics["FMTY14"].cagr_affo_per_cbfi is None
+
+
+def test_fibra_metrics_contains_entry_for_every_ticker_in_fibras(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+):
+    """fibra_metrics contains an entry for every ticker in fibras, including those with no records."""
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+    )
+    assert "FMTY14" in result.fibra_metrics
+    assert "DANHOS13" in result.fibra_metrics
+    assert "FIBRAPL14" in result.fibra_metrics
