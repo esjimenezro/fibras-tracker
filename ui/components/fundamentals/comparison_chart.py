@@ -109,4 +109,4 @@ def render_comparison_chart(
         yaxis_title=config["label"],
     )
 
-    st.plotly_chart(figure_or_data=fig, use_container_width=True)
+    st.plotly_chart(figure_or_data=fig, width="stretch")

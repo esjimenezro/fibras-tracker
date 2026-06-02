@@ -158,5 +158,5 @@ def render_comparison_table(
     styles_df = pd.DataFrame(data=style_rows, columns=_COLUMNS)
 
     styled = df.style.apply(func=lambda _: styles_df.values, axis=None)
-    st.dataframe(data=styled, hide_index=True, use_container_width=True)
+    st.dataframe(data=styled, hide_index=True, width="stretch")
     st.caption(body=_CAPTION)
