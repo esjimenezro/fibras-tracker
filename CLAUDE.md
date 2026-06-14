@@ -248,7 +248,7 @@ Complete:
 - Portfolio page (`ui/pages/portfolio.py`) — summary metrics, positions table, allocation pie, distributions chart
 
 Real data populated in `data/positions.json`, `data/distributions.json`, `data/catalog.json`,
-and `data/historical/fundamentals.json`.
+and `data/fundamentals.json`.
 
 **Next step**: Fundamentals page (`ui/pages/fundamentals.py`).
 

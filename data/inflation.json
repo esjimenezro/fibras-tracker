@@ -1,0 +1,25 @@
+{
+  "metadata": {
+    "source": "INEGI / Banxico",
+    "methodology": "Variación anual del INPC, diciembre a diciembre",
+    "base": "2ª quincena julio 2018 para 2016 en adelante; INEGI histórico para 2010-2015"
+  },
+  "inflation": [
+    {"year": 2010, "annual_inflation": 0.044},
+    {"year": 2011, "annual_inflation": 0.0382},
+    {"year": 2012, "annual_inflation": 0.0357},
+    {"year": 2013, "annual_inflation": 0.0397},
+    {"year": 2014, "annual_inflation": 0.0408},
+    {"year": 2015, "annual_inflation": 0.0213},
+    {"year": 2016, "annual_inflation": 0.0336},
+    {"year": 2017, "annual_inflation": 0.0677},
+    {"year": 2018, "annual_inflation": 0.0483},
+    {"year": 2019, "annual_inflation": 0.0283},
+    {"year": 2020, "annual_inflation": 0.0315},
+    {"year": 2021, "annual_inflation": 0.0736},
+    {"year": 2022, "annual_inflation": 0.0782},
+    {"year": 2023, "annual_inflation": 0.0466},
+    {"year": 2024, "annual_inflation": 0.0421},
+    {"year": 2025, "annual_inflation": 0.0369}
+  ]
+}

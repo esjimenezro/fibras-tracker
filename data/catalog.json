@@ -7,9 +7,9 @@
       "payment_frequency": "Monthly",
       "tenant_concentration_basis": "ingresos_totales",
       "sector_exposure": [
-        {"sector": "Industrial", "weight": 0.88},
-        {"sector": "Oficinas",   "weight": 0.10},
-        {"sector": "Comercial",  "weight": 0.02}
+        {"sector": "Industrial", "weight": 0.80},
+        {"sector": "Oficinas",   "weight": 0.19},
+        {"sector": "Comercial",  "weight": 0.01}
       ]
     },
     {
@@ -37,7 +37,6 @@
       "ticker": "FSHOP13",
       "name": "Fibra Shop",
       "payment_frequency": "Quarterly",
-      "tenant_concentration_basis": "ingresos_totales",
       "sector_exposure": [
         {"sector": "Comercial", "weight": 1.00}
       ]

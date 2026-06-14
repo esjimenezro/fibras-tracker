@@ -123,8 +123,7 @@ fibras-tracker/
     ├── catalog.json            ← static FIBRA catalog (name, frequency, sector weights)
     ├── positions.json          ← portfolio holdings
     ├── distributions.json      ← distribution payment history
-    └── historical/
-        └── fundamentals.json   ← quarterly KPI history per FIBRA
+    └── fundamentals.json       ← quarterly KPI history per FIBRA
 ```
 
 ---
@@ -266,7 +265,7 @@ fundamentals records that reference this ticker will be matched automatically.
 
 ---
 
-### `data/historical/fundamentals.json`
+### `data/fundamentals.json`
 
 Quarterly KPI history per FIBRA, manually populated from each FIBRA's quarterly reports.
 All monetary values are in MXN; area values are in m².
@@ -509,7 +508,7 @@ Tests use real Pydantic instances — no mocks, no network calls, no file I/O. E
 - `modules/common/` — `Sector`, `SectorExposure`, `Fibra`, `PaymentFrequency`, `MarketPrice`, `ServiceStatus`; catalog and market price repositories (`JsonCatalogReadRepository`, `YFinanceMarketPriceReadRepository`)
 - `modules/portfolio/` — full pipeline: models (raw + enriched + `Portfolio` with `SectorShare`), repositories, three processors, service, schema
 - `modules/fundamentals/` — full pipeline: models (`FundamentalsRecord`, `EnrichedFundamentalsRecord`, `FundamentalsHistory`), repositories, two processors (`FundamentalsProcessor`, `FundamentalsHistoryProcessor`), service, schema
-- `data/catalog.json` and `data/historical/fundamentals.json` populated with real data
+- `data/catalog.json` and `data/fundamentals.json` populated with real data
 - Unit test suite — 62 tests: 37 covering all three portfolio processors (`tests/portfolio/`), 25 covering both fundamentals processors (`tests/fundamentals/`)
 - Portfolio page (`ui/pages/portfolio.py`) — summary metrics, positions table, allocation chart, distributions history
 
