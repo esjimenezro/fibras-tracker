@@ -27,6 +27,12 @@ class FundamentalsRecord(BaseModel):
         total_assets: Total assets in MXN.
         occupancy_rate: Portfolio occupancy as a fraction (0–1).
         usd_mxn_exchange_rate: USD/MXN exchange rate at period end.
+        wale: Weighted Average Lease Expiry in years. Null where not explicitly
+            reported.
+        top_tenant_pct: Percentage of the largest single tenant over the base
+            reported by each FIBRA (decimal, e.g. 0.10 for 10 %).
+        top10_tenants_pct: Cumulative percentage of the top 10 tenants over the
+            same base (decimal).
     """
 
     ticker: str
@@ -47,3 +53,6 @@ class FundamentalsRecord(BaseModel):
     total_assets: Optional[int] = None
     occupancy_rate: Optional[float] = None
     usd_mxn_exchange_rate: Optional[float] = None
+    wale: Optional[float] = None
+    top_tenant_pct: Optional[float] = None
+    top10_tenants_pct: Optional[float] = None

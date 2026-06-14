@@ -18,7 +18,10 @@
       "financial_debt": 5730000000,
       "total_assets": 67110401325,
       "occupancy_rate": 0.852,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -38,7 +41,10 @@
       "financial_debt": 5580000000,
       "total_assets": 67398950310,
       "occupancy_rate": 0.856,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -58,7 +64,10 @@
       "financial_debt": 5630000000,
       "total_assets": 67427748594,
       "occupancy_rate": 0.855,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -78,7 +87,10 @@
       "financial_debt": 5730000000,
       "total_assets": 68039778598,
       "occupancy_rate": 0.856,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -98,7 +110,10 @@
       "financial_debt": 5910000000,
       "total_assets": 68304522943,
       "occupancy_rate": 0.852,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -118,7 +133,10 @@
       "financial_debt": 5930000000,
       "total_assets": 68809917465,
       "occupancy_rate": 0.855,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -138,7 +156,10 @@
       "financial_debt": 5960000000,
       "total_assets": 69012442131,
       "occupancy_rate": 0.856,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -158,7 +179,10 @@
       "financial_debt": 6060000000,
       "total_assets": 69499486716,
       "occupancy_rate": 0.851,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -178,7 +202,10 @@
       "financial_debt": 6505000000,
       "total_assets": 70058634455,
       "occupancy_rate": 0.853,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -198,7 +225,10 @@
       "financial_debt": 7355000000,
       "total_assets": 70983172209,
       "occupancy_rate": 0.859,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -218,7 +248,10 @@
       "financial_debt": 8000000000,
       "total_assets": 71568603149,
       "occupancy_rate": 0.862,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -238,7 +271,10 @@
       "financial_debt": 8000000000,
       "total_assets": 72149151893,
       "occupancy_rate": 0.863,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -258,7 +294,10 @@
       "financial_debt": 8000000000,
       "total_assets": 72234093994,
       "occupancy_rate": 0.867,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -278,7 +317,10 @@
       "financial_debt": 8470000000,
       "total_assets": 73217580352,
       "occupancy_rate": 0.871,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -298,7 +340,10 @@
       "financial_debt": 8600000000,
       "total_assets": 73387104836,
       "occupancy_rate": 0.894,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -318,7 +363,10 @@
       "financial_debt": 9350000000,
       "total_assets": 75628326859,
       "occupancy_rate": 0.895,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -338,7 +386,10 @@
       "financial_debt": 9350000000,
       "total_assets": 76337444143,
       "occupancy_rate": 0.9,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -358,7 +409,10 @@
       "financial_debt": 9850000000,
       "total_assets": 76814246987,
       "occupancy_rate": 0.907,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -378,7 +432,10 @@
       "financial_debt": 10150000000,
       "total_assets": 78230856109,
       "occupancy_rate": 0.914,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -398,7 +455,10 @@
       "financial_debt": 10850000000,
       "total_assets": 80148261966,
       "occupancy_rate": 0.917,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "DANHOS13",
@@ -418,7 +478,10 @@
       "financial_debt": 11000000000,
       "total_assets": 81177388663,
       "occupancy_rate": 0.919,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": 4.4,
+      "top_tenant_pct": 0.03,
+      "top10_tenants_pct": 0.225
     },
     {
       "ticker": "FIBRAPL14",
@@ -438,7 +501,10 @@
       "financial_debt": 16974916000,
       "total_assets": 59870214000,
       "occupancy_rate": 0.967,
-      "usd_mxn_exchange_rate": 20.6025
+      "usd_mxn_exchange_rate": 20.6025,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -458,7 +524,10 @@
       "financial_debt": 16562440000,
       "total_assets": 60051539000,
       "occupancy_rate": 0.964,
-      "usd_mxn_exchange_rate": 19.8157
+      "usd_mxn_exchange_rate": 19.8157,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -478,7 +547,10 @@
       "financial_debt": 17751576000,
       "total_assets": 63989241000,
       "occupancy_rate": 0.97,
-      "usd_mxn_exchange_rate": 20.4977
+      "usd_mxn_exchange_rate": 20.4977,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -498,7 +570,10 @@
       "financial_debt": 21599086000,
       "total_assets": 72190783000,
       "occupancy_rate": 0.979,
-      "usd_mxn_exchange_rate": 20.5157
+      "usd_mxn_exchange_rate": 20.5157,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -518,7 +593,10 @@
       "financial_debt": 22505668000,
       "total_assets": 75024219000,
       "occupancy_rate": 0.976,
-      "usd_mxn_exchange_rate": 19.8632
+      "usd_mxn_exchange_rate": 19.8632,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -538,7 +616,10 @@
       "financial_debt": 23068280000,
       "total_assets": 78376345000,
       "occupancy_rate": 0.978,
-      "usd_mxn_exchange_rate": 20.1443
+      "usd_mxn_exchange_rate": 20.1443,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -558,7 +639,10 @@
       "financial_debt": 21114790000,
       "total_assets": 78441980000,
       "occupancy_rate": 0.985,
-      "usd_mxn_exchange_rate": 20.1927
+      "usd_mxn_exchange_rate": 20.1927,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -578,7 +662,10 @@
       "financial_debt": 17785094000,
       "total_assets": 78522200000,
       "occupancy_rate": 0.989,
-      "usd_mxn_exchange_rate": 19.3615
+      "usd_mxn_exchange_rate": 19.3615,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -598,7 +685,10 @@
       "financial_debt": 16622800000,
       "total_assets": 72978693000,
       "occupancy_rate": 0.984,
-      "usd_mxn_exchange_rate": 18.0932
+      "usd_mxn_exchange_rate": 18.0932,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -618,7 +708,10 @@
       "financial_debt": 15711478000,
       "total_assets": 79462338000,
       "occupancy_rate": 0.98,
-      "usd_mxn_exchange_rate": 17.1187
+      "usd_mxn_exchange_rate": 17.1187,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -638,7 +731,10 @@
       "financial_debt": 16154986000,
       "total_assets": 88341946000,
       "occupancy_rate": 0.984,
-      "usd_mxn_exchange_rate": 17.6195
+      "usd_mxn_exchange_rate": 17.6195,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -658,7 +754,10 @@
       "financial_debt": 15473071000,
       "total_assets": 87620480000,
       "occupancy_rate": 0.998,
-      "usd_mxn_exchange_rate": 16.8935
+      "usd_mxn_exchange_rate": 16.8935,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -678,7 +777,10 @@
       "financial_debt": 15279814000,
       "total_assets": 102014010000,
       "occupancy_rate": 0.996,
-      "usd_mxn_exchange_rate": 16.678
+      "usd_mxn_exchange_rate": 16.678,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -698,7 +800,10 @@
       "financial_debt": 16818875000,
       "total_assets": 113206267000,
       "occupancy_rate": 0.984,
-      "usd_mxn_exchange_rate": 18.3773
+      "usd_mxn_exchange_rate": 18.3773,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -718,7 +823,10 @@
       "financial_debt": 37034297000,
       "total_assets": 178234500000,
       "occupancy_rate": 0.981,
-      "usd_mxn_exchange_rate": 19.6697
+      "usd_mxn_exchange_rate": 19.6697,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -738,7 +846,10 @@
       "financial_debt": 35397332000,
       "total_assets": 192798839000,
       "occupancy_rate": 0.983,
-      "usd_mxn_exchange_rate": 20.5103
+      "usd_mxn_exchange_rate": 20.5103,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -758,7 +869,10 @@
       "financial_debt": 33234361000,
       "total_assets": 192907043000,
       "occupancy_rate": 0.988,
-      "usd_mxn_exchange_rate": 20.4003
+      "usd_mxn_exchange_rate": 20.4003,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -778,7 +892,10 @@
       "financial_debt": 34681437000,
       "total_assets": 179399204000,
       "occupancy_rate": 0.977,
-      "usd_mxn_exchange_rate": 18.8483
+      "usd_mxn_exchange_rate": 18.8483,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -798,7 +915,10 @@
       "financial_debt": 28474957000,
       "total_assets": 175292396000,
       "occupancy_rate": 0.98,
-      "usd_mxn_exchange_rate": 18.3507
+      "usd_mxn_exchange_rate": 18.3507,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -818,7 +938,10 @@
       "financial_debt": 35525101000,
       "total_assets": 175001711000,
       "occupancy_rate": 0.97,
-      "usd_mxn_exchange_rate": 17.9528
+      "usd_mxn_exchange_rate": 17.9528,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FIBRAPL14",
@@ -838,7 +961,10 @@
       "financial_debt": 36030085000,
       "total_assets": 175951822000,
       "occupancy_rate": 0.97,
-      "usd_mxn_exchange_rate": 17.9528
+      "usd_mxn_exchange_rate": 17.9528,
+      "wale": 3.5,
+      "top_tenant_pct": 0.038,
+      "top10_tenants_pct": 0.247
     },
     {
       "ticker": "FMTY14",
@@ -858,7 +984,10 @@
       "financial_debt": 4261107000,
       "total_assets": 16352059000,
       "occupancy_rate": 0.926,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -878,7 +1007,10 @@
       "financial_debt": 4083208000,
       "total_assets": 16850731000,
       "occupancy_rate": 0.905,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -898,7 +1030,10 @@
       "financial_debt": 4480706000,
       "total_assets": 17454622000,
       "occupancy_rate": 0.907,
-      "usd_mxn_exchange_rate": 20.4977
+      "usd_mxn_exchange_rate": 20.4977,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -918,7 +1053,10 @@
       "financial_debt": 5470088000,
       "total_assets": 18808265000,
       "occupancy_rate": 0.922,
-      "usd_mxn_exchange_rate": 20.5157
+      "usd_mxn_exchange_rate": 20.5157,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -938,7 +1076,10 @@
       "financial_debt": 5296589000,
       "total_assets": 18532843000,
       "occupancy_rate": 0.916,
-      "usd_mxn_exchange_rate": 19.8632
+      "usd_mxn_exchange_rate": 19.8632,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -958,7 +1099,10 @@
       "financial_debt": 5369941000,
       "total_assets": 19067254000,
       "occupancy_rate": 0.917,
-      "usd_mxn_exchange_rate": 20.1443
+      "usd_mxn_exchange_rate": 20.1443,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -978,7 +1122,10 @@
       "financial_debt": 5381643000,
       "total_assets": 22558917000,
       "occupancy_rate": 0.918,
-      "usd_mxn_exchange_rate": 20.1927
+      "usd_mxn_exchange_rate": 20.1927,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -998,7 +1145,10 @@
       "financial_debt": 5158977000,
       "total_assets": 22215849000,
       "occupancy_rate": 0.909,
-      "usd_mxn_exchange_rate": 19.3615
+      "usd_mxn_exchange_rate": 19.3615,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -1018,7 +1168,10 @@
       "financial_debt": 11141123000,
       "total_assets": 30570937000,
       "occupancy_rate": 0.946,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -1038,7 +1191,10 @@
       "financial_debt": 7442715000,
       "total_assets": 29402483000,
       "occupancy_rate": 0.953,
-      "usd_mxn_exchange_rate": 17.6542
+      "usd_mxn_exchange_rate": 17.6542,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -1058,7 +1214,10 @@
       "financial_debt": 7836280000,
       "total_assets": 31158024000,
       "occupancy_rate": 0.958,
-      "usd_mxn_exchange_rate": 16.9799
+      "usd_mxn_exchange_rate": 16.9799,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -1078,7 +1237,10 @@
       "financial_debt": 7597339000,
       "total_assets": 28991675000,
       "occupancy_rate": 0.963,
-      "usd_mxn_exchange_rate": 16.8935
+      "usd_mxn_exchange_rate": 16.8935,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -1098,7 +1260,10 @@
       "financial_debt": 7583431000,
       "total_assets": 36108233000,
       "occupancy_rate": 0.962,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -1118,7 +1283,10 @@
       "financial_debt": 10010263000,
       "total_assets": 40470856000,
       "occupancy_rate": 0.961,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -1138,7 +1306,10 @@
       "financial_debt": 11305699000,
       "total_assets": 44459428000,
       "occupancy_rate": 0.96,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -1158,7 +1329,10 @@
       "financial_debt": 11787606000,
       "total_assets": 46013334000,
       "occupancy_rate": 0.962,
-      "usd_mxn_exchange_rate": 20.0666
+      "usd_mxn_exchange_rate": 20.0666,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -1178,7 +1352,10 @@
       "financial_debt": 12029405000,
       "total_assets": 46572729000,
       "occupancy_rate": 0.953,
-      "usd_mxn_exchange_rate": 20.4223
+      "usd_mxn_exchange_rate": 20.4223,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -1198,7 +1375,10 @@
       "financial_debt": 11291592000,
       "total_assets": 43814629000,
       "occupancy_rate": 0.954,
-      "usd_mxn_exchange_rate": 19.5445
+      "usd_mxn_exchange_rate": 19.5445,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -1218,7 +1398,10 @@
       "financial_debt": 11359619000,
       "total_assets": 42587180000,
       "occupancy_rate": 0.96,
-      "usd_mxn_exchange_rate": 18.6469
+      "usd_mxn_exchange_rate": 18.6469,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -1238,7 +1421,10 @@
       "financial_debt": 11087619000,
       "total_assets": 42595091000,
       "occupancy_rate": 0.966,
-      "usd_mxn_exchange_rate": 18.3138
+      "usd_mxn_exchange_rate": 18.3138,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FMTY14",
@@ -1258,7 +1444,10 @@
       "financial_debt": 11453349000,
       "total_assets": 51187234000,
       "occupancy_rate": 0.966,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": 5.0,
+      "top_tenant_pct": 0.124,
+      "top10_tenants_pct": 0.378
     },
     {
       "ticker": "FSHOP13",
@@ -1278,7 +1467,10 @@
       "financial_debt": 8734000000,
       "total_assets": 20038000000,
       "occupancy_rate": 0.9213,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1298,7 +1490,10 @@
       "financial_debt": 8974000000,
       "total_assets": 20316201000,
       "occupancy_rate": 0.9233,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1318,7 +1513,10 @@
       "financial_debt": 9092000000,
       "total_assets": 20493059000,
       "occupancy_rate": 0.9251,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1338,7 +1536,10 @@
       "financial_debt": 9354000000,
       "total_assets": 21364339000,
       "occupancy_rate": 0.9241,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1358,7 +1559,10 @@
       "financial_debt": 9402000000,
       "total_assets": 21564455000,
       "occupancy_rate": 0.9256,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1378,7 +1582,10 @@
       "financial_debt": 9745000000,
       "total_assets": 22167431000,
       "occupancy_rate": 0.9307,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1398,7 +1605,10 @@
       "financial_debt": 9755000000,
       "total_assets": 22209820000,
       "occupancy_rate": 0.9352,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1418,7 +1628,10 @@
       "financial_debt": 12011000000,
       "total_assets": 27133000000,
       "occupancy_rate": 0.9244,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1438,7 +1651,10 @@
       "financial_debt": 12047000000,
       "total_assets": 26565935000,
       "occupancy_rate": 0.9245,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1458,7 +1674,10 @@
       "financial_debt": 11886000000,
       "total_assets": 26468000000,
       "occupancy_rate": 0.9266,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1478,7 +1697,10 @@
       "financial_debt": 11995000000,
       "total_assets": 26728841000,
       "occupancy_rate": 0.9329,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1498,7 +1720,10 @@
       "financial_debt": 11773000000,
       "total_assets": 26292000000,
       "occupancy_rate": 0.9331,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1518,7 +1743,10 @@
       "financial_debt": 11863000000,
       "total_assets": 27440727000,
       "occupancy_rate": 0.933,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1538,7 +1766,10 @@
       "financial_debt": 12523000000,
       "total_assets": 29970703000,
       "occupancy_rate": 0.9221,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1558,7 +1789,10 @@
       "financial_debt": 12231000000,
       "total_assets": 29707736000,
       "occupancy_rate": 0.925,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1578,7 +1812,10 @@
       "financial_debt": 12345000000,
       "total_assets": 30937607000,
       "occupancy_rate": 0.9325,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1598,7 +1835,10 @@
       "financial_debt": 12343000000,
       "total_assets": 30980487000,
       "occupancy_rate": 0.9318,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1618,7 +1858,10 @@
       "financial_debt": 12323000000,
       "total_assets": 31450818000,
       "occupancy_rate": 0.9311,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1638,7 +1881,10 @@
       "financial_debt": 12431000000,
       "total_assets": 31700000000,
       "occupancy_rate": 0.9413,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1658,7 +1904,10 @@
       "financial_debt": 12497000000,
       "total_assets": 32152198000,
       "occupancy_rate": 0.9436,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     },
     {
       "ticker": "FSHOP13",
@@ -1678,7 +1927,10 @@
       "financial_debt": 12550000000,
       "total_assets": 32204000000,
       "occupancy_rate": 0.9442,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": 5.0,
+      "top_tenant_pct": 0.137,
+      "top10_tenants_pct": 0.374
     }
   ]
 }

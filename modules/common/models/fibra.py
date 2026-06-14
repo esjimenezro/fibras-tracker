@@ -1,4 +1,5 @@
 from enum import StrEnum
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -57,9 +58,13 @@ class Fibra(BaseModel):
         name: Full commercial name of the FIBRA (e.g. "Fibra Mty").
         payment_frequency: How often distributions are paid.
         sector_exposure: Breakdown of the portfolio by real-estate sector.
+        tenant_concentration_basis: Income base used by this FIBRA when reporting
+            tenant concentration (e.g. "ingresos_totales", "renta_fija",
+            "renta_neta_efectiva"). Null if not applicable.
     """
 
     ticker: str
     name: str
     payment_frequency: PaymentFrequency
     sector_exposure: list[SectorExposure]
+    tenant_concentration_basis: Optional[str] = None

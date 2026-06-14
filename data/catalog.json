@@ -5,6 +5,7 @@
       "ticker": "FMTY14",
       "name": "Fibra Mty",
       "payment_frequency": "Monthly",
+      "tenant_concentration_basis": "ingresos_totales",
       "sector_exposure": [
         {"sector": "Industrial", "weight": 0.88},
         {"sector": "Oficinas",   "weight": 0.10},
@@ -15,6 +16,7 @@
       "ticker": "DANHOS13",
       "name": "Fibra Danhos",
       "payment_frequency": "Quarterly",
+      "tenant_concentration_basis": "renta_fija",
       "sector_exposure": [
         {"sector": "Comercial",  "weight": 0.72},
         {"sector": "Oficinas",   "weight": 0.25},
@@ -26,6 +28,7 @@
       "ticker": "FIBRAPL14",
       "name": "Fibra Prologis",
       "payment_frequency": "Quarterly",
+      "tenant_concentration_basis": "renta_neta_efectiva",
       "sector_exposure": [
         {"sector": "Industrial", "weight": 1.00}
       ]
@@ -34,6 +37,7 @@
       "ticker": "FSHOP13",
       "name": "Fibra Shop",
       "payment_frequency": "Quarterly",
+      "tenant_concentration_basis": "ingresos_totales",
       "sector_exposure": [
         {"sector": "Comercial", "weight": 1.00}
       ]
