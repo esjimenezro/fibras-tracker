@@ -139,6 +139,41 @@ def test_nav_per_cbfi(processor, record_full):
     assert result.nav_per_cbfi == pytest.approx(20_000_000_000 / 1_500_000_000, rel=1e-6)
 
 
+def test_revenue_per_cbfi(processor, record_full):
+    """revenue_per_cbfi = total_revenues / cbfis_with_rights."""
+    result = processor._enrich(record=record_full, market_price=10.50)
+    assert result.revenue_per_cbfi == pytest.approx(
+        1_000_000_000 / 1_500_000_000, rel=1e-6
+    )
+
+
+def test_revenue_per_cbfi_none_when_total_revenues_none(processor, record_full):
+    """revenue_per_cbfi is None when total_revenues is None."""
+    record = FundamentalsRecord(
+        **{**record_full.model_dump(), "total_revenues": None},
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.revenue_per_cbfi is None
+
+
+def test_revenue_per_cbfi_none_when_cbfis_with_rights_none(processor, record_full):
+    """revenue_per_cbfi is None when cbfis_with_rights is None."""
+    record = FundamentalsRecord(
+        **{**record_full.model_dump(), "cbfis_with_rights": None},
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.revenue_per_cbfi is None
+
+
+def test_revenue_per_cbfi_none_when_cbfis_with_rights_zero(processor, record_full):
+    """revenue_per_cbfi is None when cbfis_with_rights is zero (avoids division by zero)."""
+    record = FundamentalsRecord(
+        **{**record_full.model_dump(), "cbfis_with_rights": 0},
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.revenue_per_cbfi is None
+
+
 # ── Capital structure ─────────────────────────────────────────────────────────
 
 

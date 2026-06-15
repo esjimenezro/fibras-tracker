@@ -20,6 +20,8 @@ class EnrichedFundamentalsRecord(FundamentalsRecord):
 
         ffo_per_cbfi: FFO per CBFI (ffo / cbfis_with_rights).
         affo_per_cbfi: AFFO per CBFI (affo / cbfis_with_rights).
+        revenue_per_cbfi: Total revenues per CBFI with economic rights
+            (total_revenues / cbfis_with_rights).
         nav_per_cbfi: Net Asset Value per CBFI (total_equity / cbfis_outstanding).
 
         ltv: Loan-to-Value ratio (financial_debt / total_assets).
@@ -45,6 +47,7 @@ class EnrichedFundamentalsRecord(FundamentalsRecord):
 
     ffo_per_cbfi: Optional[float] = None
     affo_per_cbfi: Optional[float] = None
+    revenue_per_cbfi: Optional[float] = None
     nav_per_cbfi: Optional[float] = None
 
     ltv: Optional[float] = None

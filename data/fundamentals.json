@@ -456,9 +456,9 @@
       "total_assets": 80148261966,
       "occupancy_rate": 0.917,
       "usd_mxn_exchange_rate": null,
-      "wale": null,
-      "top_tenant_pct": null,
-      "top10_tenants_pct": null
+      "wale": 4.5,
+      "top_tenant_pct": 0.03,
+      "top10_tenants_pct": 0.224
     },
     {
       "ticker": "DANHOS13",
@@ -939,9 +939,9 @@
       "total_assets": 175001711000,
       "occupancy_rate": 0.97,
       "usd_mxn_exchange_rate": 17.9528,
-      "wale": null,
-      "top_tenant_pct": null,
-      "top10_tenants_pct": null
+      "wale": 3.5,
+      "top_tenant_pct": 0.036,
+      "top10_tenants_pct": 0.23
     },
     {
       "ticker": "FIBRAPL14",
@@ -1422,9 +1422,9 @@
       "total_assets": 42595091000,
       "occupancy_rate": 0.966,
       "usd_mxn_exchange_rate": 18.3138,
-      "wale": null,
-      "top_tenant_pct": null,
-      "top10_tenants_pct": null
+      "wale": 4.7,
+      "top_tenant_pct": 0.084,
+      "top10_tenants_pct": 0.349
     },
     {
       "ticker": "FMTY14",
@@ -1905,9 +1905,9 @@
       "total_assets": 32152198000,
       "occupancy_rate": 0.9436,
       "usd_mxn_exchange_rate": null,
-      "wale": null,
-      "top_tenant_pct": null,
-      "top10_tenants_pct": null
+      "wale": 5.0,
+      "top_tenant_pct": 0.057,
+      "top10_tenants_pct": 0.28
     },
     {
       "ticker": "FSHOP13",
