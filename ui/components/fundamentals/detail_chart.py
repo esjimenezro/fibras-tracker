@@ -4,8 +4,15 @@ from typing import Any
 import plotly.graph_objects as go
 import streamlit as st
 
+from modules.common.models import InflationRecord
+from modules.fundamentals.models import AnnualFundamentalsRecord
 from modules.fundamentals.models import EnrichedFundamentalsRecord
 
+
+_LTV_LOWER: float = 0.35
+_LTV_UPPER: float = 0.45
+_OCC_LOWER: float = 0.80
+_OCC_UPPER: float = 0.85
 
 KPI_CONFIG: dict[str, dict[str, Any]] = {
     "flujo_operativo": {
@@ -69,8 +76,8 @@ KPI_CONFIG: dict[str, dict[str, Any]] = {
         "kind": "single",
         "field": "occupancy_rate",
         "format": "pct",
-        "lower": 0.80,
-        "upper": 0.85,
+        "lower": _OCC_LOWER,
+        "upper": _OCC_UPPER,
         "inverse": False,
     },
     "nav_per_cbfi": {
@@ -100,8 +107,8 @@ KPI_CONFIG: dict[str, dict[str, Any]] = {
         "kind": "single",
         "field": "ltv",
         "format": "pct",
-        "lower": 0.35,
-        "upper": 0.45,
+        "lower": _LTV_LOWER,
+        "upper": _LTV_UPPER,
         "inverse": True,
     },
     "affo_payout_ratio": {
@@ -126,6 +133,45 @@ KPI_CONFIG: dict[str, dict[str, Any]] = {
         "kind": "single",
         "field": "cbfis_per_m2",
         "format": "float",
+    },
+}
+
+ANNUAL_KPI_CONFIG: dict[str, dict[str, Any]] = {
+    "distribucion_cbfi_anual": {
+        "label": "Distribución por CBFI",
+        "field": "distribution_per_cbfi_annual",
+        "format": "mxn",
+    },
+    "nav_cbfi_anual": {
+        "label": "NAV por CBFI",
+        "field": "nav_per_cbfi",
+        "format": "mxn",
+    },
+    "ingresos_cbfi_anual": {
+        "label": "Ingresos por CBFI",
+        "field": "revenue_per_cbfi_annual",
+        "format": "mxn",
+    },
+    "affo_cbfi_anual": {
+        "label": "AFFO por CBFI",
+        "field": "affo_per_cbfi_annual",
+        "format": "mxn",
+    },
+    "ltv_anual": {
+        "label": "LTV",
+        "field": "ltv",
+        "format": "pct",
+        "lower": _LTV_LOWER,
+        "upper": _LTV_UPPER,
+        "inverse": True,
+    },
+    "ocupacion_anual": {
+        "label": "Tasa de Ocupación",
+        "field": "occupancy_rate",
+        "format": "pct",
+        "lower": _OCC_LOWER,
+        "upper": _OCC_UPPER,
+        "inverse": False,
     },
 }
 
