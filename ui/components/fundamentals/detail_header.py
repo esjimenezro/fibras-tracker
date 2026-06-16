@@ -95,7 +95,7 @@ def _yoy_delta(current: Optional[float], prior: Optional[float]) -> Optional[str
     if current is None or prior is None or prior == 0:
         return None
     growth = (current - prior) / prior
-    return format_pct(value=growth, include_sign=True)
+    return f"{format_pct(value=growth, include_sign=True)} YoY"
 
 
 def render_detail_header(
