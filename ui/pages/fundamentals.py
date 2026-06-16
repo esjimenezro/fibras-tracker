@@ -60,8 +60,11 @@ with detalle_tab:
 
     st.divider()
     ticker_records = [r for r in history.records if r.ticker == selected_ticker]
+    annual_ticker_records = [r for r in history.annual_records if r.ticker == selected_ticker]
     render_detail_chart(
-        records=ticker_records
+        records=ticker_records,
+        annual_records=annual_ticker_records,
+        inflation_records=history.inflation_records,
     )
 
 with comparativa_tab:
