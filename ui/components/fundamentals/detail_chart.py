@@ -500,8 +500,81 @@ def _render_dual_axis(
     return fig
 
 
+def _render_annual(
+    sorted_annual: list[AnnualFundamentalsRecord],
+    config: dict[str, Any],
+    annual_key: str,
+    inflation_records: list[InflationRecord],
+) -> go.Figure:
+    """Build an annual KPI chart with optional inflation reference line or threshold bands.
+
+    X axis is the calendar year (integer). None values appear as gaps (connectgaps=False).
+    Traffic-light bands apply only to LTV and Tasa de Ocupación entries.
+    A dashed inflation-adjusted reference line is added only for the
+    'distribucion_cbfi_anual' key.
+
+    Args:
+        sorted_annual: Annual records sorted ascending by year for the selected ticker.
+        config: ANNUAL_KPI_CONFIG entry for the selected KPI.
+        annual_key: Key string from ANNUAL_KPI_CONFIG used to detect the distribution case.
+        inflation_records: Full inflation history passed through to _compute_inflation_reference.
+
+    Returns:
+        Plotly Figure ready for st.plotly_chart.
+    """
+    years = [r.year for r in sorted_annual]
+    values = _get_annual_values(sorted_annual=sorted_annual, field=config["field"])
+
+    show_legend = annual_key == "distribucion_cbfi_anual"
+
+    fig = go.Figure()
+    fig.add_trace(
+        trace=go.Scatter(
+            x=years,
+            y=values,
+            mode="lines+markers",
+            connectgaps=False,
+            name=config["label"],
+        )
+    )
+
+    if annual_key == "distribucion_cbfi_anual":
+        ref_years, ref_values = _compute_inflation_reference(
+            sorted_annual=sorted_annual,
+            inflation_records=inflation_records,
+        )
+        if ref_years:
+            fig.add_trace(
+                trace=go.Scatter(
+                    x=ref_years,
+                    y=ref_values,
+                    mode="lines+markers",
+                    connectgaps=False,
+                    name="Distribución ajustada a inflación",
+                    line={"dash": "dash", "color": "rgba(255, 150, 50, 0.9)"},
+                )
+            )
+
+    if "lower" in config:
+        _add_threshold_bands(
+            fig=fig,
+            lower=config["lower"],
+            upper=config["upper"],
+            inverse=config.get("inverse", False),
+        )
+
+    _apply_yaxis_format(fig=fig, fmt=config["format"])
+    layout = _base_layout(title=config["label"], show_legend=show_legend)
+    layout["xaxis_title"] = "Año"
+    layout["xaxis"] = {"tickformat": "d"}
+    fig.update_layout(**layout)
+    return fig
+
+
 def render_detail_chart(
     records: list[EnrichedFundamentalsRecord],
+    annual_records: list[AnnualFundamentalsRecord],
+    inflation_records: list[InflationRecord],
 ) -> None:
     """Render an interactive historical KPI chart for a single FIBRA's fundamentals.
 
