@@ -578,16 +578,54 @@ def render_detail_chart(
 ) -> None:
     """Render an interactive historical KPI chart for a single FIBRA's fundamentals.
 
-    Presents a KPI selectbox with entries sorted by domain group. The selected KPI
-    determines the chart type: single-line with optional traffic-light bands, multi-line
-    with a view-mode radio toggle, or dual-Y-axis with a CBFIs/m² annotation. Records
-    are sorted chronologically by (year, quarter) before plotting; None values appear
-    as gaps rather than zeros.
+    A "Periodicidad" toggle selects between quarterly and annual views.
+    - Trimestral: full KPI_CONFIG selector with quarterly records; existing single /
+      combined / dual-axis rendering logic unchanged.
+    - Anual: ANNUAL_KPI_CONFIG selector with annual records; single-line charts with
+      optional threshold bands. The Distribución por CBFI chart adds a dashed
+      inflation-adjusted reference line.
+
+    None values appear as gaps (connectgaps=False) in all chart types.
 
     Args:
-        records: Enriched fundamentals records pre-filtered to selected_ticker, in any
-            order; sorted internally before plotting.
+        records: Enriched quarterly records pre-filtered to the selected ticker, any order;
+            sorted internally by (year, quarter) before plotting.
+        annual_records: Annual records pre-filtered to the selected ticker, any order;
+            sorted internally by year ascending before plotting.
+        inflation_records: Full annual Mexican inflation history; used only when the
+            'Distribución por CBFI' annual KPI is selected.
     """
+    periodicidad: str = st.radio(
+        label="Periodicidad",
+        options=["Trimestral", "Anual"],
+        horizontal=True,
+        key="periodicidad_toggle",
+    )
+
+    if periodicidad == "Anual":
+        if not annual_records:
+            st.info(body="No hay datos anuales disponibles.")
+            return
+
+        sorted_annual = sorted(annual_records, key=lambda r: r.year)
+
+        selected_annual_key: str = st.selectbox(
+            label="Indicador",
+            options=list(ANNUAL_KPI_CONFIG.keys()),
+            format_func=lambda k: ANNUAL_KPI_CONFIG[k]["label"],
+            key="annual_kpi_selector",
+        )
+        annual_config = ANNUAL_KPI_CONFIG[selected_annual_key]
+        fig = _render_annual(
+            sorted_annual=sorted_annual,
+            config=annual_config,
+            annual_key=selected_annual_key,
+            inflation_records=inflation_records,
+        )
+        st.plotly_chart(figure_or_data=fig, width="stretch")
+        return
+
+    # Trimestral path
     if not records:
         st.info(body="No hay datos históricos disponibles.")
         return
@@ -602,6 +640,7 @@ def render_detail_chart(
         label="Indicador",
         options=options,
         format_func=lambda k: KPI_CONFIG[k]["label"],
+        key="quarterly_kpi_selector",
     )
     config = KPI_CONFIG[selected_key]
 
