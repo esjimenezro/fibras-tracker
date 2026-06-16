@@ -1,11 +1,14 @@
 from typing import Optional
 
 from modules.common.repositories.base import BaseCatalogReadRepository
+from modules.common.repositories.base import BaseInflationReadRepository
 from modules.common.repositories.base import BaseMarketPriceReadRepository
 from modules.common.repositories import JsonCatalogReadRepository
+from modules.common.repositories import JsonInflationReadRepository
 from modules.common.repositories import YFinanceMarketPriceReadRepository
 from modules.common.schemas import ServiceStatus
 
+from modules.fundamentals.processors import AnnualFundamentalsProcessor
 from modules.fundamentals.processors import FundamentalsHistoryProcessor
 from modules.fundamentals.processors import FundamentalsProcessor
 from modules.fundamentals.repositories.base import BaseFundamentalsReadRepository
@@ -21,6 +24,7 @@ class FundamentalsDataRetrieverService:
         fundamentals_repository: Optional[BaseFundamentalsReadRepository] = None,
         market_price_repository: Optional[BaseMarketPriceReadRepository] = None,
         catalog_repository: Optional[BaseCatalogReadRepository] = None,
+        inflation_repository: Optional[BaseInflationReadRepository] = None,
     ) -> None:
         """Initialise repositories and processors.
 
@@ -31,16 +35,24 @@ class FundamentalsDataRetrieverService:
                 Defaults to YFinanceMarketPriceReadRepository.
             catalog_repository: Repository for the FIBRA catalog.
                 Defaults to JsonCatalogReadRepository.
+            inflation_repository: Repository for annual inflation records.
+                Defaults to JsonInflationReadRepository.
         """
         self._fundamentals_repository = fundamentals_repository or JsonFundamentalsReadRepository()
         self._market_price_repository = market_price_repository or YFinanceMarketPriceReadRepository()
         self._catalog_repository = catalog_repository or JsonCatalogReadRepository()
+        self._inflation_repository = inflation_repository or JsonInflationReadRepository()
 
         self._fundamentals_processor = FundamentalsProcessor()
+        self._annual_processor = AnnualFundamentalsProcessor()
         self._history_processor = FundamentalsHistoryProcessor()
 
     def run(self) -> FundamentalsDataRetrieverServiceSchema:
         """Fetch, enrich, and aggregate all fundamentals data.
+
+        Retrieves raw records, market prices, the FIBRA catalog, and inflation
+        data; enriches quarterly records; aggregates them into annual summaries;
+        then builds the final FundamentalsHistory.
 
         Returns:
             FundamentalsDataRetrieverServiceSchema: status=OK with the assembled
@@ -51,6 +63,7 @@ class FundamentalsDataRetrieverService:
 
             records = self._fundamentals_repository.retrieve_data()
             fibras = self._catalog_repository.retrieve_data()
+            inflation_records = self._inflation_repository.retrieve_data()
 
             tickers = sorted({r.ticker for r in records})
             market_prices = self._market_price_repository.retrieve_data(tickers=tickers)
@@ -59,9 +72,12 @@ class FundamentalsDataRetrieverService:
                 records=records,
                 market_prices=market_prices,
             )
+            annual_records = self._annual_processor.process(records=enriched_records)
             history = self._history_processor.process(
                 records=enriched_records,
                 fibras=fibras,
+                annual_records=annual_records,
+                inflation_records=inflation_records,
             )
 
             return FundamentalsDataRetrieverServiceSchema(
