@@ -67,6 +67,18 @@ def _float2(value: Optional[float]) -> str:
     return f"{value:.2f}" if value is not None else "N/D"
 
 
+def _float1_yrs(value: Optional[float]) -> str:
+    """Format a float to one decimal place followed by ' años', or return 'N/D' if None.
+
+    Args:
+        value: Numeric value in years, or None.
+
+    Returns:
+        One-decimal string with unit suffix (e.g. '4.9 años'), or 'N/D'.
+    """
+    return f"{value:.1f} años" if value is not None else "N/D"
+
+
 def _yoy_delta(current: Optional[float], prior: Optional[float]) -> Optional[str]:
     """Compute a year-over-year growth percentage string for st.metric delta.
 
@@ -91,10 +103,11 @@ def render_detail_header(
     fibra: Fibra,
     prior_year_record: Optional[EnrichedFundamentalsRecord],
 ) -> None:
-    """Render a three-section KPI header for a single FIBRA and quarter.
+    """Render a four-section KPI header for a single FIBRA and quarter.
 
     Displays operational metrics, per-CBFI generation/distribution metrics,
-    and market valuation metrics as st.metric cards grouped by section.
+    market valuation metrics, and distribution predictability metrics as
+    st.metric cards grouped by section.
     Year-over-year deltas are shown for FFO and AFFO per CBFI when prior-year
     data is available. The NAV delta indicates premium or discount vs. market price.
     All null values display 'N/D' without raising exceptions.
@@ -248,5 +261,38 @@ def render_detail_header(
             help=(
                 "Distribución por CBFI anualizada (×4) / precio de mercado. Rendimiento "
                 "por distribuciones sobre el precio actual."
+            ),
+        )
+
+    st.markdown("**Predictibilidad de Distribuciones**")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric(
+            label="WALE",
+            value=_float1_yrs(value=record.wale),
+            help=(
+                "Weighted Average Lease Expiry — plazo promedio ponderado de vigencia "
+                "restante de los contratos de arrendamiento, en años. Mayor WALE implica "
+                "ingresos más predecibles en el mediano plazo."
+            ),
+        )
+    with col2:
+        st.metric(
+            label="Concentración - Cliente Principal",
+            value=_pct(value=record.top_tenant_pct),
+            help=(
+                "Porcentaje de ingresos (o renta, según metodología de cada FIBRA) que "
+                "representa el arrendatario más grande. Menor concentración implica menor "
+                "riesgo si ese arrendatario se va."
+            ),
+        )
+    with col3:
+        st.metric(
+            label="Concentración - Top 10 Clientes",
+            value=_pct(value=record.top10_tenants_pct),
+            help=(
+                "Porcentaje acumulado de ingresos (o renta) que representan los 10 "
+                "arrendatarios más grandes. Menor concentración implica una base de "
+                "clientes más diversificada."
             ),
         )
