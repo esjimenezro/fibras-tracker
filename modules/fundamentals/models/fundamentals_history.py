@@ -1,8 +1,11 @@
 from typing import Optional
 
 from pydantic import BaseModel
+from pydantic import Field
 
 from modules.common.models import Fibra
+from modules.common.models import InflationRecord
+from modules.fundamentals.models.annual_fundamentals_record import AnnualFundamentalsRecord
 from modules.fundamentals.models.enriched_fundamentals_record import EnrichedFundamentalsRecord
 from modules.fundamentals.models.fibra_metrics import FibraMetrics
 
@@ -24,6 +27,11 @@ class FundamentalsHistory(BaseModel):
         fibra_metrics: Per-FIBRA aggregate metrics keyed by ticker string. Every ticker present
             in fibras appears as a key.
         fibras: FIBRA catalog entries that define which tickers appear in latest_by_ticker.
+        annual_records: Annual aggregated records per ticker, produced by AnnualFundamentalsProcessor.
+            Only tickers with at least one complete year (all four quarters present) appear as keys.
+            Empty dict when not provided.
+        inflation_records: Full annual Mexican inflation history (INPC, INEGI/Banxico).
+            Empty list when not provided.
     """
 
     records: list[EnrichedFundamentalsRecord]
@@ -31,3 +39,5 @@ class FundamentalsHistory(BaseModel):
     prior_year_by_ticker: dict[str, Optional[EnrichedFundamentalsRecord]]
     fibra_metrics: dict[str, FibraMetrics]
     fibras: list[Fibra]
+    annual_records: list[AnnualFundamentalsRecord]
+    inflation_records: list[InflationRecord]

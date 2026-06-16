@@ -3,9 +3,11 @@ from datetime import date
 import pytest
 
 from modules.common.models import Fibra
+from modules.common.models import InflationRecord
 from modules.common.models import PaymentFrequency
 from modules.common.models import Sector
 from modules.common.models import SectorExposure
+from modules.fundamentals.models import AnnualFundamentalsRecord
 from modules.fundamentals.models import EnrichedFundamentalsRecord
 from modules.fundamentals.processors import FundamentalsHistoryProcessor
 
@@ -57,6 +59,20 @@ def _make_enriched_record_with_affo(
         affo=affo,
         affo_per_cbfi=affo_per_cbfi,
     )
+
+
+def _make_annual(ticker: str, year: int, **kwargs) -> AnnualFundamentalsRecord:
+    """Build a minimal AnnualFundamentalsRecord for history-processor tests.
+
+    Args:
+        ticker: BMV ticker string.
+        year: Calendar year of the aggregation.
+        **kwargs: Optional field overrides for any AnnualFundamentalsRecord attribute.
+
+    Returns:
+        AnnualFundamentalsRecord with the given identity fields and any overrides.
+    """
+    return AnnualFundamentalsRecord(ticker=ticker, year=year, **kwargs)
 
 
 @pytest.fixture
@@ -128,6 +144,18 @@ def fibra_fibrapl14():
     )
 
 
+@pytest.fixture
+def minimal_annual_records():
+    """Minimal annual records list to satisfy the mandatory annual_records parameter."""
+    return [AnnualFundamentalsRecord(ticker="FMTY14", year=2024)]
+
+
+@pytest.fixture
+def minimal_inflation_records():
+    """Minimal inflation records list to satisfy the mandatory inflation_records parameter."""
+    return [InflationRecord(year=2024, annual_inflation=0.04)]
+
+
 def test_records_sorted_by_ticker_then_period(
     processor,
     record_fmty14_1t2026,
@@ -137,6 +165,8 @@ def test_records_sorted_by_ticker_then_period(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """Records are sorted by ticker ascending, then by (year, quarter) ascending.
 
@@ -146,6 +176,8 @@ def test_records_sorted_by_ticker_then_period(
     result = processor.process(
         records=[record_fmty14_1t2026, record_danhos13_2t2026, record_fmty14_4t2025, record_danhos13_1t2026],
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     assert result.records[0].ticker == "DANHOS13"
     assert result.records[0].period == "1T2026"
@@ -164,6 +196,8 @@ def test_sort_is_not_lexicographic(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """FMTY14 4T2025 sorts before 1T2026 because (2025, 4) < (2026, 1).
 
@@ -173,6 +207,8 @@ def test_sort_is_not_lexicographic(
     result = processor.process(
         records=[record_fmty14_1t2026, record_fmty14_4t2025],
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     assert result.records[0].period == "4T2025"
     assert result.records[1].period == "1T2026"
@@ -187,11 +223,15 @@ def test_latest_by_ticker_correct(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """latest_by_ticker holds the most recent record per ticker as determined by period."""
     result = processor.process(
         records=[record_fmty14_1t2026, record_danhos13_2t2026, record_fmty14_4t2025, record_danhos13_1t2026],
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     assert result.latest_by_ticker["DANHOS13"].period == "2T2026"
     assert result.latest_by_ticker["FMTY14"].period == "1T2026"
@@ -204,6 +244,8 @@ def test_latest_determined_by_period_not_report_date(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """latest_by_ticker picks the record with the most recent period, not the latest report_date.
 
@@ -214,6 +256,8 @@ def test_latest_determined_by_period_not_report_date(
     result = processor.process(
         records=[record_fmty14_1t2026, record_fmty14_4t2025],
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     assert result.latest_by_ticker["FMTY14"].period == "1T2026"
 
@@ -225,11 +269,15 @@ def test_latest_by_ticker_none_for_missing_ticker(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """latest_by_ticker contains None for a catalog ticker that has no fundamentals records."""
     result = processor.process(
         records=[record_fmty14_1t2026, record_danhos13_1t2026],
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     assert result.latest_by_ticker["FIBRAPL14"] is None
 
@@ -240,20 +288,29 @@ def test_fibras_preserved(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """history.fibras contains the exact Fibra list passed to process()."""
     fibras = [fibra_fmty14, fibra_danhos13, fibra_fibrapl14]
     result = processor.process(
         records=[record_fmty14_1t2026],
         fibras=fibras,
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     assert result.fibras == fibras
 
 
-def test_empty_records_raises(processor, fibra_fmty14):
+def test_empty_records_raises(processor, fibra_fmty14, minimal_annual_records, minimal_inflation_records):
     """process() raises ValueError when the records list is empty."""
     with pytest.raises(ValueError):
-        processor.process(records=[], fibras=[fibra_fmty14])
+        processor.process(
+            records=[],
+            fibras=[fibra_fmty14],
+            annual_records=minimal_annual_records,
+            inflation_records=minimal_inflation_records,
+        )
 
 
 def test_prior_year_by_ticker_found(
@@ -263,11 +320,15 @@ def test_prior_year_by_ticker_found(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """prior_year_by_ticker holds the same-quarter prior-year record when it exists."""
     result = processor.process(
         records=[record_fmty14_1t2025, record_fmty14_1t2026],
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     assert result.prior_year_by_ticker["FMTY14"] is record_fmty14_1t2025
 
@@ -278,11 +339,15 @@ def test_prior_year_by_ticker_none_when_not_found(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """prior_year_by_ticker is None when the same-quarter prior-year record does not exist."""
     result = processor.process(
         records=[record_fmty14_1t2026],
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     assert result.prior_year_by_ticker["FMTY14"] is None
 
@@ -293,11 +358,15 @@ def test_prior_year_by_ticker_none_for_missing_ticker(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """prior_year_by_ticker is None for a catalog ticker that has no fundamentals records."""
     result = processor.process(
         records=[record_fmty14_1t2026],
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     assert result.prior_year_by_ticker["FIBRAPL14"] is None
 
@@ -307,6 +376,8 @@ def test_fibra_metrics_cagr_computed_for_sufficient_history(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """fibra_metrics computes CAGR correctly for a ticker with 4 records.
 
@@ -325,6 +396,8 @@ def test_fibra_metrics_cagr_computed_for_sufficient_history(
     result = processor.process(
         records=records,
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     metrics = result.fibra_metrics["FMTY14"]
     assert metrics.ticker == "FMTY14"
@@ -343,6 +416,8 @@ def test_fibra_metrics_optional_fields_none_for_3_records(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """All Optional fields are None when a ticker has exactly 3 records.
 
@@ -357,6 +432,8 @@ def test_fibra_metrics_optional_fields_none_for_3_records(
     result = processor.process(
         records=records,
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     metrics = result.fibra_metrics["FMTY14"]
     assert metrics.periods_count == 3
@@ -375,11 +452,15 @@ def test_fibra_metrics_optional_fields_none_for_no_records(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """All Optional fields are None, periods_count=0, years_of_history=0.0 for a ticker with no records."""
     result = processor.process(
         records=[record_fmty14_1t2026],
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     metrics = result.fibra_metrics["FIBRAPL14"]
     assert metrics.ticker == "FIBRAPL14"
@@ -398,6 +479,8 @@ def test_fibra_metrics_cagr_affo_total_none_when_affo_is_none_in_first_record(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """cagr_affo_total is None when affo is None in the first record."""
     records = [
@@ -409,6 +492,8 @@ def test_fibra_metrics_cagr_affo_total_none_when_affo_is_none_in_first_record(
     result = processor.process(
         records=records,
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     assert result.fibra_metrics["FMTY14"].cagr_affo_total is None
 
@@ -418,6 +503,8 @@ def test_fibra_metrics_cagr_affo_per_cbfi_none_when_affo_per_cbfi_is_none_in_las
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """cagr_affo_per_cbfi is None when affo_per_cbfi is None in the last record."""
     records = [
@@ -429,6 +516,8 @@ def test_fibra_metrics_cagr_affo_per_cbfi_none_when_affo_per_cbfi_is_none_in_las
     result = processor.process(
         records=records,
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     assert result.fibra_metrics["FMTY14"].cagr_affo_per_cbfi is None
 
@@ -439,12 +528,239 @@ def test_fibra_metrics_contains_entry_for_every_ticker_in_fibras(
     fibra_fmty14,
     fibra_danhos13,
     fibra_fibrapl14,
+    minimal_annual_records,
+    minimal_inflation_records,
 ):
     """fibra_metrics contains an entry for every ticker in fibras, including those with no records."""
     result = processor.process(
         records=[record_fmty14_1t2026],
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=minimal_inflation_records,
     )
     assert "FMTY14" in result.fibra_metrics
     assert "DANHOS13" in result.fibra_metrics
     assert "FIBRAPL14" in result.fibra_metrics
+
+
+# ── Annual count fields ────────────────────────────────────────────────────────
+
+def test_years_with_distribution_counted_correctly(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+    minimal_inflation_records,
+):
+    """years_with_distribution counts years where distribution_per_cbfi_annual is not None and > 0."""
+    annual = [
+        _make_annual(ticker="FMTY14", year=2022, distribution_per_cbfi_annual=1.20),
+        _make_annual(ticker="FMTY14", year=2023, distribution_per_cbfi_annual=None),
+        _make_annual(ticker="FMTY14", year=2024, distribution_per_cbfi_annual=1.40),
+    ]
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=annual,
+        inflation_records=minimal_inflation_records,
+    )
+    assert result.fibra_metrics["FMTY14"].years_with_distribution == 2
+
+
+def test_years_distribution_grew_counted_correctly(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+    minimal_inflation_records,
+):
+    """years_distribution_grew counts pairs where later > earlier; year3 decrease is not counted."""
+    annual = [
+        _make_annual(ticker="FMTY14", year=2021, distribution_per_cbfi_annual=1.00),
+        _make_annual(ticker="FMTY14", year=2022, distribution_per_cbfi_annual=1.10),
+        _make_annual(ticker="FMTY14", year=2023, distribution_per_cbfi_annual=1.05),
+        _make_annual(ticker="FMTY14", year=2024, distribution_per_cbfi_annual=1.20),
+    ]
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=annual,
+        inflation_records=minimal_inflation_records,
+    )
+    assert result.fibra_metrics["FMTY14"].years_distribution_grew == 2
+
+
+def test_years_with_distribution_zero_when_all_none(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+    minimal_inflation_records,
+):
+    """years_with_distribution is 0 when all distribution_per_cbfi_annual values are None."""
+    annual = [
+        _make_annual(ticker="FMTY14", year=2022, distribution_per_cbfi_annual=None),
+        _make_annual(ticker="FMTY14", year=2023, distribution_per_cbfi_annual=None),
+    ]
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=annual,
+        inflation_records=minimal_inflation_records,
+    )
+    assert result.fibra_metrics["FMTY14"].years_with_distribution == 0
+
+
+# ── Annual CAGR fields ─────────────────────────────────────────────────────────
+
+def test_cagr_distribution_per_cbfi_computed_correctly(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+    minimal_inflation_records,
+):
+    """cagr_distribution_per_cbfi: (1.4641 / 1.0)^(1/4) - 1 ≈ 0.10."""
+    annual = [
+        _make_annual(ticker="FMTY14", year=2020, distribution_per_cbfi_annual=1.0),
+        _make_annual(ticker="FMTY14", year=2021, distribution_per_cbfi_annual=1.1),
+        _make_annual(ticker="FMTY14", year=2022, distribution_per_cbfi_annual=1.21),
+        _make_annual(ticker="FMTY14", year=2023, distribution_per_cbfi_annual=1.331),
+        _make_annual(ticker="FMTY14", year=2024, distribution_per_cbfi_annual=1.4641),
+    ]
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=annual,
+        inflation_records=minimal_inflation_records,
+    )
+    assert result.fibra_metrics["FMTY14"].cagr_distribution_per_cbfi == pytest.approx(0.10, rel=1e-4)
+
+
+def test_cagr_inflation_computed_correctly(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+):
+    """cagr_inflation: (1.04 * 1.05)^(1/2) - 1 ≈ 0.04499."""
+    annual = [
+        _make_annual(ticker="FMTY14", year=2020),
+        _make_annual(ticker="FMTY14", year=2022),
+    ]
+    inflation = [
+        InflationRecord(year=2020, annual_inflation=0.04),
+        InflationRecord(year=2021, annual_inflation=0.05),
+    ]
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=annual,
+        inflation_records=inflation,
+    )
+    expected = (1.04 * 1.05) ** 0.5 - 1
+    assert result.fibra_metrics["FMTY14"].cagr_inflation == pytest.approx(expected, rel=1e-6)
+
+
+def test_distribution_vs_inflation_is_difference(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+):
+    """distribution_vs_inflation equals cagr_distribution_per_cbfi minus cagr_inflation."""
+    annual = [
+        _make_annual(ticker="FMTY14", year=2020, distribution_per_cbfi_annual=1.0),
+        _make_annual(ticker="FMTY14", year=2022, distribution_per_cbfi_annual=1.21),
+    ]
+    inflation = [
+        InflationRecord(year=2020, annual_inflation=0.04),
+        InflationRecord(year=2021, annual_inflation=0.05),
+    ]
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=annual,
+        inflation_records=inflation,
+    )
+    metrics = result.fibra_metrics["FMTY14"]
+    assert metrics.distribution_vs_inflation == pytest.approx(
+        metrics.cagr_distribution_per_cbfi - metrics.cagr_inflation,
+        rel=1e-6,
+    )
+
+
+def test_all_cagr_fields_none_when_fewer_than_2_annual_records(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+):
+    """CAGR fields are None when only 1 annual record is provided; count fields are still set."""
+    annual = [
+        _make_annual(ticker="FMTY14", year=2024, distribution_per_cbfi_annual=1.5),
+    ]
+    inflation = [InflationRecord(year=2024, annual_inflation=0.04)]
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=annual,
+        inflation_records=inflation,
+    )
+    metrics = result.fibra_metrics["FMTY14"]
+    assert metrics.total_annual_years == 1
+    assert metrics.years_with_distribution == 1
+    assert metrics.cagr_distribution_per_cbfi is None
+    assert metrics.cagr_revenue_per_cbfi is None
+    assert metrics.cagr_inflation is None
+    assert metrics.distribution_vs_inflation is None
+
+
+# ── Pass-through fields ────────────────────────────────────────────────────────
+
+def test_annual_records_passed_through_to_history(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+    minimal_inflation_records,
+):
+    """result.annual_records equals the list passed to process()."""
+    annual = [_make_annual(ticker="FMTY14", year=2024)]
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=annual,
+        inflation_records=minimal_inflation_records,
+    )
+    assert result.annual_records == annual
+
+
+def test_inflation_records_passed_through_to_history(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+    minimal_annual_records,
+):
+    """result.inflation_records equals the list passed to process()."""
+    inflation = [
+        InflationRecord(year=2023, annual_inflation=0.055),
+        InflationRecord(year=2024, annual_inflation=0.048),
+    ]
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=minimal_annual_records,
+        inflation_records=inflation,
+    )
+    assert result.inflation_records == inflation
