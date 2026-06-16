@@ -197,6 +197,65 @@ _YAXIS_FORMAT: dict[str, dict[str, str]] = {
 }
 
 
+def _get_annual_values(
+    sorted_annual: list[AnnualFundamentalsRecord],
+    field: str,
+) -> list[Optional[float]]:
+    """Extract field values from annual records; None preserved as None.
+
+    Args:
+        sorted_annual: Annual records sorted ascending by year.
+        field: Attribute name on AnnualFundamentalsRecord to extract.
+
+    Returns:
+        List of float values, with None where the source field is None.
+    """
+    result = []
+    for r in sorted_annual:
+        v = getattr(r, field, None)
+        result.append(float(v) if v is not None else None)
+    return result
+
+
+def _compute_inflation_reference(
+    sorted_annual: list[AnnualFundamentalsRecord],
+    inflation_records: list[InflationRecord],
+) -> tuple[list[int], list[float]]:
+    """Compute the inflation-adjusted reference series for distribution_per_cbfi_annual.
+
+    Starts at the first year's distribution value and compounds it forward using the
+    annual Mexican inflation rate for each subsequent year. Stops at the last year
+    for which inflation data is available; missing years truncate the series rather
+    than raising an error.
+
+    Args:
+        sorted_annual: Annual records sorted ascending by year; must be non-empty.
+        inflation_records: Full inflation history; lookup is by year.
+
+    Returns:
+        Tuple of (years, values) lists for the reference line. Both lists are empty
+        when the first record's distribution_per_cbfi_annual is None.
+    """
+    if not sorted_annual or sorted_annual[0].distribution_per_cbfi_annual is None:
+        return [], []
+
+    inflation_by_year: dict[int, float] = {
+        r.year: r.annual_inflation for r in inflation_records
+    }
+
+    ref_years: list[int] = [sorted_annual[0].year]
+    ref_values: list[float] = [sorted_annual[0].distribution_per_cbfi_annual]
+
+    for record in sorted_annual[1:]:
+        year = record.year
+        if year not in inflation_by_year:
+            break
+        ref_values.append(ref_values[-1] * (1.0 + inflation_by_year[year]))
+        ref_years.append(year)
+
+    return ref_years, ref_values
+
+
 def _period_sort_key(record: EnrichedFundamentalsRecord) -> tuple[int, int]:
     """Return (year, quarter) for chronological sorting from a period string like '1T2026'."""
     quarter, year = record.period.split("T")
