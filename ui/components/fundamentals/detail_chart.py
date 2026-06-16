@@ -566,7 +566,7 @@ def _render_annual(
     _apply_yaxis_format(fig=fig, fmt=config["format"])
     layout = _base_layout(title=config["label"], show_legend=show_legend)
     layout["xaxis_title"] = "Año"
-    layout["xaxis"] = {"tickformat": "d"}
+    layout["xaxis"] = {"type": "category"}
     fig.update_layout(**layout)
     return fig
 
