@@ -202,3 +202,133 @@ def test_empty_records_raises(processor):
     """process() raises ValueError when the records list is empty."""
     with pytest.raises(ValueError):
         processor.process(records=[])
+
+
+# ── New sum fields ────────────────────────────────────────────────────────────
+
+def test_new_sum_fields_computed_correctly(processor):
+    """noi_annual, ebitda_annual, ffo_annual, affo_annual, total_distribution_annual,
+    noi_per_cbfi_annual, and ebitda_per_cbfi_annual are sums of four quarterly values."""
+    records = _four_quarters(
+        ticker="FMTY14",
+        year=2025,
+        noi=800_000_000,
+        ebitda=700_000_000,
+        ffo=600_000_000,
+        affo=550_000_000,
+        total_distribution=600_000_000.0,
+        noi_per_cbfi=0.40,
+        ebitda_per_cbfi=0.35,
+    )
+    result = processor.process(records=records)
+    annual = result[0]
+    assert annual.noi_annual == 3_200_000_000
+    assert annual.ebitda_annual == 2_800_000_000
+    assert annual.ffo_annual == 2_400_000_000
+    assert annual.affo_annual == 2_200_000_000
+    assert annual.total_distribution_annual == pytest.approx(2_400_000_000.0, rel=1e-6)
+    assert annual.noi_per_cbfi_annual == pytest.approx(1.60, rel=1e-6)
+    assert annual.ebitda_per_cbfi_annual == pytest.approx(1.40, rel=1e-6)
+
+
+def test_annual_margins_computed_from_annual_sums_not_quarterly_averages(processor):
+    """noi_margin_annual and ebitda_margin_annual use sum(noi)/sum(revenues),
+    not mean(quarterly margins) — verified with unequal revenue quarters."""
+    records = [
+        _make_record(ticker="FMTY14", period="1T2025",
+                     noi=600_000_000, ebitda=400_000_000, total_revenues=1_000_000_000),
+        _make_record(ticker="FMTY14", period="2T2025",
+                     noi=600_000_000, ebitda=400_000_000, total_revenues=1_000_000_000),
+        _make_record(ticker="FMTY14", period="3T2025",
+                     noi=600_000_000, ebitda=400_000_000, total_revenues=1_000_000_000),
+        _make_record(ticker="FMTY14", period="4T2025",
+                     noi=200_000_000, ebitda=100_000_000, total_revenues=200_000_000),
+    ]
+    # Annual sums: noi=2_000_000_000, ebitda=1_300_000_000, revenues=3_200_000_000
+    # Correct annual margins:  2_000/3_200 = 0.625,  1_300/3_200 = 0.40625
+    # Wrong (avg of quarterly): (0.60+0.60+0.60+1.00)/4 = 0.70 != 0.625
+    result = processor.process(records=records)
+    annual = result[0]
+    assert annual.noi_margin_annual == pytest.approx(2_000_000_000 / 3_200_000_000, rel=1e-6)
+    assert annual.ebitda_margin_annual == pytest.approx(1_300_000_000 / 3_200_000_000, rel=1e-6)
+
+
+def test_new_sum_fields_none_when_any_quarter_none(processor):
+    """noi_annual and total_distribution_annual are None when one quarter has None."""
+    records = [
+        _make_record(ticker="FMTY14", period="1T2025", noi=800_000_000, total_distribution=600_000_000.0),
+        _make_record(ticker="FMTY14", period="2T2025", noi=None, total_distribution=None),
+        _make_record(ticker="FMTY14", period="3T2025", noi=800_000_000, total_distribution=600_000_000.0),
+        _make_record(ticker="FMTY14", period="4T2025", noi=800_000_000, total_distribution=600_000_000.0),
+    ]
+    result = processor.process(records=records)
+    annual = result[0]
+    assert annual.noi_annual is None
+    assert annual.total_distribution_annual is None
+
+
+def test_annual_margins_none_when_total_revenues_annual_none(processor):
+    """noi_margin_annual and ebitda_margin_annual are None when total_revenues is None in any quarter."""
+    records = [
+        _make_record(ticker="FMTY14", period="1T2025", noi=800_000_000, ebitda=700_000_000, total_revenues=None),
+        _make_record(ticker="FMTY14", period="2T2025", noi=800_000_000, ebitda=700_000_000, total_revenues=None),
+        _make_record(ticker="FMTY14", period="3T2025", noi=800_000_000, ebitda=700_000_000, total_revenues=None),
+        _make_record(ticker="FMTY14", period="4T2025", noi=800_000_000, ebitda=700_000_000, total_revenues=None),
+    ]
+    result = processor.process(records=records)
+    annual = result[0]
+    assert annual.noi_margin_annual is None
+    assert annual.ebitda_margin_annual is None
+
+
+def test_annual_margins_none_when_total_revenues_annual_zero(processor):
+    """noi_margin_annual and ebitda_margin_annual are None when total_revenues_annual is zero."""
+    records = _four_quarters(
+        ticker="FMTY14",
+        year=2025,
+        noi=800_000_000,
+        ebitda=700_000_000,
+        total_revenues=0,
+    )
+    result = processor.process(records=records)
+    annual = result[0]
+    assert annual.noi_margin_annual is None
+    assert annual.ebitda_margin_annual is None
+
+
+def test_q4_new_snapshot_fields_pass_through(processor):
+    """gross_leasable_area_m2, cbfis_outstanding, cbfis_per_m2 are taken from the Q4 record."""
+    records = [
+        _make_record(ticker="FMTY14", period="1T2025",
+                     gross_leasable_area_m2=500_000, cbfis_outstanding=1_000_000_000, cbfis_per_m2=2_000.0),
+        _make_record(ticker="FMTY14", period="2T2025",
+                     gross_leasable_area_m2=500_000, cbfis_outstanding=1_000_000_000, cbfis_per_m2=2_000.0),
+        _make_record(ticker="FMTY14", period="3T2025",
+                     gross_leasable_area_m2=500_000, cbfis_outstanding=1_000_000_000, cbfis_per_m2=2_000.0),
+        _make_record(ticker="FMTY14", period="4T2025",
+                     gross_leasable_area_m2=600_000, cbfis_outstanding=1_500_000_000, cbfis_per_m2=2_500.0),
+    ]
+    result = processor.process(records=records)
+    annual = result[0]
+    assert annual.gross_leasable_area_m2 == 600_000
+    assert annual.cbfis_outstanding == 1_500_000_000
+    assert annual.cbfis_per_m2 == pytest.approx(2_500.0, rel=1e-6)
+
+
+def test_q4_new_snapshot_fields_pass_through_none(processor):
+    """gross_leasable_area_m2, cbfis_outstanding, cbfis_per_m2 are None when Q4 has None."""
+    records = [
+        _make_record(ticker="FMTY14", period="1T2025",
+                     gross_leasable_area_m2=600_000, cbfis_outstanding=1_500_000_000, cbfis_per_m2=2_500.0),
+        _make_record(ticker="FMTY14", period="2T2025",
+                     gross_leasable_area_m2=600_000, cbfis_outstanding=1_500_000_000, cbfis_per_m2=2_500.0),
+        _make_record(ticker="FMTY14", period="3T2025",
+                     gross_leasable_area_m2=600_000, cbfis_outstanding=1_500_000_000, cbfis_per_m2=2_500.0),
+        _make_record(ticker="FMTY14", period="4T2025",
+                     gross_leasable_area_m2=None, cbfis_outstanding=None, cbfis_per_m2=None),
+    ]
+    result = processor.process(records=records)
+    annual = result[0]
+    assert annual.gross_leasable_area_m2 is None
+    assert annual.cbfis_outstanding is None
+    assert annual.cbfis_per_m2 is None

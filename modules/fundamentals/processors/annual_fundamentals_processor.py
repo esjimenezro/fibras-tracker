@@ -16,11 +16,22 @@ class AnnualFundamentalsProcessor:
     Aggregation rules:
         Sum fields (distribution_per_cbfi_annual, ffo_per_cbfi_annual,
                     affo_per_cbfi_annual, revenue_per_cbfi_annual,
-                    total_revenues_annual):
+                    total_revenues_annual, noi_annual, noi_per_cbfi_annual,
+                    ebitda_annual, ebitda_per_cbfi_annual, ffo_annual,
+                    affo_annual, total_distribution_annual):
             Sum of the four quarterly values. Null if any quarter value is None.
+            Integer-sourced sums (noi_annual, ebitda_annual, ffo_annual,
+            affo_annual, total_revenues_annual) are cast to int.
+
+        Recomputed margin fields (noi_margin_annual, ebitda_margin_annual):
+            Computed from the annual sums, not averaged from quarterly margins.
+            noi_margin_annual    = noi_annual / total_revenues_annual
+            ebitda_margin_annual = ebitda_annual / total_revenues_annual
+            Null if either operand is None or total_revenues_annual is zero.
 
         Q4 snapshot fields (nav_per_cbfi, ltv, occupancy_rate, wale,
-                            top_tenant_pct, top10_tenants_pct):
+                            top_tenant_pct, top10_tenants_pct,
+                            gross_leasable_area_m2, cbfis_outstanding, cbfis_per_m2):
             Value taken directly from the Q4 record. Passed through as-is (already Optional).
 
         Average fields (affo_payout_ratio_avg):
@@ -45,18 +56,32 @@ class AnnualFundamentalsProcessor:
                     ffo_per_cbfi_annual          = sum of quarterly ffo_per_cbfi
                     affo_per_cbfi_annual         = sum of quarterly affo_per_cbfi
                     revenue_per_cbfi_annual      = sum of quarterly revenue_per_cbfi
-                    total_revenues_annual        = sum of quarterly total_revenues
+                    total_revenues_annual        = sum of quarterly total_revenues (cast to int)
+                    noi_annual                   = sum of quarterly noi (cast to int)
+                    noi_per_cbfi_annual          = sum of quarterly noi_per_cbfi
+                    ebitda_annual                = sum of quarterly ebitda (cast to int)
+                    ebitda_per_cbfi_annual       = sum of quarterly ebitda_per_cbfi
+                    ffo_annual                   = sum of quarterly ffo (cast to int)
+                    affo_annual                  = sum of quarterly affo (cast to int)
+                    total_distribution_annual    = sum of quarterly total_distribution
 
-                    nav_per_cbfi      = Q4 snapshot
-                    ltv               = Q4 snapshot
-                    occupancy_rate    = Q4 snapshot
-                    wale              = Q4 snapshot
-                    top_tenant_pct    = Q4 snapshot
-                    top10_tenants_pct = Q4 snapshot
+                    noi_margin_annual    = noi_annual / total_revenues_annual
+                    ebitda_margin_annual = ebitda_annual / total_revenues_annual
+
+                    nav_per_cbfi           = Q4 snapshot
+                    ltv                    = Q4 snapshot
+                    occupancy_rate         = Q4 snapshot
+                    wale                   = Q4 snapshot
+                    top_tenant_pct         = Q4 snapshot
+                    top10_tenants_pct      = Q4 snapshot
+                    gross_leasable_area_m2 = Q4 snapshot
+                    cbfis_outstanding      = Q4 snapshot
+                    cbfis_per_m2           = Q4 snapshot
 
                     affo_payout_ratio_avg = mean of quarterly affo_payout_ratio
 
                 Sum and average fields are None when any quarterly value is None.
+                Margin fields are None when total_revenues_annual is None or zero.
                 Q4 snapshot fields are passed through as-is from the Q4 record.
 
         Raises:
@@ -103,7 +128,18 @@ class AnnualFundamentalsProcessor:
             aggregation rule (sum, Q4 snapshot, or average).
         """
         q4 = next(r for r in q_records if r.period.startswith("4T"))
+
         total_revenues_sum = self._safe_sum(values=[r.total_revenues for r in q_records])
+        noi_sum = self._safe_sum(values=[r.noi for r in q_records])
+        ebitda_sum = self._safe_sum(values=[r.ebitda for r in q_records])
+        ffo_sum = self._safe_sum(values=[r.ffo for r in q_records])
+        affo_sum = self._safe_sum(values=[r.affo for r in q_records])
+
+        total_revenues_annual = int(total_revenues_sum) if total_revenues_sum is not None else None
+        noi_annual = int(noi_sum) if noi_sum is not None else None
+        ebitda_annual = int(ebitda_sum) if ebitda_sum is not None else None
+        ffo_annual = int(ffo_sum) if ffo_sum is not None else None
+        affo_annual = int(affo_sum) if affo_sum is not None else None
 
         return AnnualFundamentalsRecord(
             ticker=ticker,
@@ -120,8 +156,27 @@ class AnnualFundamentalsProcessor:
             revenue_per_cbfi_annual=self._safe_sum(
                 values=[r.revenue_per_cbfi for r in q_records],
             ),
-            total_revenues_annual=(
-                int(total_revenues_sum) if total_revenues_sum is not None else None
+            total_revenues_annual=total_revenues_annual,
+            noi_annual=noi_annual,
+            noi_per_cbfi_annual=self._safe_sum(
+                values=[r.noi_per_cbfi for r in q_records],
+            ),
+            ebitda_annual=ebitda_annual,
+            ebitda_per_cbfi_annual=self._safe_sum(
+                values=[r.ebitda_per_cbfi for r in q_records],
+            ),
+            ffo_annual=ffo_annual,
+            affo_annual=affo_annual,
+            total_distribution_annual=self._safe_sum(
+                values=[r.total_distribution for r in q_records],
+            ),
+            noi_margin_annual=self._safe_div(
+                numerator=noi_annual,
+                denominator=total_revenues_annual,
+            ),
+            ebitda_margin_annual=self._safe_div(
+                numerator=ebitda_annual,
+                denominator=total_revenues_annual,
             ),
             nav_per_cbfi=q4.nav_per_cbfi,
             ltv=q4.ltv,
@@ -129,6 +184,9 @@ class AnnualFundamentalsProcessor:
             wale=q4.wale,
             top_tenant_pct=q4.top_tenant_pct,
             top10_tenants_pct=q4.top10_tenants_pct,
+            gross_leasable_area_m2=q4.gross_leasable_area_m2,
+            cbfis_outstanding=q4.cbfis_outstanding,
+            cbfis_per_m2=q4.cbfis_per_m2,
             affo_payout_ratio_avg=self._safe_avg(
                 values=[r.affo_payout_ratio for r in q_records],
             ),
@@ -174,3 +232,22 @@ class AnnualFundamentalsProcessor:
         if any(v is None for v in values):
             return None
         return sum(values) / len(values)
+
+    @staticmethod
+    def _safe_div(
+        numerator: Optional[float],
+        denominator: Optional[float],
+    ) -> Optional[float]:
+        """Divide numerator by denominator, returning None on missing data or zero denominator.
+
+        Args:
+            numerator: Dividend value, or None.
+            denominator: Divisor value, or None.
+
+        Returns:
+            float: numerator / denominator, or None if either argument is None or
+                denominator is zero.
+        """
+        if numerator is None or denominator is None or denominator == 0:
+            return None
+        return numerator / denominator
