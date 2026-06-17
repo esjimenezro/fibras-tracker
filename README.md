@@ -386,6 +386,8 @@ cbfis_per_m2            = cbfis_outstanding / gross_leasable_area_m2
 ffo_per_cbfi            = ffo / cbfis_with_rights
 affo_per_cbfi           = affo / cbfis_with_rights
 revenue_per_cbfi        = total_revenues / cbfis_with_rights
+noi_per_cbfi            = noi / cbfis_with_rights
+ebitda_per_cbfi         = ebitda / cbfis_with_rights
 nav_per_cbfi            = total_equity / cbfis_outstanding
 ```
 
