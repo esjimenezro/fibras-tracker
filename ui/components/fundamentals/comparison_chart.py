@@ -5,7 +5,6 @@ import streamlit as st
 
 from modules.common.models import Fibra
 from modules.fundamentals.models import EnrichedFundamentalsRecord
-from ui.components.fundamentals.detail_chart import _GROUP_ORDER
 from ui.components.fundamentals.detail_chart import _add_threshold_bands
 from ui.components.fundamentals.detail_chart import _apply_yaxis_format
 from ui.components.fundamentals.detail_chart import _FORMAT_SCALE
@@ -53,17 +52,13 @@ def render_comparison_chart(
         return
 
     single_keys = [k for k, v in KPI_CONFIG.items() if v["kind"] == "single"]
-    single_keys_sorted = sorted(
-        single_keys,
-        key=lambda k: (_GROUP_ORDER.index(KPI_CONFIG[k]["group"]), KPI_CONFIG[k]["label"]),
-    )
     selected_kpi: str = st.selectbox(
         label="Indicador",
-        options=single_keys_sorted,
+        options=single_keys,
         format_func=lambda k: KPI_CONFIG[k]["label"],
     )
     config = KPI_CONFIG[selected_kpi]
-    field: str = config["field"]
+    field: str = config["field_quarterly"]
     fmt: str = config["format"]
 
     selected_tickers = {f.ticker for f in selected_fibras}
