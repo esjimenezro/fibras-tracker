@@ -9,8 +9,6 @@ from modules.fundamentals.schemas import FundamentalsDataRetrieverServiceSchema
 from modules.fundamentals.services import FundamentalsDataRetrieverService
 from ui.components.common import render_error_banner
 from ui.components.common import render_page_header
-from ui.components.fundamentals import render_comparison_chart
-from ui.components.fundamentals import render_comparison_table
 from ui.components.fundamentals import render_detail_chart
 from ui.components.fundamentals import render_detail_header
 
@@ -68,15 +66,4 @@ with detalle_tab:
     )
 
 with comparativa_tab:
-    st.divider()
-    render_comparison_table(
-        latest_by_ticker=history.latest_by_ticker,
-        prior_year_by_ticker=history.prior_year_by_ticker,
-        fibras=history.fibras,
-        fibra_metrics=history.fibra_metrics,
-    )
-    st.divider()
-    render_comparison_chart(
-        records=history.records,
-        fibras=history.fibras,
-    )
+    st.info(body="Esta sección está en mantenimiento y será actualizada próximamente.")

@@ -16,12 +16,13 @@ _GREEN = "background-color: rgba(50,200,100,0.15)"
 _AFFO_POSITIVE_BG = "background-color: rgba(46,125,50,0.15)"
 _AFFO_NEGATIVE_BG = "background-color: rgba(198,40,40,0.15)"
 
-# Thresholds for columns that have a matching KPI_CONFIG entry — sourced directly
-# so that changes to KPI_CONFIG propagate here automatically.
-_NOI_MARGIN_LOWER: float = KPI_CONFIG["noi_margin"]["lower"]
-_NOI_MARGIN_UPPER: float = KPI_CONFIG["noi_margin"]["upper"]
-_EBITDA_MARGIN_LOWER: float = KPI_CONFIG["ebitda_margin"]["lower"]
-_EBITDA_MARGIN_UPPER: float = KPI_CONFIG["ebitda_margin"]["upper"]
+# Thresholds for LTV and ocupación — still present in KPI_CONFIG.
+# noi_margin and ebitda_margin were removed from KPI_CONFIG in the KPI unification;
+# their thresholds are hardcoded here temporarily until comparison_table is redesigned.
+_NOI_MARGIN_LOWER: float = 0.70
+_NOI_MARGIN_UPPER: float = 0.80
+_EBITDA_MARGIN_LOWER: float = 0.60
+_EBITDA_MARGIN_UPPER: float = 0.70
 _OCUPACION_LOWER: float = KPI_CONFIG["ocupacion"]["lower"]
 _OCUPACION_UPPER: float = KPI_CONFIG["ocupacion"]["upper"]
 _LTV_LOWER: float = KPI_CONFIG["ltv"]["lower"]
