@@ -488,7 +488,7 @@ def render_detail_chart(
 ) -> None:
     """Render an interactive historical KPI chart for a single FIBRA's fundamentals.
 
-    A toggle switches between quarterly and annual views. The KPI selectbox is
+    A radio button switches between quarterly and annual views. The KPI selectbox is
     identical in both views — only the underlying fields and x-axis change.
 
     For the 'distribucion_cbfi' KPI in annual mode, a second dashed line shows
@@ -504,10 +504,13 @@ def render_detail_chart(
         inflation_records: Full annual Mexican inflation history; used only for
             the 'distribucion_cbfi' KPI in annual mode.
     """
-    is_annual: bool = st.toggle(
-        label="Vista anual",
+    periodicity: str = st.radio(
+        label="Periodicidad",
+        options=["Trimestral", "Anual"],
+        horizontal=True,
         key="annual_view_toggle",
     )
+    is_annual: bool = periodicity == "Anual"
 
     if is_annual and not annual_records:
         st.info(body="No hay datos anuales disponibles.")
