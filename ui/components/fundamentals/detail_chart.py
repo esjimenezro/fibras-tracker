@@ -15,173 +15,131 @@ _OCC_LOWER: float = 0.80
 _OCC_UPPER: float = 0.85
 
 KPI_CONFIG: dict[str, dict[str, Any]] = {
-    "flujo_operativo": {
-        "label": "Flujo Operativo (FFO / AFFO / Distribución)",
-        "group": "Operación",
+    "distribucion_cbfi": {
+        "label": "Distribución por CBFI",
+        "kind": "single",
+        "format": "mxn",
+        "field_quarterly": "distribution_per_cbfi",
+        "field_annual": "distribution_per_cbfi_annual",
+    },
+    "progresion_ingresos": {
+        "label": "Ingresos, NOI y EBITDA",
         "kind": "combined",
-        "toggle": ["Por CBFI", "Miles MXN"],
-        "lines_per_cbfi": [
-            {"field": "ffo_per_cbfi",          "label": "FFO por CBFI"},
-            {"field": "affo_per_cbfi",         "label": "AFFO por CBFI"},
-            {"field": "distribution_per_cbfi", "label": "Distribución por CBFI"},
-        ],
-        "lines_absolute": [
-            {"field": "ffo",                "label": "FFO"},
-            {"field": "affo",               "label": "AFFO"},
-            {"field": "total_distribution", "label": "Distribución Total"},
-        ],
+        "toggle": ["Total", "Margen", "Por CBFI"],
+        "format_total": "mxn_thousands",
+        "format_margin": "pct",
         "format_per_cbfi": "mxn",
-        "format_absolute": "mxn_thousands",
-    },
-    "noi_margin": {
-        "label": "Margen NOI",
-        "group": "Operación",
-        "kind": "single",
-        "field": "noi_margin",
-        "format": "pct",
-        "lower": 0.70,
-        "upper": 0.80,
-        "inverse": False,
-    },
-    "ebitda_margin": {
-        "label": "Margen EBITDA",
-        "group": "Operación",
-        "kind": "single",
-        "field": "ebitda_margin",
-        "format": "pct",
-        "lower": 0.60,
-        "upper": 0.70,
-        "inverse": False,
-    },
-    "margenes": {
-        "label": "Márgenes (NOI / EBITDA / Ingresos)",
-        "group": "Operación",
-        "kind": "combined",
-        "toggle": ["Margen %", "Miles MXN"],
-        "lines_pct": [
+        "lines_total_quarterly": [
+            {"field": "total_revenues", "label": "Ingresos"},
+            {"field": "noi",            "label": "NOI"},
+            {"field": "ebitda",         "label": "EBITDA"},
+        ],
+        "lines_total_annual": [
+            {"field": "total_revenues_annual", "label": "Ingresos"},
+            {"field": "noi_annual",            "label": "NOI"},
+            {"field": "ebitda_annual",         "label": "EBITDA"},
+        ],
+        "lines_margin_quarterly": [
             {"field": "noi_margin",    "label": "Margen NOI"},
             {"field": "ebitda_margin", "label": "Margen EBITDA"},
         ],
-        "lines_absolute": [
-            {"field": "noi",            "label": "NOI"},
-            {"field": "ebitda",         "label": "EBITDA"},
-            {"field": "total_revenues", "label": "Ingresos Totales"},
+        "lines_margin_annual": [
+            {"field": "noi_margin_annual",    "label": "Margen NOI"},
+            {"field": "ebitda_margin_annual", "label": "Margen EBITDA"},
         ],
-        "format_pct": "pct",
-        "format_absolute": "mxn_thousands",
+        "lines_per_cbfi_quarterly": [
+            {"field": "revenue_per_cbfi", "label": "Ingresos/CBFI"},
+            {"field": "noi_per_cbfi",     "label": "NOI/CBFI"},
+            {"field": "ebitda_per_cbfi",  "label": "EBITDA/CBFI"},
+        ],
+        "lines_per_cbfi_annual": [
+            {"field": "revenue_per_cbfi_annual", "label": "Ingresos/CBFI"},
+            {"field": "noi_per_cbfi_annual",     "label": "NOI/CBFI"},
+            {"field": "ebitda_per_cbfi_annual",  "label": "EBITDA/CBFI"},
+        ],
     },
-    "ocupacion": {
-        "label": "Tasa de Ocupación",
-        "group": "Operación",
+    "progresion_ffo_affo": {
+        "label": "FFO, AFFO y Distribución",
+        "kind": "combined",
+        "toggle": ["Total", "Por CBFI"],
+        "format_total": "mxn_thousands",
+        "format_per_cbfi": "mxn",
+        "lines_total_quarterly": [
+            {"field": "ffo",                "label": "FFO"},
+            {"field": "affo",               "label": "AFFO"},
+            {"field": "total_distribution", "label": "Distribución"},
+        ],
+        "lines_total_annual": [
+            {"field": "ffo_annual",                "label": "FFO"},
+            {"field": "affo_annual",               "label": "AFFO"},
+            {"field": "total_distribution_annual", "label": "Distribución"},
+        ],
+        "lines_per_cbfi_quarterly": [
+            {"field": "ffo_per_cbfi",          "label": "FFO/CBFI"},
+            {"field": "affo_per_cbfi",         "label": "AFFO/CBFI"},
+            {"field": "distribution_per_cbfi", "label": "Distribución/CBFI"},
+        ],
+        "lines_per_cbfi_annual": [
+            {"field": "ffo_per_cbfi_annual",          "label": "FFO/CBFI"},
+            {"field": "affo_per_cbfi_annual",         "label": "AFFO/CBFI"},
+            {"field": "distribution_per_cbfi_annual", "label": "Distribución/CBFI"},
+        ],
+    },
+    "payout_ratio": {
+        "label": "Payout Ratio (AFFO)",
         "kind": "single",
-        "field": "occupancy_rate",
         "format": "pct",
-        "lower": _OCC_LOWER,
-        "upper": _OCC_UPPER,
-        "inverse": False,
-    },
-    "nav_per_cbfi": {
-        "label": "NAV por CBFI",
-        "group": "Por CBFI",
-        "kind": "single",
-        "field": "nav_per_cbfi",
-        "format": "mxn",
-    },
-    "affo_per_m2": {
-        "label": "AFFO por m²",
-        "group": "Por m²",
-        "kind": "single",
-        "field": "affo_per_m2",
-        "format": "float",
-    },
-    "revenue_per_m2": {
-        "label": "Ingresos por m²",
-        "group": "Por m²",
-        "kind": "single",
-        "field": "revenue_per_m2",
-        "format": "float",
+        "field_quarterly": "affo_payout_ratio",
+        "field_annual": "affo_payout_ratio_avg",
     },
     "ltv": {
         "label": "LTV",
-        "group": "Estructura de capital",
         "kind": "single",
-        "field": "ltv",
         "format": "pct",
+        "field_quarterly": "ltv",
+        "field_annual": "ltv",
         "lower": _LTV_LOWER,
         "upper": _LTV_UPPER,
         "inverse": True,
     },
-    "affo_payout_ratio": {
-        "label": "Payout Ratio (AFFO)",
-        "group": "Estructura de capital",
-        "kind": "single",
-        "field": "affo_payout_ratio",
-        "format": "pct",
-    },
-    "abr_cbfis": {
-        "label": "ABR y CBFIs en Circulación",
-        "group": "Escala del portafolio",
-        "kind": "dual_axis",
-        "left_axis":  [{"field": "gross_leasable_area_m2", "label": "ABR (m²)"}],
-        "right_axis": [{"field": "cbfis_outstanding",      "label": "CBFIs en Circulación"}],
-        "format_left": "float",
-        "format_right": "float",
-    },
-    "cbfis_per_m2": {
-        "label": "CBFIs por m²",
-        "group": "Escala del portafolio",
-        "kind": "single",
-        "field": "cbfis_per_m2",
-        "format": "float",
-    },
-}
-
-ANNUAL_KPI_CONFIG: dict[str, dict[str, Any]] = {
-    "distribucion_cbfi_anual": {
-        "label": "Distribución por CBFI",
-        "field": "distribution_per_cbfi_annual",
-        "format": "mxn",
-    },
-    "nav_cbfi_anual": {
+    "nav_per_cbfi": {
         "label": "NAV por CBFI",
-        "field": "nav_per_cbfi",
+        "kind": "single",
         "format": "mxn",
+        "field_quarterly": "nav_per_cbfi",
+        "field_annual": "nav_per_cbfi",
     },
-    "ingresos_cbfi_anual": {
-        "label": "Ingresos por CBFI",
-        "field": "revenue_per_cbfi_annual",
-        "format": "mxn",
-    },
-    "affo_cbfi_anual": {
-        "label": "AFFO por CBFI",
-        "field": "affo_per_cbfi_annual",
-        "format": "mxn",
-    },
-    "ltv_anual": {
-        "label": "LTV",
-        "field": "ltv",
-        "format": "pct",
-        "lower": _LTV_LOWER,
-        "upper": _LTV_UPPER,
-        "inverse": True,
-    },
-    "ocupacion_anual": {
+    "ocupacion": {
         "label": "Tasa de Ocupación",
-        "field": "occupancy_rate",
+        "kind": "single",
         "format": "pct",
+        "field_quarterly": "occupancy_rate",
+        "field_annual": "occupancy_rate",
         "lower": _OCC_LOWER,
         "upper": _OCC_UPPER,
         "inverse": False,
     },
+    "abr_cbfis": {
+        "label": "ABR y CBFIs en Circulación",
+        "kind": "dual_axis",
+        "left_axis_quarterly": "gross_leasable_area_m2",
+        "left_axis_annual": "gross_leasable_area_m2",
+        "right_axis_quarterly": "cbfis_outstanding",
+        "right_axis_annual": "cbfis_outstanding",
+        "format_left": "float",
+        "format_right": "float",
+        "annotation_field_quarterly": "cbfis_per_m2",
+        "annotation_field_annual": "cbfis_per_m2",
+        "left_label": "ABR (m²)",
+        "right_label": "CBFIs en Circulación",
+    },
 }
 
-_GROUP_ORDER: list[str] = [
-    "Operación",
-    "Por CBFI",
-    "Por m²",
-    "Estructura de capital",
-    "Escala del portafolio",
-]
+_MODE_KEY_MAP: dict[str, str] = {
+    "Total": "total",
+    "Margen": "margin",
+    "Por CBFI": "per_cbfi",
+}
 
 _FORMAT_SCALE: dict[str, float] = {
     "mxn_thousands": 1 / 1_000,
@@ -197,23 +155,29 @@ _YAXIS_FORMAT: dict[str, dict[str, str]] = {
 }
 
 
-def _get_annual_values(
-    sorted_annual: list[AnnualFundamentalsRecord],
+def _extract_values(
+    records: list,
     field: str,
+    fmt: str,
 ) -> list[Optional[float]]:
-    """Extract field values from annual records; None preserved as None.
+    """Extract field values from any record list with format-specific scaling.
+
+    Works with both EnrichedFundamentalsRecord and AnnualFundamentalsRecord
+    since both expose fields via attribute access.
 
     Args:
-        sorted_annual: Annual records sorted ascending by year.
-        field: Attribute name on AnnualFundamentalsRecord to extract.
+        records: Sorted list of records (quarterly or annual).
+        field: Attribute name to extract via getattr.
+        fmt: Format key; values in _FORMAT_SCALE are multiplied before return.
 
     Returns:
-        List of float values, with None where the source field is None.
+        List of scaled float values, with None where the source field is None.
     """
+    scale = _FORMAT_SCALE.get(fmt, 1.0)
     result = []
-    for r in sorted_annual:
+    for r in records:
         v = getattr(r, field, None)
-        result.append(float(v) if v is not None else None)
+        result.append(v * scale if v is not None else None)
     return result
 
 
@@ -262,29 +226,6 @@ def _period_sort_key(record: EnrichedFundamentalsRecord) -> tuple[int, int]:
     return (int(year), int(quarter))
 
 
-def _get_values(
-    records: list[EnrichedFundamentalsRecord],
-    field: str,
-    fmt: str,
-) -> list[Optional[float]]:
-    """Extract field values from records applying format-specific scaling; None preserved as None.
-
-    Args:
-        records: Sorted enriched fundamentals records to read from.
-        field: Attribute name on EnrichedFundamentalsRecord to extract.
-        fmt: Format key from _FORMAT_SCALE; determines scaling factor (default 1.0).
-
-    Returns:
-        List of scaled float values, with None where the source field is None.
-    """
-    scale = _FORMAT_SCALE.get(fmt, 1.0)
-    result = []
-    for r in records:
-        v = getattr(r, field, None)
-        result.append(v * scale if v is not None else None)
-    return result
-
-
 def _add_threshold_bands(
     fig: go.Figure,
     lower: float,
@@ -330,219 +271,73 @@ def _apply_yaxis_format(fig: go.Figure, fmt: str, axis: str = "yaxis") -> None:
     fig.update_layout({axis: _YAXIS_FORMAT.get(fmt, {})})
 
 
-def _base_layout(title: str, show_legend: bool) -> dict[str, Any]:
+def _base_layout(
+    title: str,
+    show_legend: bool,
+    x_title: str = "Trimestre",
+    x_type: Optional[str] = None,
+) -> dict[str, Any]:
     """Return common Plotly layout kwargs for title, axis grid style, and legend visibility.
 
     Args:
         title: Chart title string.
         show_legend: Whether the legend should be visible.
+        x_title: X-axis label — 'Trimestre' for quarterly, 'Año' for annual.
+        x_type: Optional Plotly axis type, e.g. 'category' for annual integer years.
 
     Returns:
         Dict of keyword arguments suitable for fig.update_layout(**...).
     """
-    return {
+    layout: dict[str, Any] = {
         "title": title,
-        "xaxis_title": "Trimestre",
+        "xaxis_title": x_title,
         "xaxis_showgrid": False,
         "yaxis_showgrid": True,
         "yaxis_gridcolor": "rgba(200,200,200,0.3)",
         "legend": {"visible": show_legend},
     }
+    if x_type is not None:
+        layout["xaxis"] = {"type": x_type}
+    return layout
 
 
 def _render_single(
-    sorted_records: list[EnrichedFundamentalsRecord],
+    x_values: list,
+    records: list,
     config: dict[str, Any],
+    field: str,
+    is_annual: bool,
+    inflation_ref: Optional[tuple[list[int], list[float]]],
 ) -> go.Figure:
-    """Build a single-line Plotly figure with optional traffic-light threshold bands.
+    """Build a single-line Plotly figure with optional threshold bands or inflation reference.
 
     Args:
-        sorted_records: Records sorted chronologically for the selected ticker.
-        config: KPI_CONFIG entry with kind='single'.
+        x_values: Pre-computed X-axis values (period strings or year ints).
+        records: Sorted records matching x_values (quarterly or annual).
+        config: KPI_CONFIG entry; provides format, label, and optional threshold keys.
+        field: Pre-resolved field name on the records (field_quarterly or field_annual).
+        is_annual: When True, applies category x-axis and 'Año' label.
+        inflation_ref: Optional (years, values) tuple for a dashed reference line.
+            Only passed for 'distribucion_cbfi' in annual mode.
 
     Returns:
         Plotly Figure ready for st.plotly_chart.
     """
-    periods = [r.period for r in sorted_records]
-    values = _get_values(records=sorted_records, field=config["field"], fmt=config["format"])
-    fig = go.Figure(
-        data=go.Scatter(
-            x=periods,
-            y=values,
-            mode="lines+markers",
-            connectgaps=False,
-            name=config["label"],
-        )
-    )
-    if "lower" in config:
-        _add_threshold_bands(
-            fig=fig,
-            lower=config["lower"],
-            upper=config["upper"],
-            inverse=config.get("inverse", False),
-        )
-    _apply_yaxis_format(fig=fig, fmt=config["format"])
-    fig.update_layout(**_base_layout(title=config["label"], show_legend=False))
-    return fig
-
-
-def _render_combined(
-    sorted_records: list[EnrichedFundamentalsRecord],
-    config: dict[str, Any],
-    chart_key: str,
-) -> go.Figure:
-    """Build a multi-line Plotly figure with a view-mode radio toggle rendered above the chart.
-
-    Args:
-        sorted_records: Records sorted chronologically for the selected ticker.
-        config: KPI_CONFIG entry with kind='combined'.
-        chart_key: Unique key suffix for the Streamlit radio widget.
-
-    Returns:
-        Plotly Figure ready for st.plotly_chart.
-    """
-    mode = st.radio(
-        label="Modo",
-        options=config["toggle"],
-        horizontal=True,
-        key=f"chart_mode_{chart_key}",
-    )
-    periods = [r.period for r in sorted_records]
-    primary_mode = mode == config["toggle"][0]
-    if primary_mode:
-        if "lines_per_cbfi" in config:
-            line_defs = config["lines_per_cbfi"]
-            fmt = config["format_per_cbfi"]
-        else:
-            line_defs = config["lines_pct"]
-            fmt = config["format_pct"]
-    else:
-        line_defs = config["lines_absolute"]
-        fmt = config["format_absolute"]
-    fig = go.Figure()
-    for line in line_defs:
-        fig.add_trace(
-            trace=go.Scatter(
-                x=periods,
-                y=_get_values(records=sorted_records, field=line["field"], fmt=fmt),
-                mode="lines+markers",
-                connectgaps=False,
-                name=line["label"],
-            )
-        )
-    if primary_mode:
-        first_with_thresholds = next(
-            (line for line in line_defs if "lower" in line),
-            None,
-        )
-        if first_with_thresholds is not None:
-            _add_threshold_bands(
-                fig=fig,
-                lower=first_with_thresholds["lower"],
-                upper=first_with_thresholds["upper"],
-                inverse=False,
-            )
-    _apply_yaxis_format(fig=fig, fmt=fmt)
-    fig.update_layout(**_base_layout(title=config["label"], show_legend=True))
-    return fig
-
-
-def _render_dual_axis(
-    sorted_records: list[EnrichedFundamentalsRecord],
-    config: dict[str, Any],
-) -> go.Figure:
-    """Build a dual-Y-axis Plotly figure with a CBFIs/m² text annotation at top-left.
-
-    Args:
-        sorted_records: Records sorted chronologically for the selected ticker.
-        config: KPI_CONFIG entry with kind='dual_axis'.
-
-    Returns:
-        Plotly Figure ready for st.plotly_chart.
-    """
-    periods = [r.period for r in sorted_records]
-    left_def = config["left_axis"][0]
-    right_def = config["right_axis"][0]
-    left_trace = go.Scatter(
-        x=periods,
-        y=_get_values(records=sorted_records, field=left_def["field"], fmt=config["format_left"]),
-        name=left_def["label"],
-        yaxis="y1",
-        mode="lines+markers",
-        connectgaps=False,
-    )
-    right_trace = go.Scatter(
-        x=periods,
-        y=_get_values(records=sorted_records, field=right_def["field"], fmt=config["format_right"]),
-        name=right_def["label"],
-        yaxis="y2",
-        mode="lines+markers",
-        connectgaps=False,
-    )
-    fig = go.Figure(data=[left_trace, right_trace])
-    _apply_yaxis_format(fig=fig, fmt=config["format_left"], axis="yaxis")
-    _apply_yaxis_format(fig=fig, fmt=config["format_right"], axis="yaxis2")
-    fig.update_layout(
-        yaxis2={"overlaying": "y", "side": "right"},
-        **_base_layout(title=config["label"], show_legend=True),
-    )
-    latest_cbfis_per_m2: Optional[float] = sorted_records[-1].cbfis_per_m2 if sorted_records else None
-    if latest_cbfis_per_m2 is not None:
-        fig.add_annotation(
-            text=f"CBFIs/m²: {latest_cbfis_per_m2:.1f}",
-            xref="paper",
-            yref="paper",
-            x=0.01,
-            y=0.99,
-            showarrow=False,
-            align="left",
-        )
-    return fig
-
-
-def _render_annual(
-    sorted_annual: list[AnnualFundamentalsRecord],
-    config: dict[str, Any],
-    annual_key: str,
-    inflation_records: list[InflationRecord],
-) -> go.Figure:
-    """Build an annual KPI chart with optional inflation reference line or threshold bands.
-
-    X axis is the calendar year (integer). None values appear as gaps (connectgaps=False).
-    Traffic-light bands apply only to LTV and Tasa de Ocupación entries.
-    A dashed inflation-adjusted reference line is added only for the
-    'distribucion_cbfi_anual' key.
-
-    Args:
-        sorted_annual: Annual records sorted ascending by year for the selected ticker.
-        config: ANNUAL_KPI_CONFIG entry for the selected KPI.
-        annual_key: Key string from ANNUAL_KPI_CONFIG used to detect the distribution case.
-        inflation_records: Full inflation history passed through to _compute_inflation_reference.
-
-    Returns:
-        Plotly Figure ready for st.plotly_chart.
-    """
-    years = [r.year for r in sorted_annual]
-    values = _get_annual_values(sorted_annual=sorted_annual, field=config["field"])
-
-    show_legend = annual_key == "distribucion_cbfi_anual"
-
+    fmt = config["format"]
+    values = _extract_values(records=records, field=field, fmt=fmt)
+    show_legend = inflation_ref is not None
     fig = go.Figure()
     fig.add_trace(
         trace=go.Scatter(
-            x=years,
+            x=x_values,
             y=values,
             mode="lines+markers",
             connectgaps=False,
             name=config["label"],
         )
     )
-
-    if annual_key == "distribucion_cbfi_anual":
-        ref_years, ref_values = _compute_inflation_reference(
-            sorted_annual=sorted_annual,
-            inflation_records=inflation_records,
-        )
+    if inflation_ref is not None:
+        ref_years, ref_values = inflation_ref
         if ref_years:
             fig.add_trace(
                 trace=go.Scatter(
@@ -554,7 +349,6 @@ def _render_annual(
                     line={"dash": "dash", "color": "rgba(255, 150, 50, 0.9)"},
                 )
             )
-
     if "lower" in config:
         _add_threshold_bands(
             fig=fig,
@@ -562,12 +356,128 @@ def _render_annual(
             upper=config["upper"],
             inverse=config.get("inverse", False),
         )
+    _apply_yaxis_format(fig=fig, fmt=fmt)
+    fig.update_layout(
+        **_base_layout(
+            title=config["label"],
+            show_legend=show_legend,
+            x_title="Año" if is_annual else "Trimestre",
+            x_type="category" if is_annual else None,
+        )
+    )
+    return fig
 
-    _apply_yaxis_format(fig=fig, fmt=config["format"])
-    layout = _base_layout(title=config["label"], show_legend=show_legend)
-    layout["xaxis_title"] = "Año"
-    layout["xaxis"] = {"type": "category"}
-    fig.update_layout(**layout)
+
+def _render_combined(
+    x_values: list,
+    records: list,
+    config: dict[str, Any],
+    line_defs: list[dict[str, str]],
+    fmt: str,
+    is_annual: bool,
+) -> go.Figure:
+    """Build a multi-line Plotly figure.
+
+    No threshold bands are drawn — multiple lines with different natural thresholds
+    make bands ambiguous in a combined chart.
+
+    Args:
+        x_values: Pre-computed X-axis values (period strings or year ints).
+        records: Sorted records matching x_values (quarterly or annual).
+        config: KPI_CONFIG entry; provides label.
+        line_defs: Pre-resolved list of {field, label} dicts for the active mode.
+        fmt: Pre-resolved format key for this mode.
+        is_annual: When True, applies category x-axis and 'Año' label.
+
+    Returns:
+        Plotly Figure ready for st.plotly_chart.
+    """
+    fig = go.Figure()
+    for line in line_defs:
+        fig.add_trace(
+            trace=go.Scatter(
+                x=x_values,
+                y=_extract_values(records=records, field=line["field"], fmt=fmt),
+                mode="lines+markers",
+                connectgaps=False,
+                name=line["label"],
+            )
+        )
+    _apply_yaxis_format(fig=fig, fmt=fmt)
+    fig.update_layout(
+        **_base_layout(
+            title=config["label"],
+            show_legend=True,
+            x_title="Año" if is_annual else "Trimestre",
+            x_type="category" if is_annual else None,
+        )
+    )
+    return fig
+
+
+def _render_dual_axis(
+    x_values: list,
+    records: list,
+    config: dict[str, Any],
+    left_field: str,
+    right_field: str,
+    annotation_field: str,
+    is_annual: bool,
+) -> go.Figure:
+    """Build a dual-Y-axis Plotly figure with a CBFIs/m² annotation at top-left.
+
+    Args:
+        x_values: Pre-computed X-axis values (period strings or year ints).
+        records: Sorted records matching x_values (quarterly or annual).
+        config: KPI_CONFIG entry; provides label, format_left, format_right,
+            left_label, right_label.
+        left_field: Pre-resolved field name for the left Y-axis.
+        right_field: Pre-resolved field name for the right Y-axis.
+        annotation_field: Pre-resolved field name for the latest-value annotation.
+        is_annual: When True, applies category x-axis and 'Año' label.
+
+    Returns:
+        Plotly Figure ready for st.plotly_chart.
+    """
+    left_trace = go.Scatter(
+        x=x_values,
+        y=_extract_values(records=records, field=left_field, fmt=config["format_left"]),
+        name=config["left_label"],
+        yaxis="y1",
+        mode="lines+markers",
+        connectgaps=False,
+    )
+    right_trace = go.Scatter(
+        x=x_values,
+        y=_extract_values(records=records, field=right_field, fmt=config["format_right"]),
+        name=config["right_label"],
+        yaxis="y2",
+        mode="lines+markers",
+        connectgaps=False,
+    )
+    fig = go.Figure(data=[left_trace, right_trace])
+    _apply_yaxis_format(fig=fig, fmt=config["format_left"], axis="yaxis")
+    _apply_yaxis_format(fig=fig, fmt=config["format_right"], axis="yaxis2")
+    fig.update_layout(
+        yaxis2={"overlaying": "y", "side": "right"},
+        **_base_layout(
+            title=config["label"],
+            show_legend=True,
+            x_title="Año" if is_annual else "Trimestre",
+            x_type="category" if is_annual else None,
+        ),
+    )
+    latest_annotation: Optional[float] = getattr(records[-1], annotation_field, None) if records else None
+    if latest_annotation is not None:
+        fig.add_annotation(
+            text=f"CBFIs/m²: {latest_annotation:.1f}",
+            xref="paper",
+            yref="paper",
+            x=0.01,
+            y=0.99,
+            showarrow=False,
+            align="left",
+        )
     return fig
 
 
@@ -578,77 +488,99 @@ def render_detail_chart(
 ) -> None:
     """Render an interactive historical KPI chart for a single FIBRA's fundamentals.
 
-    A "Periodicidad" toggle selects between quarterly and annual views.
-    - Trimestral: full KPI_CONFIG selector with quarterly records; existing single /
-      combined / dual-axis rendering logic unchanged.
-    - Anual: ANNUAL_KPI_CONFIG selector with annual records; single-line charts with
-      optional threshold bands. The Distribución por CBFI chart adds a dashed
-      inflation-adjusted reference line.
+    A toggle switches between quarterly and annual views. The KPI selectbox is
+    identical in both views — only the underlying fields and x-axis change.
+
+    For the 'distribucion_cbfi' KPI in annual mode, a second dashed line shows
+    the inflation-adjusted reference series.
 
     None values appear as gaps (connectgaps=False) in all chart types.
 
     Args:
-        records: Enriched quarterly records pre-filtered to the selected ticker, any order;
-            sorted internally by (year, quarter) before plotting.
-        annual_records: Annual records pre-filtered to the selected ticker, any order;
-            sorted internally by year ascending before plotting.
-        inflation_records: Full annual Mexican inflation history; used only when the
-            'Distribución por CBFI' annual KPI is selected.
+        records: Enriched quarterly records pre-filtered to the selected ticker,
+            any order; sorted internally by (year, quarter) before plotting.
+        annual_records: Annual records pre-filtered to the selected ticker, any
+            order; sorted internally by year ascending before plotting.
+        inflation_records: Full annual Mexican inflation history; used only for
+            the 'distribucion_cbfi' KPI in annual mode.
     """
-    periodicidad: str = st.radio(
-        label="Periodicidad",
-        options=["Trimestral", "Anual"],
-        horizontal=True,
-        key="periodicidad_toggle",
+    is_annual: bool = st.toggle(
+        label="Vista anual",
+        key="annual_view_toggle",
     )
 
-    if periodicidad == "Anual":
-        if not annual_records:
-            st.info(body="No hay datos anuales disponibles.")
-            return
-
-        sorted_annual = sorted(annual_records, key=lambda r: r.year)
-
-        selected_annual_key: str = st.selectbox(
-            label="Indicador",
-            options=list(ANNUAL_KPI_CONFIG.keys()),
-            format_func=lambda k: ANNUAL_KPI_CONFIG[k]["label"],
-            key="annual_kpi_selector",
-        )
-        annual_config = ANNUAL_KPI_CONFIG[selected_annual_key]
-        fig = _render_annual(
-            sorted_annual=sorted_annual,
-            config=annual_config,
-            annual_key=selected_annual_key,
-            inflation_records=inflation_records,
-        )
-        st.plotly_chart(figure_or_data=fig, width="stretch")
+    if is_annual and not annual_records:
+        st.info(body="No hay datos anuales disponibles.")
         return
-
-    # Trimestral path
-    if not records:
+    if not is_annual and not records:
         st.info(body="No hay datos históricos disponibles.")
         return
 
-    sorted_records = sorted(records, key=_period_sort_key)
+    sorted_quarterly = sorted(records, key=_period_sort_key)
+    sorted_annual = sorted(annual_records, key=lambda r: r.year)
 
-    options = sorted(
-        KPI_CONFIG.keys(),
-        key=lambda k: (_GROUP_ORDER.index(KPI_CONFIG[k]["group"]), KPI_CONFIG[k]["label"]),
-    )
+    if is_annual:
+        active_records: list = sorted_annual
+        x_values: list = [r.year for r in sorted_annual]
+    else:
+        active_records = sorted_quarterly
+        x_values = [r.period for r in sorted_quarterly]
+
     selected_key: str = st.selectbox(
         label="Indicador",
-        options=options,
+        options=list(KPI_CONFIG.keys()),
         format_func=lambda k: KPI_CONFIG[k]["label"],
-        key="quarterly_kpi_selector",
+        key="kpi_selector",
     )
     config = KPI_CONFIG[selected_key]
 
+    suffix = "annual" if is_annual else "quarterly"
+
     if config["kind"] == "single":
-        fig = _render_single(sorted_records=sorted_records, config=config)
+        field = config[f"field_{suffix}"]
+        inflation_ref: Optional[tuple[list[int], list[float]]] = None
+        if is_annual and selected_key == "distribucion_cbfi":
+            inflation_ref = _compute_inflation_reference(
+                sorted_annual=sorted_annual,
+                inflation_records=inflation_records,
+            )
+        fig = _render_single(
+            x_values=x_values,
+            records=active_records,
+            config=config,
+            field=field,
+            is_annual=is_annual,
+            inflation_ref=inflation_ref,
+        )
+
     elif config["kind"] == "combined":
-        fig = _render_combined(sorted_records=sorted_records, config=config, chart_key=selected_key)
-    else:
-        fig = _render_dual_axis(sorted_records=sorted_records, config=config)
+        mode: str = st.radio(
+            label="Modo",
+            options=config["toggle"],
+            horizontal=True,
+            key=f"chart_mode_{selected_key}",
+        )
+        mk = _MODE_KEY_MAP[mode]
+        line_defs = config[f"lines_{mk}_{suffix}"]
+        fmt = config[f"format_{mk}"]
+        fig = _render_combined(
+            x_values=x_values,
+            records=active_records,
+            config=config,
+            line_defs=line_defs,
+            fmt=fmt,
+            is_annual=is_annual,
+        )
+
+    else:  # dual_axis
+        fig = _render_dual_axis(
+            x_values=x_values,
+            records=active_records,
+            config=config,
+            left_field=config[f"left_axis_{suffix}"],
+            right_field=config[f"right_axis_{suffix}"],
+            annotation_field=config[f"annotation_field_{suffix}"],
+            is_annual=is_annual,
+        )
 
     st.plotly_chart(figure_or_data=fig, width="stretch")
