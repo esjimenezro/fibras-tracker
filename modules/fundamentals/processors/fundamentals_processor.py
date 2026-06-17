@@ -21,6 +21,8 @@ class FundamentalsProcessor:
         ffo_per_cbfi            = ffo / cbfis_with_rights
         affo_per_cbfi           = affo / cbfis_with_rights
         revenue_per_cbfi        = total_revenues / cbfis_with_rights
+        noi_per_cbfi            = noi / cbfis_with_rights
+        ebitda_per_cbfi         = ebitda / cbfis_with_rights
         nav_per_cbfi            = total_equity / cbfis_outstanding
 
         ltv                     = financial_debt / total_assets
@@ -63,6 +65,8 @@ class FundamentalsProcessor:
                 ffo_per_cbfi            = ffo / cbfis_with_rights
                 affo_per_cbfi           = affo / cbfis_with_rights
                 revenue_per_cbfi        = total_revenues / cbfis_with_rights
+                noi_per_cbfi            = noi / cbfis_with_rights
+                ebitda_per_cbfi         = ebitda / cbfis_with_rights
                 nav_per_cbfi            = total_equity / cbfis_outstanding
 
                 ltv                     = financial_debt / total_assets
@@ -146,6 +150,14 @@ class FundamentalsProcessor:
             affo_per_cbfi=affo_per_cbfi,
             revenue_per_cbfi=self._safe_div(
                 numerator=record.total_revenues,
+                denominator=record.cbfis_with_rights,
+            ),
+            noi_per_cbfi=self._safe_div(
+                numerator=record.noi,
+                denominator=record.cbfis_with_rights,
+            ),
+            ebitda_per_cbfi=self._safe_div(
+                numerator=record.ebitda,
                 denominator=record.cbfis_with_rights,
             ),
             nav_per_cbfi=nav_per_cbfi,

@@ -174,6 +174,72 @@ def test_revenue_per_cbfi_none_when_cbfis_with_rights_zero(processor, record_ful
     assert result.revenue_per_cbfi is None
 
 
+def test_noi_per_cbfi(processor, record_full):
+    """noi_per_cbfi = noi / cbfis_with_rights."""
+    result = processor._enrich(record=record_full, market_price=10.50)
+    assert result.noi_per_cbfi == pytest.approx(800_000_000 / 1_500_000_000, rel=1e-6)
+
+
+def test_ebitda_per_cbfi(processor, record_full):
+    """ebitda_per_cbfi = ebitda / cbfis_with_rights."""
+    result = processor._enrich(record=record_full, market_price=10.50)
+    assert result.ebitda_per_cbfi == pytest.approx(700_000_000 / 1_500_000_000, rel=1e-6)
+
+
+def test_noi_per_cbfi_none_when_noi_none(processor, record_full):
+    """noi_per_cbfi is None when noi is None."""
+    record = FundamentalsRecord(
+        **{**record_full.model_dump(), "noi": None},
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.noi_per_cbfi is None
+
+
+def test_ebitda_per_cbfi_none_when_ebitda_none(processor, record_full):
+    """ebitda_per_cbfi is None when ebitda is None."""
+    record = FundamentalsRecord(
+        **{**record_full.model_dump(), "ebitda": None},
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.ebitda_per_cbfi is None
+
+
+def test_noi_per_cbfi_none_when_cbfis_with_rights_none(processor, record_full):
+    """noi_per_cbfi is None when cbfis_with_rights is None."""
+    record = FundamentalsRecord(
+        **{**record_full.model_dump(), "cbfis_with_rights": None},
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.noi_per_cbfi is None
+
+
+def test_ebitda_per_cbfi_none_when_cbfis_with_rights_none(processor, record_full):
+    """ebitda_per_cbfi is None when cbfis_with_rights is None."""
+    record = FundamentalsRecord(
+        **{**record_full.model_dump(), "cbfis_with_rights": None},
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.ebitda_per_cbfi is None
+
+
+def test_noi_per_cbfi_none_when_cbfis_with_rights_zero(processor, record_full):
+    """noi_per_cbfi is None when cbfis_with_rights is zero (avoids division by zero)."""
+    record = FundamentalsRecord(
+        **{**record_full.model_dump(), "cbfis_with_rights": 0},
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.noi_per_cbfi is None
+
+
+def test_ebitda_per_cbfi_none_when_cbfis_with_rights_zero(processor, record_full):
+    """ebitda_per_cbfi is None when cbfis_with_rights is zero (avoids division by zero)."""
+    record = FundamentalsRecord(
+        **{**record_full.model_dump(), "cbfis_with_rights": 0},
+    )
+    result = processor._enrich(record=record, market_price=10.50)
+    assert result.ebitda_per_cbfi is None
+
+
 # ── Capital structure ─────────────────────────────────────────────────────────
 
 
