@@ -426,6 +426,43 @@ fibras           = list[Fibra] sourced from the catalog
 
 Period sort order is determined by parsing `"QT{YEAR}"` into `(year, quarter)` integer pairs — never lexicographically. Every ticker from the catalog appears as a key in `latest_by_ticker`; tickers with no history have the value `None`.
 
+### Annual aggregation (`AnnualFundamentalsProcessor` → `AnnualFundamentalsRecord`)
+
+Only years with all four quarters (Q1–Q4) present for a given ticker are included; incomplete years are omitted entirely.
+
+**Sum fields** (null if any quarter value is None; integer-sourced fields cast to `int`):
+```
+distribution_per_cbfi_annual = sum of quarterly distribution_per_cbfi
+ffo_per_cbfi_annual          = sum of quarterly ffo_per_cbfi
+affo_per_cbfi_annual         = sum of quarterly affo_per_cbfi
+revenue_per_cbfi_annual      = sum of quarterly revenue_per_cbfi
+total_revenues_annual        = sum of quarterly total_revenues
+noi_annual                   = sum of quarterly noi
+noi_per_cbfi_annual          = sum of quarterly noi_per_cbfi
+ebitda_annual                = sum of quarterly ebitda
+ebitda_per_cbfi_annual       = sum of quarterly ebitda_per_cbfi
+ffo_annual                   = sum of quarterly ffo
+affo_annual                  = sum of quarterly affo
+total_distribution_annual    = sum of quarterly total_distribution
+```
+
+**Recomputed margins** (computed from annual sums, not averaged from quarterly margins; null if denominator is None or zero):
+```
+noi_margin_annual    = noi_annual / total_revenues_annual
+ebitda_margin_annual = ebitda_annual / total_revenues_annual
+```
+
+**Q4 snapshot fields** (value taken from the Q4 record; passed through as-is):
+```
+nav_per_cbfi, ltv, occupancy_rate, wale, top_tenant_pct, top10_tenants_pct,
+gross_leasable_area_m2, cbfis_outstanding, cbfis_per_m2
+```
+
+**Average fields** (null if any quarter value is None):
+```
+affo_payout_ratio_avg = mean of quarterly affo_payout_ratio
+```
+
 ---
 
 ## Setup and installation
