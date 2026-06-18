@@ -3,12 +3,14 @@ from typing import Optional
 import streamlit as st
 
 from modules.common.schemas import ServiceStatus
+from modules.fundamentals.models import AnnualFundamentalsRecord
 from modules.fundamentals.models import EnrichedFundamentalsRecord
 from modules.fundamentals.models import FundamentalsHistory
 from modules.fundamentals.schemas import FundamentalsDataRetrieverServiceSchema
 from modules.fundamentals.services import FundamentalsDataRetrieverService
 from ui.components.common import render_error_banner
 from ui.components.common import render_page_header
+from ui.components.fundamentals import render_comparison_table
 from ui.components.fundamentals import render_detail_chart
 from ui.components.fundamentals import render_detail_header
 
@@ -31,6 +33,12 @@ if result.status == ServiceStatus.ERROR:
     st.stop()
 
 history: FundamentalsHistory = result.data
+
+annual_records_by_ticker: dict[str, list[AnnualFundamentalsRecord]] = {}
+for _rec in history.annual_records:
+    annual_records_by_ticker.setdefault(_rec.ticker, []).append(_rec)
+for _ticker in annual_records_by_ticker:
+    annual_records_by_ticker[_ticker].sort(key=lambda r: r.year)
 
 [detalle_tab, comparativa_tab] = st.tabs(["Detalle", "Comparativa"])
 
@@ -66,4 +74,9 @@ with detalle_tab:
     )
 
 with comparativa_tab:
-    st.info(body="Esta sección está en mantenimiento y será actualizada próximamente.")
+    render_comparison_table(
+        latest_by_ticker=history.latest_by_ticker,
+        fibras=history.fibras,
+        fibra_metrics=history.fibra_metrics,
+        annual_records=annual_records_by_ticker,
+    )
