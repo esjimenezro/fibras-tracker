@@ -6,17 +6,15 @@ from modules.common.models import Fibra
 from modules.fundamentals.models import AnnualFundamentalsRecord
 from modules.fundamentals.models import EnrichedFundamentalsRecord
 from modules.fundamentals.models import FibraMetrics
+from ui.components.fundamentals.detail_chart import LTV_LOWER
+from ui.components.fundamentals.detail_chart import LTV_UPPER
+from ui.components.fundamentals.detail_chart import OCC_LOWER
+from ui.components.fundamentals.detail_chart import OCC_UPPER
 from ui.styles.theme import format_pct
 
 # Icon thresholds — single source of truth.
 _THRESHOLD_FULL: float = 1.0
 _THRESHOLD_WARN: float = 0.70
-
-# Colour thresholds for Ocupación and LTV.
-_OCUPACION_LOWER: float = 0.80
-_OCUPACION_UPPER: float = 0.85
-_LTV_LOWER: float = 0.35
-_LTV_UPPER: float = 0.45
 
 # Background colour values.
 _GREEN_BG: str = "rgba(50,200,100,0.15)"
@@ -27,6 +25,52 @@ _GRAY_BG: str = "rgba(200,200,200,0.15)"
 _LOW_SAMPLE_CAPTION: str = (
     "* Esta FIBRA cuenta con menos de 3 años de historial completo. "
     "Los porcentajes de cumplimiento pueden no ser representativos."
+)
+
+_TOOLTIP_DIST_CONSTANTE: str = (
+    "Porcentaje de años completos en los que la FIBRA repartió distribución. "
+    "Un año sin distribución cuenta en contra."
+)
+_TOOLTIP_DIST_CRECIENTE: str = (
+    "Porcentaje de años en los que la distribución por CBFI fue mayor a la del año anterior."
+)
+_TOOLTIP_DIST_VS_INFLACION: str = (
+    "Compara el CAGR de la distribución por CBFI contra el CAGR de la inflación en el mismo "
+    "periodo. Positivo significa que la distribución creció por encima de la inflación."
+)
+_TOOLTIP_NAV_CRECIENTE: str = (
+    "Porcentaje de años en los que el NAV por CBFI fue mayor al del año anterior."
+)
+_TOOLTIP_INGRESOS_CRECIENTE: str = (
+    "Porcentaje de años en los que los ingresos por CBFI fueron mayores a los del año anterior."
+)
+_TOOLTIP_AFFO_CRECIENTE: str = (
+    "Porcentaje de años en los que el AFFO por CBFI fue mayor al del año anterior. "
+    "No comparable en valor absoluto entre FIBRAs por diferencias metodológicas, "
+    "pero el patrón de crecimiento sí es informativo."
+)
+_TOOLTIP_PAYOUT_RATIO: str = (
+    "Distribución por CBFI entre AFFO por CBFI del último año completo. "
+    "Por encima de 100% significa que la FIBRA distribuyó más de lo que generó ese año."
+)
+_TOOLTIP_OCUPACION: str = (
+    "Tasa de ocupación del Área Bruta Rentable al cierre del último año completo."
+)
+_TOOLTIP_LTV: str = (
+    "Deuda financiera entre activos totales al cierre del último año completo. "
+    "Mide el apalancamiento."
+)
+_TOOLTIP_WALE: str = (
+    "Plazo promedio ponderado de vigencia restante de los contratos de arrendamiento, en años. "
+    "Dato del último trimestre reportado, no anual."
+)
+_TOOLTIP_TOP_CLIENTE: str = (
+    "Porcentaje de ingresos (o renta, según metodología de cada FIBRA) que representa el "
+    "arrendatario más grande. Dato del último trimestre reportado."
+)
+_TOOLTIP_TOP_10: str = (
+    "Porcentaje acumulado de ingresos que representan los 10 arrendatarios más grandes. "
+    "Dato del último trimestre reportado."
 )
 
 _TABLE_CSS: str = """
@@ -224,11 +268,11 @@ def _build_table_html(
 
         ocup_val: Optional[float] = most_recent_annual.occupancy_rate if most_recent_annual else None
         ocup_str = format_pct(value=ocup_val, include_sign=False) if ocup_val is not None else "N/D"
-        ocup_bg = _color_bg(value=ocup_val, lower=_OCUPACION_LOWER, upper=_OCUPACION_UPPER, inverse=False)
+        ocup_bg = _color_bg(value=ocup_val, lower=OCC_LOWER, upper=OCC_UPPER, inverse=False)
 
         ltv_val: Optional[float] = most_recent_annual.ltv if most_recent_annual else None
         ltv_str = format_pct(value=ltv_val, include_sign=False) if ltv_val is not None else "N/D"
-        ltv_bg = _color_bg(value=ltv_val, lower=_LTV_LOWER, upper=_LTV_UPPER, inverse=True)
+        ltv_bg = _color_bg(value=ltv_val, lower=LTV_LOWER, upper=LTV_UPPER, inverse=True)
 
         # ── Contratos ──────────────────────────────────────────────────────────
         wale_val: Optional[float] = latest.wale if latest else None
@@ -267,18 +311,18 @@ def _build_table_html(
         f'      <th colspan="3">Contratos</th>\n'
         f"    </tr>\n"
         f"    <tr>\n"
-        f"      <th>Dist. constante</th>\n"
-        f"      <th>Dist. creciente</th>\n"
-        f"      <th>Dist. vs inflación</th>\n"
-        f"      <th>NAV/CBFI creciente</th>\n"
-        f"      <th>Ing./CBFI creciente</th>\n"
-        f"      <th>AFFO/CBFI creciente</th>\n"
-        f"      <th>Payout ratio</th>\n"
-        f"      <th>Ocupación</th>\n"
-        f"      <th>LTV</th>\n"
-        f"      <th>WALE</th>\n"
-        f"      <th>Top Cliente</th>\n"
-        f"      <th>Top 10</th>\n"
+        f'      <th title="{_TOOLTIP_DIST_CONSTANTE}">Dist. constante</th>\n'
+        f'      <th title="{_TOOLTIP_DIST_CRECIENTE}">Dist. creciente</th>\n'
+        f'      <th title="{_TOOLTIP_DIST_VS_INFLACION}">Dist. vs inflación</th>\n'
+        f'      <th title="{_TOOLTIP_NAV_CRECIENTE}">NAV/CBFI creciente</th>\n'
+        f'      <th title="{_TOOLTIP_INGRESOS_CRECIENTE}">Ing./CBFI creciente</th>\n'
+        f'      <th title="{_TOOLTIP_AFFO_CRECIENTE}">AFFO/CBFI creciente</th>\n'
+        f'      <th title="{_TOOLTIP_PAYOUT_RATIO}">Payout ratio</th>\n'
+        f'      <th title="{_TOOLTIP_OCUPACION}">Ocupación</th>\n'
+        f'      <th title="{_TOOLTIP_LTV}">LTV</th>\n'
+        f'      <th title="{_TOOLTIP_WALE}">WALE</th>\n'
+        f'      <th title="{_TOOLTIP_TOP_CLIENTE}">Top Cliente</th>\n'
+        f'      <th title="{_TOOLTIP_TOP_10}">Top 10</th>\n'
         f"    </tr>\n"
         f"  </thead>\n"
         f"  <tbody>\n"
@@ -326,3 +370,13 @@ def render_comparison_table(
     st.markdown(body=html, unsafe_allow_html=True)
     if has_low_sample:
         st.caption(body=_LOW_SAMPLE_CAPTION)
+    all_years = [rec.year for records in annual_records.values() for rec in records]
+    if all_years:
+        min_year = min(all_years)
+        max_year = max(all_years)
+        st.caption(
+            body=(
+                f"Datos anuales calculados sobre el periodo {min_year}–{max_year}. "
+                "Indicadores de contratos (WALE, concentración) corresponden al trimestre más reciente reportado."
+            )
+        )

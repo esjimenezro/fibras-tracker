@@ -9,10 +9,10 @@ from modules.fundamentals.models import AnnualFundamentalsRecord
 from modules.fundamentals.models import EnrichedFundamentalsRecord
 
 
-_LTV_LOWER: float = 0.35
-_LTV_UPPER: float = 0.45
-_OCC_LOWER: float = 0.80
-_OCC_UPPER: float = 0.85
+LTV_LOWER: float = 0.35
+LTV_UPPER: float = 0.45
+OCC_LOWER: float = 0.80
+OCC_UPPER: float = 0.85
 
 KPI_CONFIG: dict[str, dict[str, Any]] = {
     "distribucion_cbfi": {
@@ -98,8 +98,8 @@ KPI_CONFIG: dict[str, dict[str, Any]] = {
         "format": "pct",
         "field_quarterly": "ltv",
         "field_annual": "ltv",
-        "lower": _LTV_LOWER,
-        "upper": _LTV_UPPER,
+        "lower": LTV_LOWER,
+        "upper": LTV_UPPER,
         "inverse": True,
     },
     "nav_per_cbfi": {
@@ -115,8 +115,8 @@ KPI_CONFIG: dict[str, dict[str, Any]] = {
         "format": "pct",
         "field_quarterly": "occupancy_rate",
         "field_annual": "occupancy_rate",
-        "lower": _OCC_LOWER,
-        "upper": _OCC_UPPER,
+        "lower": OCC_LOWER,
+        "upper": OCC_UPPER,
         "inverse": False,
     },
     "abr_cbfis": {
