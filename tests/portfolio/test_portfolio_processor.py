@@ -1,3 +1,4 @@
+from datetime import date
 from datetime import datetime
 from datetime import timezone
 from typing import Optional
@@ -8,6 +9,7 @@ from modules.common.models import PaymentFrequency
 from modules.common.models import Sector
 from modules.common.models import SectorExposure
 
+from modules.portfolio.models import EnrichedDistribution
 from modules.portfolio.models import EnrichedPosition
 from modules.portfolio.processors import PortfolioProcessor
 
@@ -105,58 +107,75 @@ def enriched_b():
     )
 
 
+@pytest.fixture
+def dist_a():
+    """EnrichedDistribution for FMTY14 used to verify all_distributions passthrough."""
+    return EnrichedDistribution(
+        ticker="FMTY14",
+        payment_date=date(2026, 3, 6),
+        reimbursement_total=49.65,
+        fiscal_result_total=72.45,
+        gross_fiscal_result_income=72.45,
+        net_reimbursement_income=49.65,
+        gross_income=122.10,
+        fiscal_result_withholding=21.735,
+        net_fiscal_result_income=50.715,
+        net_income=100.365,
+    )
+
+
 def test_empty_positions_raises(processor):
     """process() raises ValueError when the positions list is empty."""
     with pytest.raises(ValueError):
-        processor.process(positions=[])
+        processor.process(positions=[], enriched_distributions=[])
 
 
 def test_total_purchase_cost(processor, enriched_a, enriched_b):
     """total_purchase_cost = sum of purchase_cost across all positions."""
-    portfolio = processor.process(positions=[enriched_a, enriched_b])
+    portfolio = processor.process(positions=[enriched_a, enriched_b], enriched_distributions=[])
     assert portfolio.total_purchase_cost == pytest.approx(24_370.0, rel=1e-6)
 
 
 def test_total_market_value(processor, enriched_a, enriched_b):
     """total_market_value = sum of market_value across all positions."""
-    portfolio = processor.process(positions=[enriched_a, enriched_b])
+    portfolio = processor.process(positions=[enriched_a, enriched_b], enriched_distributions=[])
     assert portfolio.total_market_value == pytest.approx(26_750.0, rel=1e-6)
 
 
 def test_total_return(processor, enriched_a, enriched_b):
     """total_return = total_market_value - total_purchase_cost."""
-    portfolio = processor.process(positions=[enriched_a, enriched_b])
+    portfolio = processor.process(positions=[enriched_a, enriched_b], enriched_distributions=[])
     assert portfolio.total_return == pytest.approx(2_380.0, rel=1e-6)
 
 
 def test_total_return_pct(processor, enriched_a, enriched_b):
     """total_return_pct = total_return / total_purchase_cost."""
-    portfolio = processor.process(positions=[enriched_a, enriched_b])
+    portfolio = processor.process(positions=[enriched_a, enriched_b], enriched_distributions=[])
     assert portfolio.total_return_pct == pytest.approx(2_380.0 / 24_370.0, rel=1e-6)
 
 
 def test_total_net_fiscal_result_received(processor, enriched_a, enriched_b):
     """total_net_fiscal_result_received = sum of total_net_fiscal_result_received across all positions."""
-    portfolio = processor.process(positions=[enriched_a, enriched_b])
+    portfolio = processor.process(positions=[enriched_a, enriched_b], enriched_distributions=[])
     assert portfolio.total_net_fiscal_result_received == pytest.approx(80.715, rel=1e-6)
 
 
 def test_total_return_including_distributions(processor, enriched_a, enriched_b):
     """total_return_including_distributions = total_return + total_net_fiscal_result_received."""
-    portfolio = processor.process(positions=[enriched_a, enriched_b])
+    portfolio = processor.process(positions=[enriched_a, enriched_b], enriched_distributions=[])
     assert portfolio.total_return_including_distributions == pytest.approx(2_460.715, rel=1e-6)
 
 
 def test_positions_share_sums_to_one(processor, enriched_a, enriched_b):
     """Sum of all position shares equals 1.0."""
-    portfolio = processor.process(positions=[enriched_a, enriched_b])
+    portfolio = processor.process(positions=[enriched_a, enriched_b], enriched_distributions=[])
     assert sum(ps.share for ps in portfolio.positions_share) == pytest.approx(1.0, rel=1e-6)
     assert sum(ss.weight for ss in portfolio.sector_shares) == pytest.approx(1.0, rel=1e-6)
 
 
 def test_positions_share_per_ticker(processor, enriched_a, enriched_b):
     """Each position share = market_value / total_market_value."""
-    portfolio = processor.process(positions=[enriched_a, enriched_b])
+    portfolio = processor.process(positions=[enriched_a, enriched_b], enriched_distributions=[])
     shares = {ps.ticker: ps.share for ps in portfolio.positions_share}
     assert shares["FMTY14"] == pytest.approx(15_750.0 / 26_750.0, rel=1e-6)
     assert shares["FSHOP13"] == pytest.approx(11_000.0 / 26_750.0, rel=1e-6)
@@ -167,21 +186,28 @@ def test_positions_share_per_ticker(processor, enriched_a, enriched_b):
 
 def test_last_updated_at(processor, enriched_a, enriched_b):
     """last_updated_at = max of price_updated_at across all positions."""
-    portfolio = processor.process(positions=[enriched_a, enriched_b])
+    portfolio = processor.process(positions=[enriched_a, enriched_b], enriched_distributions=[])
     assert portfolio.last_updated_at == T2
 
 
 def test_portfolio_positions_preserved(processor, enriched_a, enriched_b):
     """portfolio_positions contains the same enriched position objects passed in."""
     positions = [enriched_a, enriched_b]
-    portfolio = processor.process(positions)
+    portfolio = processor.process(positions=positions, enriched_distributions=[])
     assert portfolio.portfolio_positions == positions
 
 
 def test_single_position_share_is_one(processor, enriched_a):
     """A portfolio with one position has a positions_share of exactly 1.0."""
-    portfolio = processor.process(positions=[enriched_a])
+    portfolio = processor.process(positions=[enriched_a], enriched_distributions=[])
     assert portfolio.positions_share[0].share == pytest.approx(1.0, rel=1e-6)
     assert len(portfolio.sector_shares) == 1
     assert portfolio.sector_shares[0].sector == Sector.INDUSTRIAL
     assert portfolio.sector_shares[0].weight == pytest.approx(1.0, rel=1e-6)
+
+
+def test_all_distributions_passthrough(processor, enriched_a, dist_a):
+    """all_distributions on the Portfolio equals the list passed to process()."""
+    dists = [dist_a]
+    portfolio = processor.process(positions=[enriched_a], enriched_distributions=dists)
+    assert portfolio.all_distributions == dists

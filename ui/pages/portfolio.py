@@ -49,4 +49,4 @@ render_positions_table(positions=portfolio.portfolio_positions, positions_share=
 
 st.divider()
 st.subheader("Historial de Distribuciones")
-render_distributions_chart(distributions_by_ticker={pos.ticker: pos.distributions for pos in portfolio.portfolio_positions})
+render_distributions_chart(all_distributions=portfolio.all_distributions)

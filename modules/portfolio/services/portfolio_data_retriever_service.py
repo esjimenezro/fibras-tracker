@@ -67,7 +67,10 @@ class PortfolioDataRetrieverService:
                 distributions=enriched_distributions,
                 fibras=fibras,
             )
-            portfolio = self._portfolio_processor.process(positions=enriched_positions)
+            portfolio = self._portfolio_processor.process(
+                positions=enriched_positions,
+                enriched_distributions=enriched_distributions,
+            )
 
             return PortfolioDataRetrieverServiceSchema(
                 status=ServiceStatus.OK,

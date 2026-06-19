@@ -8,7 +8,7 @@ from ui.styles.theme import format_mxn_label
 
 
 def render_distributions_chart(
-    distributions_by_ticker: dict[str, list[EnrichedDistribution]],
+    all_distributions: list[EnrichedDistribution],
 ) -> None:
     """Render a stacked bar chart of net distribution income over time, grouped by FIBRA,
     followed by an expandable monthly breakdown section.
@@ -20,19 +20,18 @@ def render_distributions_chart(
     totals row.
 
     Args:
-        distributions_by_ticker: Mapping of BMV ticker to its enriched distribution list.
+        all_distributions: Complete distribution history across all tickers.
     """
     rows = [
         {
             "payment_date": d.payment_date,
-            "ticker": ticker,
+            "ticker": d.ticker,
             "gross_fiscal_result_income": d.gross_fiscal_result_income,
             "net_reimbursement_income": d.net_reimbursement_income,
             "fiscal_result_withholding": d.fiscal_result_withholding,
             "net_income": d.net_income,
         }
-        for ticker, dists in distributions_by_ticker.items()
-        for d in dists
+        for d in all_distributions
     ]
 
     if not rows:

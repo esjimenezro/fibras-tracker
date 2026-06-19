@@ -3,6 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 from modules.common.models import Sector
+from modules.portfolio.models.enriched_distribution import EnrichedDistribution
 from modules.portfolio.models.enriched_position import EnrichedPosition
 
 
@@ -35,6 +36,8 @@ class Portfolio(BaseModel):
 
     Attributes:
         portfolio_positions: All enriched FIBRA positions.
+        all_distributions: Complete distribution history across all tickers, as-is from the
+            distributions pipeline. Not filtered or aggregated.
         positions_share: Portfolio weight per position; sums to 1.0 across all entries.
         sector_shares: Portfolio weight per real-estate sector; sums to 1.0 when all
             positions have fully-specified sector exposures.
@@ -49,6 +52,7 @@ class Portfolio(BaseModel):
     """
 
     portfolio_positions: list[EnrichedPosition]
+    all_distributions: list[EnrichedDistribution]
     positions_share: list[PositionShare]
     sector_shares: list[SectorShare]
     total_purchase_cost: float

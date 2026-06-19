@@ -1,4 +1,5 @@
 from modules.common.models import Sector
+from modules.portfolio.models import EnrichedDistribution
 from modules.portfolio.models import EnrichedPosition
 from modules.portfolio.models import Portfolio
 from modules.portfolio.models import PositionShare
@@ -8,7 +9,7 @@ from modules.portfolio.models import SectorShare
 class PortfolioProcessor:
     """Aggregates a list of EnrichedPosition records into a single Portfolio output model.
 
-    Transformation: list[EnrichedPosition] → Portfolio
+    Transformation: list[EnrichedPosition] + list[EnrichedDistribution] → Portfolio
 
     Formulas implemented:
         total_purchase_cost               = sum(p.purchase_cost for p in positions)
@@ -23,16 +24,19 @@ class PortfolioProcessor:
         last_updated_at                   = max(p.price_updated_at for p in positions)
         sector_contribution(position, s)  = p.market_value × sector_exposure.weight  (per matching sector)
         sector_share.weight(sector)       = sum(sector_contribution) / total_market_value
+        all_distributions                 = enriched_distributions  (passed through as-is)
 
     Note: positions_share always sums to exactly 1.0 across all positions.
     Note: sector_shares sums to exactly 1.0 when all positions have sector_exposure weights summing to 1.0.
     """
 
-    def process(self, positions: list[EnrichedPosition]) -> Portfolio:
+    def process(self, positions: list[EnrichedPosition], enriched_distributions: list[EnrichedDistribution]) -> Portfolio:
         """Compute all portfolio-level aggregates from enriched positions.
 
         Args:
             positions: All enriched FIBRA positions. Must not be empty.
+            enriched_distributions: Full list of enriched distributions across all tickers.
+                Passed through to Portfolio.all_distributions unchanged.
 
         Returns:
             Portfolio with the following aggregated fields:
@@ -48,6 +52,7 @@ class PortfolioProcessor:
                 last_updated_at                   = max(p.price_updated_at for p in positions)
                 sector_shares                     = [SectorShare(sector=s, weight=total / total_market_value)
                                                      for s, total in sector_totals.items() if total > 0]
+                all_distributions                 = enriched_distributions  (passed through as-is)
 
             Note: positions_share always sums to exactly 1.0 across all positions.
             Note: sector_shares sums to exactly 1.0 when all positions have sector_exposure weights summing to 1.0.
@@ -77,6 +82,7 @@ class PortfolioProcessor:
 
         return Portfolio(
             portfolio_positions=positions,
+            all_distributions=enriched_distributions,
             positions_share=[
                 PositionShare(ticker=p.ticker, share=p.market_value / total_market_value)
                 for p in positions
