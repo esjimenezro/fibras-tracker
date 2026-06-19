@@ -10,6 +10,7 @@ from modules.fundamentals.schemas import FundamentalsDataRetrieverServiceSchema
 from modules.fundamentals.services import FundamentalsDataRetrieverService
 from ui.components.common import render_error_banner
 from ui.components.common import render_page_header
+from ui.components.fundamentals import render_comparison_chart
 from ui.components.fundamentals import render_comparison_table
 from ui.components.fundamentals import render_detail_chart
 from ui.components.fundamentals import render_detail_header
@@ -79,4 +80,10 @@ with comparativa_tab:
         fibras=history.fibras,
         fibra_metrics=history.fibra_metrics,
         annual_records=annual_records_by_ticker,
+    )
+    st.divider()
+    render_comparison_chart(
+        annual_records=annual_records_by_ticker,
+        fibras=history.fibras,
+        inflation_records=history.inflation_records,
     )
