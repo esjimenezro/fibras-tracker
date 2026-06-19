@@ -2,91 +2,68 @@
 
 ## What is this project
 
-A personal Python + Streamlit application to track a portfolio of Mexican FIBRAs (Fideicomisos de Infraestructura y Bienes Raíces). FIBRAs are the Mexican equivalent of REITs, listed on the BMV (Mexican Stock Exchange).
+A personal Python + Streamlit application (branded **FIBRALens**) to track and analyze Mexican
+FIBRAs (Fideicomisos de Infraestructura y Bienes Raíces — the Mexican equivalent of REITs, listed
+on the BMV). It tracks a personal portfolio (positions, distributions, live prices) and a
+fundamentals history (quarterly KPIs per FIBRA, with annual aggregation and inflation-adjusted
+growth analysis).
+
+Full formula sets, data-file schemas, and feature descriptions live in `README.md`. This file
+holds the architecture, conventions, and current state.
 
 ## Development principles
 
-- **Small, verifiable features** — never full modules at once
-- Confirm each piece works before moving to the next
-- Ask before implementing if there is any ambiguity in the requirement
-- **Docstrings are mandatory** — every class, method, and function must have a docstring describing its purpose
-- **Docstrings follow Google style** — classes document fields under `Attributes:`, methods and functions document parameters under `Args:` and return values under `Returns:`
+- **Small, verifiable features** — never full modules at once. Confirm each piece works before the next.
+- Ask before implementing if there is any ambiguity in the requirement.
+- **Docstrings are mandatory** — every class, method, and function. Google style: classes document
+  fields under `Attributes:`; methods/functions document `Args:` and `Returns:` (processors also
+  document each derived field's formula).
 
 ## Architecture
 
 ```
 fibras-tracker/
 ├── app.py                  ← Streamlit entry point (registers pages via st.navigation)
-├── config.py               ← paths, titles, business constants (e.g. FISCAL_RESULT_WITHHOLDING_RATE)
+├── config.py               ← paths, FIBRALens branding, FISCAL_RESULT_WITHHOLDING_RATE
 ├── ui/
 │   ├── assets/             ← static files (SVG logo)
 │   ├── components/
 │   │   ├── common/         ← shared: page_header, error_banner
-│   │   └── portfolio/      ← domain: summary_card, positions_table, distributions_chart
-│   ├── pages/              ← Streamlit page scripts (one per module)
-│   │   ├── home.py
-│   │   ├── portfolio.py
-│   │   ├── fundamentals.py
-│   │   └── radar.py
+│   │   ├── portfolio/      ← summary_card, positions_table, distributions_chart, sector_chart
+│   │   └── fundamentals/   ← detail_header, detail_chart, comparison_table, comparison_chart
+│   ├── pages/              ← home.py, portfolio.py, fundamentals.py, radar.py
 │   └── styles/
 │       └── theme.py        ← color constants, number formatters, CSS injection
 ├── modules/                ← business logic
 │   ├── common/
-│   │   ├── models/
-│   │   │   ├── fibra.py                         ← Fibra, Sector, SectorExposure, PaymentFrequency
-│   │   │   └── market_price.py                  ← MarketPrice (live price snapshot)
-│   │   ├── repositories/
-│   │   │   ├── base/
-│   │   │   │   ├── base_catalog_read_repository.py
-│   │   │   │   └── base_market_price_read_repository.py
-│   │   │   ├── json_catalog_read_repository.py
-│   │   │   └── yfinance_market_price_read_repository.py
-│   │   └── schemas/
-│   │       └── base_service_schema.py           ← ServiceStatus (shared StrEnum: OK / ERROR)
+│   │   ├── models/         ← Fibra, Sector, SectorExposure, PaymentFrequency; MarketPrice; InflationRecord
+│   │   ├── repositories/   ← json_catalog, yfinance_market_price, json_inflation (+ base/ interfaces)
+│   │   └── schemas/        ← ServiceStatus (shared StrEnum: OK / ERROR)
 │   ├── portfolio/
-│   │   ├── models/
-│   │   │   ├── position.py                      ← raw Position
-│   │   │   ├── enriched_position.py             ← EnrichedPosition(Position) with computed fields
-│   │   │   ├── distribution.py                  ← raw Distribution
-│   │   │   ├── enriched_distribution.py         ← EnrichedDistribution(Distribution) with computed fields
-│   │   │   └── portfolio.py                     ← Portfolio + PositionShare + SectorShare
-│   │   ├── repositories/
-│   │   │   ├── base/
-│   │   │   │   ├── base_positions_read_repository.py
-│   │   │   │   └── base_distributions_read_repository.py
-│   │   │   ├── json_positions_read_repository.py
-│   │   │   └── json_distributions_read_repository.py
-│   │   ├── processors/
-│   │   │   ├── distributions_processor.py       ← Distribution → EnrichedDistribution
-│   │   │   ├── positions_processor.py           ← Position + MarketPrice + [EnrichedDistribution] → EnrichedPosition
-│   │   │   └── portfolio_processor.py           ← [EnrichedPosition] → Portfolio
-│   │   ├── schemas/
-│   │   │   └── portfolio_schemas.py             ← service input/output contracts
-│   │   └── services/
-│   │       └── portfolio_data_retriever_service.py  ← main orchestrator
+│   │   ├── models/         ← Position, EnrichedPosition, Distribution, EnrichedDistribution,
+│   │   │                     Portfolio (+ PositionShare, SectorShare)
+│   │   ├── repositories/   ← json_positions, json_distributions (+ base/)
+│   │   ├── processors/     ← distributions_processor, positions_processor, portfolio_processor
+│   │   ├── schemas/        ← PortfolioDataRetrieverServiceSchema
+│   │   └── services/       ← portfolio_data_retriever_service
 │   ├── fundamentals/
-│   │   ├── models/
-│   │   │   ├── fundamentals_record.py           ← raw FundamentalsRecord
-│   │   │   ├── enriched_fundamentals_record.py  ← EnrichedFundamentalsRecord with computed fields
-│   │   │   └── fundamentals_history.py          ← FundamentalsHistory (aggregated output)
-│   │   ├── repositories/
-│   │   │   ├── base/
-│   │   │   │   └── base_fundamentals_read_repository.py
-│   │   │   └── json_fundamentals_read_repository.py
-│   │   ├── processors/
-│   │   │   ├── fundamentals_processor.py        ← FundamentalsRecord + MarketPrice → EnrichedFundamentalsRecord
-│   │   │   └── fundamentals_history_processor.py ← [EnrichedFundamentalsRecord] + [Fibra] → FundamentalsHistory
-│   │   ├── schemas/
-│   │   │   └── fundamentals_schemas.py          ← service input/output contracts
-│   │   └── services/
-│   │       └── fundamentals_data_retriever_service.py  ← main orchestrator
-│   └── radar/
+│   │   ├── models/         ← FundamentalsRecord, EnrichedFundamentalsRecord,
+│   │   │                     AnnualFundamentalsRecord, FibraMetrics, FundamentalsHistory
+│   │   ├── repositories/   ← json_fundamentals (+ base/)
+│   │   ├── processors/     ← fundamentals_processor, annual_fundamentals_processor,
+│   │   │                     fundamentals_history_processor
+│   │   ├── schemas/        ← FundamentalsDataRetrieverServiceSchema
+│   │   └── services/       ← fundamentals_data_retriever_service
+│   └── radar/              ← (empty — reserved)
+├── tests/
+│   ├── portfolio/          ← 37 tests (all three portfolio processors)
+│   └── fundamentals/       ← 86 tests (all three fundamentals processors)
 └── data/
-    ├── catalog.json            ← static FIBRA catalog (name, frequency, sector weights)
-    ├── positions.json
-    ├── distributions.json
-    └── historical/
-        └── fundamentals.json   ← quarterly KPI history per FIBRA
+    ├── catalog.json        ← static FIBRA catalog (name, frequency, sector weights)
+    ├── positions.json      ← portfolio holdings
+    ├── distributions.json  ← distribution payment history
+    ├── fundamentals.json   ← quarterly KPI history per FIBRA
+    └── inflation.json      ← annual Mexican inflation (INPC) history
 ```
 
 ## Layer flow
@@ -99,114 +76,110 @@ pages/ → services/ → repositories/ → data source
           processors/
 ```
 
-Data transformation pipeline (executed inside the service):
+Data transformation pipelines (executed inside the services):
 
 ```
-Distribution      ──[DistributionsProcessor]──▶ EnrichedDistribution
-Position + MarketPrice + [EnrichedDistribution]
-                  ──[PositionsProcessor]─────▶ EnrichedPosition
-[EnrichedPosition]──[PortfolioProcessor]─────▶ Portfolio
+# Portfolio
+Distribution                                   ──[DistributionsProcessor]─▶ EnrichedDistribution
+Position + MarketPrice + Fibra + [EnrichedDistribution]
+                                               ──[PositionsProcessor]─────▶ EnrichedPosition
+[EnrichedPosition]                             ──[PortfolioProcessor]─────▶ Portfolio
 
-FundamentalsRecord + list[MarketPrice]
-                  ──[FundamentalsProcessor]───▶ EnrichedFundamentalsRecord
-[EnrichedFundamentalsRecord] + list[Fibra]
-                  ──[FundamentalsHistoryProcessor]─▶ FundamentalsHistory
+# Fundamentals
+[FundamentalsRecord] + [MarketPrice]           ──[FundamentalsProcessor]──────▶ [EnrichedFundamentalsRecord]
+[EnrichedFundamentalsRecord]                   ──[AnnualFundamentalsProcessor]─▶ [AnnualFundamentalsRecord]
+[EnrichedFundamentalsRecord] + [Fibra]
+  + [AnnualFundamentalsRecord] + [InflationRecord]
+                                               ──[FundamentalsHistoryProcessor]▶ FundamentalsHistory
 ```
-
-## UI layer
-
-- `app.py` uses `st.navigation([st.Page("ui/pages/…")])` — pages are **not** auto-discovered; every page must be explicitly registered here.
-- Component convention: every component is a pure `render_<component>()` function. Stateless, no `st.session_state`. Receives exactly the typed data it needs; never calls services or repositories.
-- Page convention: call `render_page_header()` first → wrap service call in `@st.cache_data(ttl=300)` → check `result.status` and call `render_error_banner()` + `st.stop()` on error → render components section by section with `st.divider()`.
-- `theme.py` usage: always import `format_mxn`, `format_mxn_compact`, `format_pct`, `color_return`, `COLOR_POSITIVE/NEGATIVE/NEUTRAL` from here. Never redefine colors or formatters inside components. `load_custom_css()` is called once by `render_page_header()` — do not call it from individual components.
 
 ## Layer responsibilities
 
-- `ui/pages/` only calls methods from `services/`. Never touches repos or data directly.
-- `services/` orchestrates: fetches data from repos, transforms it via processors, returns a UI-ready result wrapped in a schema.
-- `repositories/` implements data access. Abstract interfaces live in `repositories/base/`. Concrete implementations are named `<source>_<entity>_read_repository.py` (e.g. `json_positions_read_repository.py`, `yfinance_market_price_read_repository.py`).
-- `processors/` contains pure logic: calculations, aggregations, filters. No knowledge of data sources or services. Processors fail loud — raise `ValueError` on invalid input (e.g. `PositionsProcessor` raises if any position has no matching market price; `PortfolioProcessor` raises on an empty positions list).
-- `models/` defines domain entities as Pydantic models. No methods, no computed fields, no validators — pure data contracts. The codebase uses a **raw → enriched** convention: a raw model (e.g. `Distribution`) is paired with an `Enriched<Name>` subclass that inherits from it and adds processor-computed fields. Processors only produce enriched models; repositories only read raw models.
-- `schemas/` holds service input/output contracts. Convention for service outputs: `<ServiceName>Schema` with three fields — `status` (a `StrEnum` of `"OK"` / `"ERROR"`), `data` (the success payload, optional), and `error_message` (optional). See `PortfolioDataRetrieverServiceSchema` for the worked example.
+- `ui/pages/` — only calls methods from `services/`. Never touches repositories or data directly.
+- `services/` — orchestrates: fetches from repos, transforms via processors, returns a UI-ready
+  result wrapped in a schema.
+- `repositories/` — data access only. Abstract interfaces in `repositories/base/`; concrete
+  implementations named `<source>_<entity>_read_repository.py`.
+- `processors/` — pure logic (calculations, aggregations, filters). No knowledge of data sources.
+  Fail loud: raise `ValueError` on invalid input (e.g. `PositionsProcessor` if a position has no
+  matching price/catalog entry; `PortfolioProcessor` on empty positions).
+- `models/` — Pydantic domain entities. No methods, no computed fields, no validators. **raw →
+  enriched** convention: a raw model (e.g. `Distribution`) is paired with an `Enriched<Name>`
+  subclass adding processor-computed fields. Processors produce enriched models; repositories read
+  raw models. (`AnnualFundamentalsRecord`, `FibraMetrics`, `FundamentalsHistory` are aggregate
+  outputs, not enriched subclasses.)
+- `schemas/` — service input/output contracts. Output convention: `<ServiceName>Schema` with
+  `status` (`ServiceStatus`), `data` (optional payload), `error_message` (optional).
 
 ## Repository pattern
 
-The goal is that switching the data source (JSON → API) requires no changes to `services/`, `processors/`, or `pages/`. Only a new concrete repository implementation is added. The contract is enforced by the abstract base class.
+Switching the data source (JSON → API) must require no changes to `services/`, `processors/`, or
+`pages/` — only a new concrete repository. Structure per domain: `base/` holds one abstract
+interface per entity; concrete implementations are `json_<entity>_read_repository.py`,
+`yfinance_<entity>_read_repository.py`, etc.
 
-Repository structure per domain:
-
-- `base/` → one abstract interface file per entity (e.g. `base_positions_read_repository.py`)
-- `json_<entity>_read_repository.py` → concrete JSON implementation
-- `yfinance_<entity>_read_repository.py` / `api_<entity>_read_repository.py` → other concrete implementations
-
-**Constructor convention:** all concrete repositories take no constructor arguments. Anything dynamic flows through `retrieve_data(...)`. For example, `BaseMarketPriceReadRepository.retrieve_data(tickers: list[str])` takes tickers at call time — not in `__init__` — so the service can resolve all repository defaults uniformly inside `__init__` and pass the runtime ticker list when calling `retrieve_data`.
+**Constructor convention:** concrete repositories take no constructor arguments. Anything dynamic
+flows through `retrieve_data(...)` — e.g. `BaseMarketPriceReadRepository.retrieve_data(tickers)`.
 
 ## Service pattern
 
-A service is the only entry point a `page/` is allowed to call. It:
+A service is the only entry point a `page/` may call. It:
 
-1. Accepts optional repository instances in `__init__` and defaults each to its concrete implementation when `None` is passed (constructor injection with sensible defaults).
-2. Instantiates all processors internally — processors are never injected (they are stateless and have no external dependencies).
-3. Exposes a single public method (typically `run()`) that orchestrates the repo → processor pipeline.
-4. Wraps the entire pipeline in `try/except Exception` and always returns its typed `<ServiceName>Schema` with either `status=OK` and `data` populated, or `status=ERROR` and `error_message=str(e)`. Exceptions are never silently swallowed.
+1. Accepts optional repository instances in `__init__`, defaulting each to its concrete
+   implementation when `None` (constructor injection with sensible defaults).
+2. Instantiates all processors internally (processors are stateless, never injected).
+3. Exposes a single public `run()` that orchestrates the repo → processor pipeline.
+4. Wraps the whole pipeline in `try/except Exception`, always returning its typed
+   `<ServiceName>Schema` (`status=OK` + `data`, or `status=ERROR` + `error_message`). Exceptions
+   are never silently swallowed.
 
-`PortfolioDataRetrieverService` is the reference implementation.
+`PortfolioDataRetrieverService` and `FundamentalsDataRetrieverService` are the reference implementations.
+
+## UI layer conventions
+
+- `app.py` registers every page explicitly via `st.navigation([st.Page("ui/pages/…")])` — pages are
+  not auto-discovered.
+- **Page convention:** call `render_page_header()` first → wrap the service call in
+  `@st.cache_data(ttl=300)` → check `result.status` and call `render_error_banner()` + `st.stop()`
+  on error → render components section by section.
+- **Component convention:** every component is a pure `render_<component>()` function. Stateless, no
+  `st.session_state`, receives exactly the typed data it needs, never calls services/repositories.
+- **theme.py:** always import `format_mxn`, `format_mxn_compact`, `format_pct`, `color_return`,
+  `COLOR_POSITIVE/NEGATIVE/NEUTRAL` from here — never redefine colors/formatters in components.
+  `load_custom_css()` is called once by `render_page_header()`; do not call it elsewhere.
 
 ## Stack
 
-- Python 3.11+
-- Streamlit
-- Pydantic (models and schemas)
-- yfinance (market prices, tickers with `.MX` suffix)
-- pandas (transformations)
-- Plotly Express (charts in UI components)
+- Python 3.12+
+- Streamlit, Pydantic (models + schemas), pandas, Plotly
+- yfinance (market prices; tickers with `.MX` suffix). Use yfinance >=1.0.0 — 0.2.x has known Yahoo
+  Finance API compatibility issues ("possibly delisted" errors on valid tickers).
 
 ## Linting
 
-- **Tool**: flake8
-- **Max line length**: 200 characters (`max-line-length = 200` in `.flake8`)
+flake8, `max-line-length = 200` (`.flake8`).
 
 ## Code style
 
-**Exports:** every class and model must be exported from its package's `__init__.py`. All imports must reference the package, not the file:
+**Exports:** every class/model must be exported from its package's `__init__.py`. Imports reference
+the package, not the file:
 ```python
-# correct
-from modules.fundamentals.models import FundamentalsRecord
-# wrong
-from modules.fundamentals.models.fundamentals_record import FundamentalsRecord
+from modules.fundamentals.models import FundamentalsRecord   # correct
+from modules.fundamentals.models.fundamentals_record import FundamentalsRecord  # wrong
 ```
 
-**One import per line:** never combine multiple names on a single `from … import` line:
+**One import per line:** never combine names on a single `from … import` line.
+
+**Import order** (one blank line between groups): 1) standard library, 2) third-party,
+3) internal — `modules/common/` first, then other internal imports.
+
+**Keyword arguments:** every function/method call uses explicit keyword arguments — never positional:
 ```python
-# correct
-from modules.portfolio.models import Position
-from modules.portfolio.models import Distribution
-# wrong
-from modules.portfolio.models import Position, Distribution
+EnrichedPosition(ticker="FMTY14", cbfis=100, market_price=12.5)   # correct
+EnrichedPosition("FMTY14", 100, 12.5)                              # wrong
 ```
 
-**Import order** (one blank line between each group):
-1. Standard library (`datetime`, `abc`, `json`, …)
-2. Third-party (`pydantic`, `pandas`, `streamlit`, …)
-3. Internal — `modules/common/` imports first, then other internal imports
-
-**Keyword arguments:** every function/method call must use explicit keyword arguments — never pass values by position:
-```python
-# correct
-render_summary_card(total_purchase_cost=portfolio.total_purchase_cost, total_market_value=portfolio.total_market_value)
-EnrichedPosition(ticker="FMTY14", cbfis=100, market_price=12.5)
-# wrong
-render_summary_card(portfolio.total_purchase_cost, portfolio.total_market_value)
-EnrichedPosition("FMTY14", 100, 12.5)
-```
-
-## Dependencies notes
-
-- yfinance: use version >=1.0.0. Versions 0.2.x have known compatibility
-  issues with Yahoo Finance API and may return "possibly delisted" errors
-  even for valid tickers.
-
-## FIBRAs in the portfolio
+## FIBRAs in scope
 
 | Ticker    | Name           | Sector                    | Frequency |
 |-----------|----------------|---------------------------|-----------|
@@ -215,56 +188,48 @@ EnrichedPosition("FMTY14", 100, 12.5)
 | FIBRAPL14 | Fibra Prologis | Industrial / Logistics    | Quarterly |
 | FSHOP13   | Fibra Shop     | Retail / Shopping centers | Quarterly |
 
-yfinance tickers: append `.MX` suffix (e.g. `FMTY14.MX`)
+yfinance tickers append `.MX` (e.g. `FMTY14.MX`).
 
-## Business rules
+## Business rules — critical invariants
 
-Full formula sets are documented in processor docstrings and `README.md`.
+Tax constant: `FISCAL_RESULT_WITHHOLDING_RATE = 0.30` lives in `config.py`. Full formula sets are in
+the processor docstrings and `README.md`. Invariants to preserve in any new processor/formula:
 
-Tax constant: `FISCAL_RESULT_WITHHOLDING_RATE = 0.30` lives in `config.py`.
-
-Critical invariants to preserve in any new processor or formula:
 - `average_purchase_cost` is the broker-adjusted cost base — never subtract reimbursements from it.
-- Use `net_fiscal_result_income`, never `net_income`, when aggregating fiscal result income. `net_income` includes the non-taxable reimbursement component.
-
-Fundamentals pipeline formulas (operational metrics, per-CBFI ratios, capital structure,
-and market multiples) are documented in `FundamentalsProcessor` docstrings and `README.md`.
+- Use `net_fiscal_result_income`, never `net_income`, when aggregating fiscal-result income
+  (`net_income` includes the non-taxable reimbursement component).
+- `dividend_yield` annualises the quarterly distribution (`distribution_per_cbfi * 4 / market_price`).
+- `ltv` uses `financial_debt / total_assets` (interest-bearing debt), **not** `total_debt`.
+- Per-CBFI ratios use `cbfis_with_rights`; `nav_per_cbfi` and `market_cap` use `cbfis_outstanding`.
+- Annual distribution sums (`distribution_per_cbfi_annual`, `total_distribution_annual`) use a
+  **partial sum** — sum of non-null quarters, null only if all four are null — because monthly
+  payers may not report every quarter. All other annual sums are strict (null if any quarter null).
 
 ## Current project state
 
 Complete:
-- `modules/common/` — `Fibra`, `Sector`, `SectorExposure`, `PaymentFrequency` (all in `fibra.py`);
-  `MarketPrice`; `ServiceStatus` (centralized `StrEnum` used by all modules);
-  `JsonCatalogReadRepository`, `YFinanceMarketPriceReadRepository`
-- `modules/portfolio/` — full pipeline: raw + enriched models, `Portfolio` (with `SectorShare`),
-  repositories, three processors, `PortfolioDataRetrieverService`, `PortfolioDataRetrieverServiceSchema`
+- `modules/common/` — `Fibra`/`Sector`/`SectorExposure`/`PaymentFrequency`, `MarketPrice`,
+  `InflationRecord`, `ServiceStatus`; JSON catalog/inflation + yfinance price repositories.
+- `modules/portfolio/` — full pipeline: raw + enriched models, `Portfolio` (with `PositionShare`,
+  `SectorShare`), repositories, three processors, service, schema.
 - `modules/fundamentals/` — full pipeline: `FundamentalsRecord`, `EnrichedFundamentalsRecord`,
-  `FundamentalsHistory`; `JsonFundamentalsReadRepository`; `FundamentalsProcessor`,
-  `FundamentalsHistoryProcessor`; `FundamentalsDataRetrieverService`,
-  `FundamentalsDataRetrieverServiceSchema`
-- Unit tests — 62 tests: 37 in `tests/portfolio/` covering all three portfolio processors; 25 in `tests/fundamentals/` covering both fundamentals processors
-- Processor docstrings — formula-complete Google-style docstrings on all processor classes and methods
-- `README.md` — human-readable developer documentation
-- Portfolio page (`ui/pages/portfolio.py`) — summary metrics, positions table, allocation pie, distributions chart
+  `AnnualFundamentalsRecord`, `FibraMetrics`, `FundamentalsHistory`; repository; three processors
+  (`FundamentalsProcessor`, `AnnualFundamentalsProcessor`, `FundamentalsHistoryProcessor`); service,
+  schema.
+- UI — Portfolio page (summary, positions table, allocation donuts, distributions chart) and
+  Fundamentals page (Detalle tab: KPI detail header + unified KPI_CONFIG chart; Comparativa tab:
+  evaluative table + normalized comparison chart).
+- Unit tests — 123: 37 in `tests/portfolio/`, 86 in `tests/fundamentals/` (all five processors).
+- Real data in all five `data/*.json` files. Formula-complete processor docstrings. `README.md`.
 
-Real data populated in `data/positions.json`, `data/distributions.json`, `data/catalog.json`,
-and `data/fundamentals.json`.
+**Next step:** Radar page (`ui/pages/radar.py`) — currently a "Próximamente" placeholder.
 
-**Next step**: Fundamentals page (`ui/pages/fundamentals.py`).
+## Data files overview
 
-## Agreed implementation order
+Detail (fields, units, how to add entries) lives in `README.md`.
 
-1. ~~Models (`modules/portfolio/models/`)~~ ✓
-2. ~~Repository interfaces (`modules/portfolio/repositories/base/`)~~ ✓
-3. ~~Concrete repositories (`json_*`, `yfinance_*`)~~ ✓
-4. ~~Processors (calculations)~~ ✓
-5. ~~Service (orchestrator) + schemas~~ ✓
-6. ~~Portfolio page (`ui/pages/portfolio.py`)~~ ✓
-7. ~~Models (`modules/fundamentals/models/`)~~ ✓
-8. ~~Repository interfaces (`modules/fundamentals/repositories/base/`)~~ ✓
-9. ~~Concrete repositories~~ ✓
-10. ~~Processors (`modules/fundamentals/processors/`)~~ ✓
-11. ~~Service and Schema (`modules/fundamentals/services/` and `modules/fundamentals/schemas/`)~~ ✓
-12. **Fundamentals page (`ui/pages/fundamentals.py`)** ← current next step
-
-Implement and verify one layer at a time before moving to the next.
+- `data/catalog.json` — static FIBRA catalog: name, payment frequency, sector-exposure weights.
+- `data/positions.json` — portfolio holdings (ticker, CBFIs, average purchase cost).
+- `data/distributions.json` — distribution payment history (reimbursement / fiscal result per CBFI).
+- `data/fundamentals.json` — quarterly KPI history per FIBRA.
+- `data/inflation.json` — annual Mexican inflation (INPC) history, for growth-vs-inflation analysis.

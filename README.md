@@ -1,6 +1,6 @@
 # FIBRAs Tracker
 
-A personal Streamlit application to track a portfolio of Mexican FIBRAs. It fetches live market prices via Yahoo Finance and reads distribution payment history from a local JSON file, computing per-position and portfolio-level metrics from both.
+A personal Streamlit application (branded **FIBRALens**) to track and analyze Mexican FIBRAs. It fetches live market prices via Yahoo Finance, reads distribution and position history from local JSON files, and maintains a quarterly fundamentals history per FIBRA — computing per-position, portfolio-level, and fundamental metrics from all three, plus inflation-adjusted growth analysis.
 
 FIBRAs (Fideicomisos de Infraestructura y Bienes Raíces) are the Mexican equivalent of REITs, listed on the BMV (Mexican Stock Exchange).
 
@@ -31,9 +31,18 @@ FIBRAs (Fideicomisos de Infraestructura y Bienes Raíces) are the Mexican equiva
 
 **Portfolio page (`ui/pages/portfolio.py`)**
 - Summary metrics: market value (with unrealised MXN delta), purchase cost, total return %, net distributions, and total return including distributions
-- Allocation donut chart showing portfolio weight per FIBRA
+- Allocation donut charts: portfolio weight per FIBRA and per sector (sectors below 2% grouped into "Otros")
 - Positions table: per-FIBRA breakdown with colour-coded return columns (green/red)
-- Distributions history: stacked bar chart grouped by FIBRA with a monthly/daily granularity toggle, plus a side-by-side summary table showing gross fiscal income, reimbursement, ISR withholding, and net income per period
+- Distributions history: stacked bar chart grouped by FIBRA, plus per-period expanders showing gross fiscal income, reimbursement, ISR withholding, and net income
+
+**Fundamentals analysis**
+- Quarterly KPI history per FIBRA, enriched into operational margins, per-m² and per-CBFI ratios, capital structure (LTV, payout), and market multiples (P/FFO, P/AFFO, dividend yield, P/NAV)
+- Annual aggregation of complete years (all four quarters), with partial-sum handling for distributions
+- Per-FIBRA growth metrics: AFFO/CBFI, distribution, revenue, and NAV CAGRs, year-over-year growth counts, and distribution growth vs. Mexican inflation
+
+**Fundamentals page (`ui/pages/fundamentals.py`)**
+- **Detalle tab** — per-FIBRA KPI dashboard (operation/debt, generation/distribution per CBFI, market valuation, contract predictability) with traffic-light icons and year-over-year deltas, plus a unified indicator chart with a Trimestral/Anual toggle, threshold bands, and an inflation reference line
+- **Comparativa tab** — cross-FIBRA evaluative table (Propósito / Predictibilidad / Contratos) and a multi-FIBRA comparison chart with direct and normalized (base-1000) modes
 
 ---
 
@@ -55,21 +64,31 @@ pages/ → services/ → repositories/
 
 ### Data transformation pipeline
 
+**Portfolio**
+
 ```
 Distribution
   → [DistributionsProcessor] → EnrichedDistribution
 
-Position + MarketPrice + [EnrichedDistribution]
+Position + MarketPrice + Fibra + list[EnrichedDistribution]
   → [PositionsProcessor] → EnrichedPosition
 
-[EnrichedPosition]
-  → [PortfolioProcessor] → Portfolio
+list[EnrichedPosition]
+  → [PortfolioProcessor] → Portfolio  (with PositionShare + SectorShare)
+```
 
-FundamentalsRecord + list[MarketPrice]
-  → [FundamentalsProcessor] → EnrichedFundamentalsRecord
+**Fundamentals**
+
+```
+list[FundamentalsRecord] + list[MarketPrice]
+  → [FundamentalsProcessor] → list[EnrichedFundamentalsRecord]
+
+list[EnrichedFundamentalsRecord]
+  → [AnnualFundamentalsProcessor] → list[AnnualFundamentalsRecord]
 
 list[EnrichedFundamentalsRecord] + list[Fibra]
-  → [FundamentalsHistoryProcessor] → FundamentalsHistory
+    + list[AnnualFundamentalsRecord] + list[InflationRecord]
+  → [FundamentalsHistoryProcessor] → FundamentalsHistory  (with per-FIBRA FibraMetrics)
 ```
 
 ### Repository pattern
@@ -83,47 +102,53 @@ Each entity has an abstract interface in `repositories/base/` that defines the `
 ```
 fibras-tracker/
 ├── app.py                      ← Streamlit entry point (registers pages via st.navigation)
-├── config.py                   ← file paths and business constants
+├── config.py                   ← file paths, FIBRALens branding, business constants
 ├── ui/
 │   ├── assets/                 ← static files (SVG logo)
 │   ├── components/
 │   │   ├── common/             ← shared: page_header, error_banner
-│   │   └── portfolio/          ← domain: summary_card, positions_table, distributions_chart
+│   │   ├── portfolio/          ← summary_card, positions_table, distributions_chart, sector_chart
+│   │   └── fundamentals/       ← detail_header, detail_chart, comparison_table, comparison_chart
 │   ├── pages/                  ← Streamlit page scripts (one per module)
 │   │   ├── home.py
 │   │   ├── portfolio.py
 │   │   ├── fundamentals.py
-│   │   └── radar.py
+│   │   └── radar.py            ← placeholder ("Próximamente")
 │   └── styles/
 │       └── theme.py            ← color constants, number formatters, CSS injection
 ├── modules/
 │   ├── common/
-│   │   ├── models/             ← Sector, SectorExposure, Fibra, PaymentFrequency, MarketPrice
-│   │   ├── repositories/       ← catalog and market price repositories
+│   │   ├── models/             ← Sector, SectorExposure, Fibra, PaymentFrequency, MarketPrice, InflationRecord
+│   │   ├── repositories/       ← catalog, market price, and inflation repositories
 │   │   │   └── base/           ← abstract interfaces
 │   │   └── schemas/            ← ServiceStatus (shared across all modules)
 │   ├── portfolio/
-│   │   ├── models/             ← Pydantic data contracts (raw + enriched + aggregate)
+│   │   ├── models/             ← Position, EnrichedPosition, Distribution, EnrichedDistribution,
+│   │   │                         Portfolio (PositionShare, SectorShare)
 │   │   ├── repositories/       ← data access layer
 │   │   │   └── base/           ← abstract interfaces
-│   │   ├── processors/         ← pure business logic and calculations
-│   │   ├── schemas/            ← service input/output contracts
-│   │   └── services/           ← orchestration layer
+│   │   ├── processors/         ← DistributionsProcessor, PositionsProcessor, PortfolioProcessor
+│   │   ├── schemas/            ← PortfolioDataRetrieverServiceSchema
+│   │   └── services/           ← PortfolioDataRetrieverService
 │   ├── fundamentals/
-│   │   ├── models/             ← FundamentalsRecord, EnrichedFundamentalsRecord, FundamentalsHistory
+│   │   ├── models/             ← FundamentalsRecord, EnrichedFundamentalsRecord,
+│   │   │                         AnnualFundamentalsRecord, FibraMetrics, FundamentalsHistory
 │   │   ├── repositories/       ← data access layer
 │   │   │   └── base/           ← abstract interfaces
-│   │   ├── processors/         ← FundamentalsProcessor, FundamentalsHistoryProcessor
+│   │   ├── processors/         ← FundamentalsProcessor, AnnualFundamentalsProcessor,
+│   │   │                         FundamentalsHistoryProcessor
 │   │   ├── schemas/            ← FundamentalsDataRetrieverServiceSchema
 │   │   └── services/           ← FundamentalsDataRetrieverService
-│   └── radar/
+│   └── radar/                  ← (empty — reserved)
 ├── tests/
-│   └── portfolio/              ← unit tests for all three portfolio processors
+│   ├── portfolio/              ← unit tests for all three portfolio processors (37 tests)
+│   └── fundamentals/           ← unit tests for all three fundamentals processors (86 tests)
 └── data/
     ├── catalog.json            ← static FIBRA catalog (name, frequency, sector weights)
     ├── positions.json          ← portfolio holdings
     ├── distributions.json      ← distribution payment history
-    └── fundamentals.json       ← quarterly KPI history per FIBRA
+    ├── fundamentals.json       ← quarterly KPI history per FIBRA
+    └── inflation.json          ← annual Mexican inflation (INPC) history
 ```
 
 ---
@@ -136,7 +161,8 @@ fibras-tracker/
 |---|---|
 | `ui/assets/` | Static files (SVG logo) |
 | `ui/components/common/` | Shared components reused across all pages (`page_header`, `error_banner`) |
-| `ui/components/<domain>/` | Domain-specific components (`portfolio/summary_card`, `positions_table`, `distributions_chart`) |
+| `ui/components/portfolio/` | `summary_card`, `positions_table`, `distributions_chart`, `sector_chart` |
+| `ui/components/fundamentals/` | `detail_header`, `detail_chart`, `comparison_table`, `comparison_chart` |
 | `ui/pages/` | One script per application page; these are the files Streamlit runs |
 | `ui/styles/theme.py` | Color constants, number formatters (`format_mxn`, `format_pct`), and CSS injection |
 
@@ -159,6 +185,19 @@ fibras-tracker/
 3. Accept only the typed data the component needs — no service or repository calls inside.
 4. Import all formatters and colors from `ui.styles.theme`; never redefine them locally.
 
+### Fundamentals page structure
+
+The fundamentals page (`ui/pages/fundamentals.py`) calls `FundamentalsDataRetrieverService().run()` and renders two tabs:
+
+**Detalle tab**
+1. A FIBRA selectbox.
+2. `render_detail_header(record, fibra, prior_year_record)` — four KPI sections (operation & debt; generation & distribution per CBFI; market valuation; distribution predictability), with traffic-light icons on threshold metrics (margins, occupancy, LTV) and year-over-year deltas on FFO/AFFO per CBFI and NAV.
+3. `render_detail_chart(records, annual_records, inflation_records)` — a single **KPI_CONFIG**-driven indicator selector plus a Trimestral/Anual radio toggle. KPI_CONFIG is one dictionary that defines every selectable indicator (label, quarterly/annual source fields, chart `kind`, format, thresholds). Three chart kinds are rendered: `single` (one line, optional threshold bands and inflation reference), `combined` (multi-line with a Total/Margen/Por CBFI mode toggle), and `dual_axis` (two Y-axes).
+
+**Comparativa tab**
+1. `render_comparison_table(latest_by_ticker, fibras, fibra_metrics, annual_records)` — an HTML evaluative table grouped into three supercolumns: **Propósito** (constant / growing / vs-inflation distribution), **Predictibilidad** (NAV, revenue, AFFO per-CBFI growth; payout ratio; occupancy; LTV), and **Contratos** (WALE, top tenant, top-10 tenants). FIBRAs with fewer than three complete annual years are greyed and suffixed with `*`.
+2. `render_comparison_chart(annual_records, fibras, inflation_records)` — a multi-FIBRA, multi-indicator chart. Direct indicators (payout ratio, LTV, occupancy) plot raw values; normalized indicators (distribution, AFFO, revenue, NAV per CBFI) rebase every series to **1000** at a common base year, and distribution adds an inflation reference line.
+
 ---
 
 ## Data files
@@ -172,11 +211,8 @@ One entry per FIBRA held in the portfolio.
   "positions": [
     {
       "ticker": "FMTY14",
-      "name": "Fibra Mty",
-      "sector": "Industrial / Offices",
       "cbfis": 1500,
-      "average_purchase_cost": 9.58,
-      "payment_frequency": "Monthly"
+      "average_purchase_cost": 9.586
     }
   ]
 }
@@ -184,14 +220,11 @@ One entry per FIBRA held in the portfolio.
 
 | Field | Description |
 |---|---|
-| `ticker` | BMV ticker without the `.MX` suffix |
-| `name` | Full name of the FIBRA |
-| `sector` | Market sector |
+| `ticker` | BMV ticker without the `.MX` suffix; matches a FIBRA in `catalog.json` |
 | `cbfis` | Number of CBFIs (units) currently held |
 | `average_purchase_cost` | Broker-reported weighted average cost per CBFI, in MXN |
-| `payment_frequency` | `"Monthly"` or `"Quarterly"` |
 
-> **Note:** `average_purchase_cost` is the value reported by your broker and is already cost-adjusted. Do not manually subtract reimbursements from it — those are tracked separately in `distributions.json`.
+> **Note:** Name, payment frequency, and sector exposure are not stored here — they are resolved from `catalog.json` by ticker during enrichment. `average_purchase_cost` is the value reported by your broker and is already cost-adjusted. Do not manually subtract reimbursements from it — those are tracked separately in `distributions.json`.
 
 To add a new position: append a new object to the `"positions"` array.
 
@@ -240,10 +273,11 @@ The catalog drives the `Fibra` domain model and is consumed by both the Portfoli
       "ticker": "FMTY14",
       "name": "Fibra Mty",
       "payment_frequency": "Monthly",
+      "tenant_concentration_basis": "ingresos_totales",
       "sector_exposure": [
-        {"sector": "Industrial", "weight": 0.88},
-        {"sector": "Oficinas",   "weight": 0.10},
-        {"sector": "Comercial",  "weight": 0.02}
+        {"sector": "Industrial", "weight": 0.80},
+        {"sector": "Oficinas",   "weight": 0.19},
+        {"sector": "Comercial",  "weight": 0.01}
       ]
     }
   ]
@@ -256,6 +290,7 @@ The catalog drives the `Fibra` domain model and is consumed by both the Portfoli
 | `ticker` | BMV ticker without the `.MX` suffix |
 | `name` | Full display name of the FIBRA |
 | `payment_frequency` | `"Monthly"` or `"Quarterly"` |
+| `tenant_concentration_basis` | *(optional)* methodology each FIBRA uses to report tenant concentration — e.g. `"ingresos_totales"`, `"renta_fija"`, `"renta_neta_efectiva"`. Used for context on the `top_tenant_pct` / `top10_tenants_pct` fundamentals fields |
 | `sector_exposure` | List of `{sector, weight}` pairs; weights must sum to 1.0 |
 | `sector_exposure[].sector` | Sector name — must be one of the values in `sectors` |
 | `sector_exposure[].weight` | Fraction of GLA belonging to this sector (0.0–1.0) |
@@ -285,16 +320,22 @@ All monetary values are in MXN; area values are in m².
       "distribution_per_cbfi": 0.4,
       "gross_leasable_area_m2": 891800,
       "cbfis_outstanding": 1493866919,
+      "cbfis_with_rights": 1493866919,
       "total_equity": 59657284544,
       "total_debt": 7453116781,
-      "financial_debt": 7453116781,
+      "financial_debt": 5730000000,
       "total_assets": 67110401325,
       "occupancy_rate": 0.852,
-      "usd_mxn_exchange_rate": null
+      "usd_mxn_exchange_rate": null,
+      "wale": null,
+      "top_tenant_pct": null,
+      "top10_tenants_pct": null
     }
   ]
 }
 ```
+
+Every field except `ticker`, `period`, and `report_date` is optional; any field whose value is unknown for a given quarter is set to `null`, and the processor propagates `null` through any derived metric that depends on it.
 
 | Field | Description |
 |---|---|
@@ -308,15 +349,47 @@ All monetary values are in MXN; area values are in m².
 | `affo` | Adjusted Funds From Operations for the quarter (MXN) |
 | `distribution_per_cbfi` | Distribution declared for the quarter per CBFI (MXN) |
 | `gross_leasable_area_m2` | Total gross leasable area at end of period (m²) |
-| `cbfis_outstanding` | CBFIs in circulation at end of period |
-| `total_equity` | Total stockholders' equity (MXN) |
+| `cbfis_outstanding` | Total CBFIs in circulation at quarter close — used for balance-sheet metrics (`nav_per_cbfi`, `market_cap`) |
+| `cbfis_with_rights` | CBFIs that held economic rights during the period — used for per-CBFI flow ratios (FFO/AFFO/revenue/NOI/EBITDA per CBFI, `total_distribution`). May differ from `cbfis_outstanding` in quarters with mid-period capital raises or buybacks; equal for all current records |
+| `total_equity` | Total stockholders' equity / NAV (MXN) |
 | `total_debt` | Total financial obligations including lease liabilities (MXN) |
-| `financial_debt` | Interest-bearing financial debt only (MXN) — currently equals `total_debt`; will be corrected when accurate data is available |
+| `financial_debt` | Interest-bearing financial debt only (MXN) — used for `ltv`, **not** `total_debt`. Some historical records still mirror `total_debt`; will be corrected as accurate data becomes available |
 | `total_assets` | Total assets (MXN) |
 | `occupancy_rate` | Occupancy rate as a decimal (e.g. `0.852` = 85.2%) |
-| `usd_mxn_exchange_rate` | Exchange rate used in the report, or `null` if not applicable |
+| `usd_mxn_exchange_rate` | USD/MXN exchange rate at period end, or `null` if not reported |
+| `wale` | Weighted Average Lease Expiry in years, or `null` where not reported |
+| `top_tenant_pct` | Concentration of the largest single tenant as a decimal, over the base named by the catalog's `tenant_concentration_basis` |
+| `top10_tenants_pct` | Cumulative concentration of the top 10 tenants as a decimal, over the same base |
 
 To add a new quarterly record: append a new object to the `"fundamentals"` array.
+
+---
+
+### `data/inflation.json`
+
+Annual Mexican inflation history (year-over-year change of the INPC, December to December), used by the fundamentals pipeline to compute inflation-adjusted distribution growth.
+
+```json
+{
+  "metadata": {
+    "source": "INEGI / Banxico",
+    "methodology": "Variación anual del INPC, diciembre a diciembre",
+    "base": "2ª quincena julio 2018 para 2016 en adelante; INEGI histórico para 2010-2015"
+  },
+  "inflation": [
+    {"year": 2010, "annual_inflation": 0.044},
+    {"year": 2025, "annual_inflation": 0.0369}
+  ]
+}
+```
+
+| Field | Description |
+|---|---|
+| `metadata` | Free-form provenance block (`source`, `methodology`, `base`); not parsed by the model |
+| `inflation[].year` | Calendar year |
+| `inflation[].annual_inflation` | Year-over-year inflation as a decimal (e.g. `0.0421` = 4.21%) |
+
+Only the `inflation` array is read (into `InflationRecord`). To extend the series, append a `{year, annual_inflation}` object. Coverage must span the full range of complete fundamentals years for `cagr_inflation` to be computed for a FIBRA.
 
 ---
 
@@ -418,32 +491,85 @@ price_to_nav            = market_price / nav_per_cbfi
 ### Fundamentals aggregation (`FundamentalsHistoryProcessor` → `FundamentalsHistory`)
 
 ```
-records          = all EnrichedFundamentalsRecord sorted by (ticker asc, year asc, quarter asc)
-latest_by_ticker = most recent record per ticker, keyed by ticker string.
-                   None if no record exists for a catalog ticker.
-fibras           = list[Fibra] sourced from the catalog
+records              = all EnrichedFundamentalsRecord sorted by (ticker asc, year asc, quarter asc)
+latest_by_ticker     = most recent record per ticker; None if the ticker has no record
+prior_year_by_ticker = record for the same quarter one year before the latest; None if absent
+fibra_metrics        = per-FIBRA FibraMetrics, keyed by ticker (see below)
+fibras               = list[Fibra] sourced from the catalog
+annual_records       = list[AnnualFundamentalsRecord] (passed through from the annual processor)
+inflation_records    = list[InflationRecord] (passed through, full inflation history)
 ```
 
-Period sort order is determined by parsing `"QT{YEAR}"` into `(year, quarter)` integer pairs — never lexicographically. Every ticker from the catalog appears as a key in `latest_by_ticker`; tickers with no history have the value `None`.
+Period sort order is determined by parsing `"QT{YEAR}"` into `(year, quarter)` integer pairs — never lexicographically. Every ticker from the catalog appears as a key in `latest_by_ticker`, `prior_year_by_ticker`, and `fibra_metrics`; tickers with no history map to `None` (or a `FibraMetrics` with `periods_count = 0`).
+
+### Per-FIBRA metrics (`FibraMetrics`, one per ticker inside `fundamentals_history.fibra_metrics`)
+
+Computed from the full quarterly series plus the annual records and inflation history.
+
+```
+periods_count   = number of records for the ticker
+years_of_history = (last_year + (last_quarter - 1)/4) - (first_year + (first_quarter - 1)/4)
+                   (0 when periods_count is 0 or 1)
+```
+
+**AFFO growth** (all `None` when fewer than 4 records exist, or any source value is `None`,
+or `years_of_history` is 0):
+```
+affo_first, affo_latest             = AFFO (MXN) in the earliest / most recent record
+cagr_affo_total       = (affo_latest / affo_first) ** (1 / years_of_history) - 1
+affo_per_cbfi_first, affo_per_cbfi_latest
+cagr_affo_per_cbfi    = (affo_per_cbfi_latest / affo_per_cbfi_first) ** (1 / years_of_history) - 1
+```
+
+**Annual counts** (all `None` when no annual data; year-over-year counts skip the first year and any
+`None` pair):
+```
+total_annual_years           = number of complete years (all four quarters present)
+years_with_distribution      = count of years where distribution_per_cbfi_annual is not None and > 0
+years_distribution_grew      = count of YoY increases in distribution_per_cbfi_annual
+years_affo_per_cbfi_grew     = count of YoY increases in affo_per_cbfi_annual
+years_nav_per_cbfi_grew      = count of YoY increases in the nav_per_cbfi Q4 snapshot
+years_revenue_per_cbfi_grew  = count of YoY increases in revenue_per_cbfi_annual
+```
+
+**Annual CAGRs** (all `None` when fewer than 2 annual records, a boundary value is `None`, or
+`years = last_year - first_year` is 0):
+```
+cagr_distribution_per_cbfi = (last / first) ** (1 / years) - 1   over distribution_per_cbfi_annual
+cagr_revenue_per_cbfi      = (last / first) ** (1 / years) - 1   over revenue_per_cbfi_annual
+cagr_inflation             = (Π (1 + annual_inflation[y]) for y in [first_year, last_year)) ** (1/years) - 1
+                             (None if any year in the range is missing from inflation_records)
+distribution_vs_inflation  = cagr_distribution_per_cbfi - cagr_inflation
+```
+
+`cagr_inflation` is the geometric mean annual inflation across the FIBRA's complete-year span;
+`distribution_vs_inflation` is the headline "did distributions beat inflation?" figure used by the
+Comparativa tab.
 
 ### Annual aggregation (`AnnualFundamentalsProcessor` → `AnnualFundamentalsRecord`)
 
 Only years with all four quarters (Q1–Q4) present for a given ticker are included; incomplete years are omitted entirely.
 
-**Sum fields** (null if any quarter value is None; integer-sourced fields cast to `int`):
+**Partial-sum fields** (sum of the non-null quarters; null **only if all four quarters are None**):
 ```
-distribution_per_cbfi_annual = sum of quarterly distribution_per_cbfi
+distribution_per_cbfi_annual = partial sum of quarterly distribution_per_cbfi
+total_distribution_annual    = partial sum of quarterly total_distribution
+```
+
+The two distribution fields use a partial sum because monthly payers may not report `distribution_per_cbfi` in every quarter; a single missing quarter should not nullify the annual total.
+
+**Strict-sum fields** (null if **any** quarter value is None; integer-sourced fields cast to `int`):
+```
 ffo_per_cbfi_annual          = sum of quarterly ffo_per_cbfi
 affo_per_cbfi_annual         = sum of quarterly affo_per_cbfi
 revenue_per_cbfi_annual      = sum of quarterly revenue_per_cbfi
-total_revenues_annual        = sum of quarterly total_revenues
-noi_annual                   = sum of quarterly noi
+total_revenues_annual        = sum of quarterly total_revenues   (int)
+noi_annual                   = sum of quarterly noi              (int)
 noi_per_cbfi_annual          = sum of quarterly noi_per_cbfi
-ebitda_annual                = sum of quarterly ebitda
+ebitda_annual                = sum of quarterly ebitda           (int)
 ebitda_per_cbfi_annual       = sum of quarterly ebitda_per_cbfi
-ffo_annual                   = sum of quarterly ffo
-affo_annual                  = sum of quarterly affo
-total_distribution_annual    = sum of quarterly total_distribution
+ffo_annual                   = sum of quarterly ffo              (int)
+affo_annual                  = sum of quarterly affo             (int)
 ```
 
 **Recomputed margins** (computed from annual sums, not averaged from quarterly margins; null if denominator is None or zero):
@@ -545,12 +671,13 @@ Tests use real Pydantic instances — no mocks, no network calls, no file I/O. E
 ## Current status
 
 **Complete:**
-- `modules/common/` — `Sector`, `SectorExposure`, `Fibra`, `PaymentFrequency`, `MarketPrice`, `ServiceStatus`; catalog and market price repositories (`JsonCatalogReadRepository`, `YFinanceMarketPriceReadRepository`)
-- `modules/portfolio/` — full pipeline: models (raw + enriched + `Portfolio` with `SectorShare`), repositories, three processors, service, schema
-- `modules/fundamentals/` — full pipeline: models (`FundamentalsRecord`, `EnrichedFundamentalsRecord`, `FundamentalsHistory`), repositories, two processors (`FundamentalsProcessor`, `FundamentalsHistoryProcessor`), service, schema
-- `data/catalog.json` and `data/fundamentals.json` populated with real data
-- Unit test suite — 62 tests: 37 covering all three portfolio processors (`tests/portfolio/`), 25 covering both fundamentals processors (`tests/fundamentals/`)
-- Portfolio page (`ui/pages/portfolio.py`) — summary metrics, positions table, allocation chart, distributions history
+- `modules/common/` — `Sector`, `SectorExposure`, `Fibra`, `PaymentFrequency`, `MarketPrice`, `InflationRecord`, `ServiceStatus`; catalog, market price, and inflation repositories (`JsonCatalogReadRepository`, `YFinanceMarketPriceReadRepository`, `JsonInflationReadRepository`)
+- `modules/portfolio/` — full pipeline: models (raw + enriched + `Portfolio` with `PositionShare` and `SectorShare`), repositories, three processors, service, schema
+- `modules/fundamentals/` — full pipeline: models (`FundamentalsRecord`, `EnrichedFundamentalsRecord`, `AnnualFundamentalsRecord`, `FibraMetrics`, `FundamentalsHistory`), repository, three processors (`FundamentalsProcessor`, `AnnualFundamentalsProcessor`, `FundamentalsHistoryProcessor`), service, schema
+- All five `data/*.json` files populated with real data
+- Unit test suite — 123 tests: 37 covering all three portfolio processors (`tests/portfolio/`), 86 covering all three fundamentals processors (`tests/fundamentals/`)
+- Portfolio page (`ui/pages/portfolio.py`) — summary metrics, positions table, FIBRA + sector allocation donuts, distributions history
+- Fundamentals page (`ui/pages/fundamentals.py`) — Detalle tab (KPI detail header + unified KPI_CONFIG indicator chart) and Comparativa tab (evaluative table + normalized comparison chart)
 
 **Next:**
-- Fundamentals page (`ui/pages/fundamentals.py`)
+- Radar page (`ui/pages/radar.py`) — currently a "Próximamente" placeholder
