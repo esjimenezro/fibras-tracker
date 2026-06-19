@@ -72,8 +72,8 @@ Control flow:
 
 ```
 pages/ → services/ → repositories/ → data source
-               ↕
-          processors/
+            ↓
+         processors/
 ```
 
 Data transformation pipelines (executed inside the services):

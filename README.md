@@ -52,8 +52,8 @@ FIBRAs (Fideicomisos de Infraestructura y Bienes Raíces) are the Mexican equiva
 
 ```
 pages/ → services/ → repositories/
-               ↕
-          processors/
+            ↓
+         processors/
 ```
 
 - **`pages/`** call services only — no direct repository or data access.
