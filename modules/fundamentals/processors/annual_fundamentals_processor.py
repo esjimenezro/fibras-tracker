@@ -14,11 +14,16 @@ class AnnualFundamentalsProcessor:
     produced for missing quarters.
 
     Aggregation rules:
-        Sum fields (distribution_per_cbfi_annual, ffo_per_cbfi_annual,
-                    affo_per_cbfi_annual, revenue_per_cbfi_annual,
-                    total_revenues_annual, noi_annual, noi_per_cbfi_annual,
-                    ebitda_annual, ebitda_per_cbfi_annual, ffo_annual,
-                    affo_annual, total_distribution_annual):
+        Partial sum fields (distribution_per_cbfi_annual, total_distribution_annual):
+            Sum of non-None quarterly values. Null only if all four quarter values
+            are None. FIBRAs with monthly payment frequency may not report
+            distribution_per_cbfi every quarter, so a missing quarter should not
+            nullify the annual total.
+
+        Strict sum fields (ffo_per_cbfi_annual, affo_per_cbfi_annual,
+                           revenue_per_cbfi_annual, total_revenues_annual,
+                           noi_annual, noi_per_cbfi_annual, ebitda_annual,
+                           ebitda_per_cbfi_annual, ffo_annual, affo_annual):
             Sum of the four quarterly values. Null if any quarter value is None.
             Integer-sourced sums (noi_annual, ebitda_annual, ffo_annual,
             affo_annual, total_revenues_annual) are cast to int.
@@ -52,7 +57,8 @@ class AnnualFundamentalsProcessor:
             list[AnnualFundamentalsRecord]: A list of annual fundamentals records. Each annual
                 record contains:
 
-                    distribution_per_cbfi_annual = sum of quarterly distribution_per_cbfi
+                    distribution_per_cbfi_annual = sum of non-None quarterly distribution_per_cbfi
+                                                   (None only if all four quarters are None)
                     ffo_per_cbfi_annual          = sum of quarterly ffo_per_cbfi
                     affo_per_cbfi_annual         = sum of quarterly affo_per_cbfi
                     revenue_per_cbfi_annual      = sum of quarterly revenue_per_cbfi
@@ -63,7 +69,8 @@ class AnnualFundamentalsProcessor:
                     ebitda_per_cbfi_annual       = sum of quarterly ebitda_per_cbfi
                     ffo_annual                   = sum of quarterly ffo (cast to int)
                     affo_annual                  = sum of quarterly affo (cast to int)
-                    total_distribution_annual    = sum of quarterly total_distribution
+                    total_distribution_annual    = sum of non-None quarterly total_distribution
+                                                   (None only if all four quarters are None)
 
                     noi_margin_annual    = noi_annual / total_revenues_annual
                     ebitda_margin_annual = ebitda_annual / total_revenues_annual
@@ -80,7 +87,9 @@ class AnnualFundamentalsProcessor:
 
                     affo_payout_ratio_avg = mean of quarterly affo_payout_ratio
 
-                Sum and average fields are None when any quarterly value is None.
+                Strict sum and average fields are None when any quarterly value is None.
+                Partial sum fields (distribution_per_cbfi_annual, total_distribution_annual)
+                are None only when all four quarterly values are None.
                 Margin fields are None when total_revenues_annual is None or zero.
                 Q4 snapshot fields are passed through as-is from the Q4 record.
 
@@ -144,7 +153,7 @@ class AnnualFundamentalsProcessor:
         return AnnualFundamentalsRecord(
             ticker=ticker,
             year=year,
-            distribution_per_cbfi_annual=self._safe_sum(
+            distribution_per_cbfi_annual=self._partial_sum(
                 values=[r.distribution_per_cbfi for r in q_records],
             ),
             ffo_per_cbfi_annual=self._safe_sum(
@@ -167,7 +176,7 @@ class AnnualFundamentalsProcessor:
             ),
             ffo_annual=ffo_annual,
             affo_annual=affo_annual,
-            total_distribution_annual=self._safe_sum(
+            total_distribution_annual=self._partial_sum(
                 values=[r.total_distribution for r in q_records],
             ),
             noi_margin_annual=self._safe_div(
@@ -218,6 +227,21 @@ class AnnualFundamentalsProcessor:
         if any(v is None for v in values):
             return None
         return sum(values)
+
+    @staticmethod
+    def _partial_sum(values: list[Optional[float]]) -> Optional[float]:
+        """Sum non-None values, returning None only when all values are None.
+
+        Args:
+            values: List of numeric values, any of which may be None.
+
+        Returns:
+            float: Sum of all non-None values, or None if every value is None.
+        """
+        non_null = [v for v in values if v is not None]
+        if not non_null:
+            return None
+        return sum(non_null)
 
     @staticmethod
     def _safe_avg(values: list[Optional[float]]) -> Optional[float]:

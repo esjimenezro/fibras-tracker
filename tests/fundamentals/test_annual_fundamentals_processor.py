@@ -254,17 +254,15 @@ def test_annual_margins_computed_from_annual_sums_not_quarterly_averages(process
 
 
 def test_new_sum_fields_none_when_any_quarter_none(processor):
-    """noi_annual and total_distribution_annual are None when one quarter has None."""
+    """noi_annual is None when one quarter has None (strict rule)."""
     records = [
-        _make_record(ticker="FMTY14", period="1T2025", noi=800_000_000, total_distribution=600_000_000.0),
-        _make_record(ticker="FMTY14", period="2T2025", noi=None, total_distribution=None),
-        _make_record(ticker="FMTY14", period="3T2025", noi=800_000_000, total_distribution=600_000_000.0),
-        _make_record(ticker="FMTY14", period="4T2025", noi=800_000_000, total_distribution=600_000_000.0),
+        _make_record(ticker="FMTY14", period="1T2025", noi=800_000_000),
+        _make_record(ticker="FMTY14", period="2T2025", noi=None),
+        _make_record(ticker="FMTY14", period="3T2025", noi=800_000_000),
+        _make_record(ticker="FMTY14", period="4T2025", noi=800_000_000),
     ]
     result = processor.process(records=records)
-    annual = result[0]
-    assert annual.noi_annual is None
-    assert annual.total_distribution_annual is None
+    assert result[0].noi_annual is None
 
 
 def test_annual_margins_none_when_total_revenues_annual_none(processor):
@@ -332,3 +330,57 @@ def test_q4_new_snapshot_fields_pass_through_none(processor):
     assert annual.gross_leasable_area_m2 is None
     assert annual.cbfis_outstanding is None
     assert annual.cbfis_per_m2 is None
+
+
+# ── Partial sum fields (distribution_per_cbfi_annual, total_distribution_annual) ──
+
+def test_distribution_per_cbfi_annual_partial_sum_when_some_quarters_none(processor):
+    """distribution_per_cbfi_annual sums non-None quarters when some (but not all) are None."""
+    records = [
+        _make_record(ticker="FMTY14", period="1T2025", distribution_per_cbfi=0.40),
+        _make_record(ticker="FMTY14", period="2T2025", distribution_per_cbfi=None),
+        _make_record(ticker="FMTY14", period="3T2025", distribution_per_cbfi=0.40),
+        _make_record(ticker="FMTY14", period="4T2025", distribution_per_cbfi=0.40),
+    ]
+    result = processor.process(records=records)
+    assert result[0].distribution_per_cbfi_annual == pytest.approx(1.20, rel=1e-6)
+
+
+def test_distribution_per_cbfi_annual_none_when_all_quarters_none(processor):
+    """distribution_per_cbfi_annual is None when all four quarterly values are None."""
+    records = _four_quarters(ticker="FMTY14", year=2025, distribution_per_cbfi=None)
+    result = processor.process(records=records)
+    assert result[0].distribution_per_cbfi_annual is None
+
+
+def test_distribution_per_cbfi_annual_sum_when_all_quarters_present(processor):
+    """distribution_per_cbfi_annual sums all four quarters when none are None."""
+    records = _four_quarters(ticker="FMTY14", year=2025, distribution_per_cbfi=0.40)
+    result = processor.process(records=records)
+    assert result[0].distribution_per_cbfi_annual == pytest.approx(1.60, rel=1e-6)
+
+
+def test_total_distribution_annual_partial_sum_when_some_quarters_none(processor):
+    """total_distribution_annual sums non-None quarters when some (but not all) are None."""
+    records = [
+        _make_record(ticker="FMTY14", period="1T2025", total_distribution=600_000_000.0),
+        _make_record(ticker="FMTY14", period="2T2025", total_distribution=None),
+        _make_record(ticker="FMTY14", period="3T2025", total_distribution=600_000_000.0),
+        _make_record(ticker="FMTY14", period="4T2025", total_distribution=600_000_000.0),
+    ]
+    result = processor.process(records=records)
+    assert result[0].total_distribution_annual == pytest.approx(1_800_000_000.0, rel=1e-6)
+
+
+def test_total_distribution_annual_none_when_all_quarters_none(processor):
+    """total_distribution_annual is None when all four quarterly values are None."""
+    records = _four_quarters(ticker="FMTY14", year=2025, total_distribution=None)
+    result = processor.process(records=records)
+    assert result[0].total_distribution_annual is None
+
+
+def test_total_distribution_annual_sum_when_all_quarters_present(processor):
+    """total_distribution_annual sums all four quarters when none are None."""
+    records = _four_quarters(ticker="FMTY14", year=2025, total_distribution=600_000_000.0)
+    result = processor.process(records=records)
+    assert result[0].total_distribution_annual == pytest.approx(2_400_000_000.0, rel=1e-6)
