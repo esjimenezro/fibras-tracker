@@ -18,9 +18,8 @@ def dist_fiscal_only():
     return Distribution(
         ticker="FMTY14",
         payment_date=date(2026, 3, 6),
-        reimbursement_per_cbfi=0.0,
-        fiscal_result_per_cbfi=0.10,
-        cbfis_at_time=1000,
+        reimbursement_total=0.0,
+        fiscal_result_total=100.0,
     )
 
 
@@ -30,9 +29,8 @@ def dist_reimbursement_only():
     return Distribution(
         ticker="FMTY14",
         payment_date=date(2026, 3, 6),
-        reimbursement_per_cbfi=0.05,
-        fiscal_result_per_cbfi=0.0,
-        cbfis_at_time=500,
+        reimbursement_total=25.0,
+        fiscal_result_total=0.0,
     )
 
 
@@ -42,20 +40,19 @@ def dist_mixed():
     return Distribution(
         ticker="FMTY14",
         payment_date=date(2026, 3, 6),
-        reimbursement_per_cbfi=0.0331,
-        fiscal_result_per_cbfi=0.0483,
-        cbfis_at_time=1500,
+        reimbursement_total=49.65,
+        fiscal_result_total=72.45,
     )
 
 
 def test_gross_fiscal_result_income(processor, dist_mixed):
-    """gross_fiscal_result_income = fiscal_result_per_cbfi * cbfis_at_time."""
+    """gross_fiscal_result_income = fiscal_result_total."""
     result = processor._enrich(distribution=dist_mixed)
     assert result.gross_fiscal_result_income == pytest.approx(72.45, rel=1e-6)
 
 
 def test_net_reimbursement_income(processor, dist_mixed):
-    """net_reimbursement_income = reimbursement_per_cbfi * cbfis_at_time."""
+    """net_reimbursement_income = reimbursement_total."""
     result = processor._enrich(distribution=dist_mixed)
     assert result.net_reimbursement_income == pytest.approx(49.65, rel=1e-6)
 
@@ -85,14 +82,14 @@ def test_net_income(processor, dist_mixed):
 
 
 def test_fiscal_only_zero_reimbursement(processor, dist_fiscal_only):
-    """When reimbursement_per_cbfi=0, net_reimbursement_income=0 and gross_income equals gross_fiscal_result_income."""
+    """When reimbursement_total=0, net_reimbursement_income=0 and gross_income equals gross_fiscal_result_income."""
     result = processor._enrich(distribution=dist_fiscal_only)
     assert result.net_reimbursement_income == pytest.approx(0.0, abs=1e-9)
     assert result.gross_income == pytest.approx(result.gross_fiscal_result_income, rel=1e-6)
 
 
 def test_reimbursement_only_zero_withholding(processor, dist_reimbursement_only):
-    """When fiscal_result_per_cbfi=0, withholding=0 and net_income equals net_reimbursement_income."""
+    """When fiscal_result_total=0, withholding=0 and net_income equals net_reimbursement_income."""
     result = processor._enrich(distribution=dist_reimbursement_only)
     assert result.fiscal_result_withholding == pytest.approx(0.0, abs=1e-9)
     assert result.net_income == pytest.approx(result.net_reimbursement_income, rel=1e-6)
@@ -113,7 +110,7 @@ def test_total_net_income(processor, dist_mixed, dist_fiscal_only):
     """total_net_income() sums net_income across all enriched distributions.
 
     dist_mixed: net_income = 100.365
-    dist_fiscal_only: net_income = 0.10 * 1000 - 0.30 * (0.10 * 1000) = 100 - 30 = 70.0
+    dist_fiscal_only: net_income = fiscal_result_total=100.0 - 0.30 * 100.0 = 70.0
     """
     enriched = processor.process(distributions=[dist_mixed, dist_fiscal_only])
     assert processor.total_net_income(enriched=enriched) == pytest.approx(170.365, rel=1e-6)
@@ -123,7 +120,7 @@ def test_total_gross_income(processor, dist_mixed, dist_fiscal_only):
     """total_gross_income() sums gross_income across all enriched distributions.
 
     dist_mixed: gross_income = 122.10
-    dist_fiscal_only: gross_income = 0 + 0.10 * 1000 = 100.0
+    dist_fiscal_only: gross_income = reimbursement_total=0.0 + fiscal_result_total=100.0 = 100.0
     """
     enriched = processor.process(distributions=[dist_mixed, dist_fiscal_only])
     assert processor.total_gross_income(enriched=enriched) == pytest.approx(222.10, rel=1e-6)
@@ -133,7 +130,7 @@ def test_total_withholding(processor, dist_mixed, dist_fiscal_only):
     """total_withholding() sums fiscal_result_withholding across all enriched distributions.
 
     dist_mixed: withholding = 21.735
-    dist_fiscal_only: withholding = 0.30 * 100 = 30.0
+    dist_fiscal_only: withholding = 0.30 * fiscal_result_total=100.0 = 30.0
     """
     enriched = processor.process(distributions=[dist_mixed, dist_fiscal_only])
     assert processor.total_withholding(enriched=enriched) == pytest.approx(51.735, rel=1e-6)

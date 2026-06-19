@@ -9,15 +9,13 @@ class Distribution(BaseModel):
     Attributes:
         ticker: BMV ticker (e.g. "FMTY14").
         payment_date: Date the payment was credited by the broker.
-        reimbursement_per_cbfi: Capital reimbursement per CBFI
+        reimbursement_total: Total capital reimbursement received in MXN
             (not taxable when received).
-        fiscal_result_per_cbfi: Fiscal result per CBFI
+        fiscal_result_total: Total fiscal result income received in MXN
             (subject to 30% ISR withholding).
-        cbfis_at_time: Number of CBFIs held at the time of payment.
     """
 
     ticker: str
     payment_date: date
-    reimbursement_per_cbfi: float
-    fiscal_result_per_cbfi: float
-    cbfis_at_time: int
+    reimbursement_total: float
+    fiscal_result_total: float

@@ -240,9 +240,8 @@ One entry per payment event. A FIBRA that pays monthly will have multiple entrie
     {
       "ticker": "FMTY14",
       "payment_date": "2026-03-06",
-      "reimbursement_per_cbfi": 0.0331,
-      "fiscal_result_per_cbfi": 0.0483,
-      "cbfis_at_time": 1500
+      "reimbursement_total": 49.65,
+      "fiscal_result_total": 72.45
     }
   ]
 }
@@ -252,9 +251,8 @@ One entry per payment event. A FIBRA that pays monthly will have multiple entrie
 |---|---|
 | `ticker` | BMV ticker matching a position in `positions.json` |
 | `payment_date` | Date the payment was credited by the broker (`YYYY-MM-DD`) |
-| `reimbursement_per_cbfi` | Capital reimbursement per CBFI — not taxable when received |
-| `fiscal_result_per_cbfi` | Fiscal result per CBFI — subject to 30% ISR withholding |
-| `cbfis_at_time` | CBFIs held at the time of this specific payment |
+| `reimbursement_total` | Total capital reimbursement received in MXN — not taxable when received |
+| `fiscal_result_total` | Total fiscal result income received in MXN — subject to 30% ISR withholding |
 
 To record a new distribution: append a new object to the `"distributions"` array.
 
@@ -404,8 +402,8 @@ FISCAL_RESULT_WITHHOLDING_RATE = 0.30  # 30% ISR withholding on fiscal result in
 ### Distributions pipeline (`DistributionsProcessor` → `EnrichedDistribution`)
 
 ```
-gross_fiscal_result_income = fiscal_result_per_cbfi * cbfis_at_time
-net_reimbursement_income   = reimbursement_per_cbfi * cbfis_at_time
+gross_fiscal_result_income = fiscal_result_total
+net_reimbursement_income   = reimbursement_total
 gross_income               = gross_fiscal_result_income + net_reimbursement_income
 fiscal_result_withholding  = FISCAL_RESULT_WITHHOLDING_RATE * gross_fiscal_result_income
 net_fiscal_result_income   = gross_fiscal_result_income - fiscal_result_withholding

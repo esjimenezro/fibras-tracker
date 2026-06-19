@@ -86,16 +86,12 @@ def market_price_b():
 
 @pytest.fixture
 def dist_fmty14():
-    """EnrichedDistribution for FMTY14 with net_fiscal_result_income=50.715.
-
-    Derived from: reimbursement=0.0331, fiscal=0.0483, cbfis=1500.
-    """
+    """EnrichedDistribution for FMTY14 with net_fiscal_result_income=50.715."""
     return EnrichedDistribution(
         ticker="FMTY14",
         payment_date=date(2026, 3, 6),
-        reimbursement_per_cbfi=0.0331,
-        fiscal_result_per_cbfi=0.0483,
-        cbfis_at_time=1500,
+        reimbursement_total=49.65,
+        fiscal_result_total=72.45,
         gross_fiscal_result_income=72.45,
         net_reimbursement_income=49.65,
         gross_income=122.10,
@@ -107,16 +103,12 @@ def dist_fmty14():
 
 @pytest.fixture
 def dist_fshop13():
-    """EnrichedDistribution for FSHOP13 with net_fiscal_result_income=35.0.
-
-    Derived from: reimbursement=0.0, fiscal=0.05, cbfis=1000.
-    """
+    """EnrichedDistribution for FSHOP13 with net_fiscal_result_income=35.0."""
     return EnrichedDistribution(
         ticker="FSHOP13",
         payment_date=date(2026, 3, 31),
-        reimbursement_per_cbfi=0.0,
-        fiscal_result_per_cbfi=0.05,
-        cbfis_at_time=1000,
+        reimbursement_total=0.0,
+        fiscal_result_total=50.0,
         gross_fiscal_result_income=50.0,
         net_reimbursement_income=0.0,
         gross_income=50.0,

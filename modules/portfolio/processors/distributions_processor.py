@@ -9,8 +9,8 @@ class DistributionsProcessor:
     Transformation: Distribution → EnrichedDistribution
 
     Formulas implemented:
-        gross_fiscal_result_income = fiscal_result_per_cbfi * cbfis_at_time
-        net_reimbursement_income   = reimbursement_per_cbfi * cbfis_at_time
+        gross_fiscal_result_income = fiscal_result_total
+        net_reimbursement_income   = reimbursement_total
         gross_income               = gross_fiscal_result_income + net_reimbursement_income
         fiscal_result_withholding  = FISCAL_RESULT_WITHHOLDING_RATE * gross_fiscal_result_income
         net_fiscal_result_income   = gross_fiscal_result_income - fiscal_result_withholding
@@ -40,8 +40,8 @@ class DistributionsProcessor:
 
         Returns:
             EnrichedDistribution with the following derived fields:
-                gross_fiscal_result_income = fiscal_result_per_cbfi * cbfis_at_time
-                net_reimbursement_income   = reimbursement_per_cbfi * cbfis_at_time
+                gross_fiscal_result_income = fiscal_result_total
+                net_reimbursement_income   = reimbursement_total
                 gross_income               = gross_fiscal_result_income + net_reimbursement_income
                 fiscal_result_withholding  = FISCAL_RESULT_WITHHOLDING_RATE * gross_fiscal_result_income
                 net_fiscal_result_income   = gross_fiscal_result_income - fiscal_result_withholding
@@ -51,8 +51,8 @@ class DistributionsProcessor:
             Use this field — never net_income — when aggregating income received from the
             fiscal result.
         """
-        gross_fiscal_result_income = distribution.fiscal_result_per_cbfi * distribution.cbfis_at_time
-        net_reimbursement_income = distribution.reimbursement_per_cbfi * distribution.cbfis_at_time
+        gross_fiscal_result_income = distribution.fiscal_result_total
+        net_reimbursement_income = distribution.reimbursement_total
         gross_income = net_reimbursement_income + gross_fiscal_result_income
         fiscal_result_withholding = FISCAL_RESULT_WITHHOLDING_RATE * gross_fiscal_result_income
         net_fiscal_result_income = gross_fiscal_result_income - fiscal_result_withholding
