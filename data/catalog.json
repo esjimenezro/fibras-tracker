@@ -1,45 +1,80 @@
 {
   "sectors": ["Industrial", "Comercial", "Oficinas", "Hotelero", "Hipotecario", "Educativo", "Almacenaje"],
   "fibras": [
-    {
-      "ticker": "FMTY14",
-      "name": "Fibra Mty",
-      "payment_frequency": "Monthly",
-      "tenant_concentration_basis": "ingresos_totales",
-      "sector_exposure": [
-        {"sector": "Industrial", "weight": 0.80},
-        {"sector": "Oficinas",   "weight": 0.19},
-        {"sector": "Comercial",  "weight": 0.01}
-      ]
-    },
-    {
-      "ticker": "DANHOS13",
-      "name": "Fibra Danhos",
-      "payment_frequency": "Quarterly",
-      "tenant_concentration_basis": "renta_fija",
-      "sector_exposure": [
-        {"sector": "Comercial",  "weight": 0.72},
-        {"sector": "Oficinas",   "weight": 0.25},
-        {"sector": "Hotelero",   "weight": 0.02},
-        {"sector": "Industrial", "weight": 0.01}
-      ]
-    },
-    {
-      "ticker": "FIBRAPL14",
-      "name": "Fibra Prologis",
-      "payment_frequency": "Quarterly",
-      "tenant_concentration_basis": "renta_neta_efectiva",
-      "sector_exposure": [
-        {"sector": "Industrial", "weight": 1.00}
-      ]
-    },
-    {
-      "ticker": "FSHOP13",
-      "name": "Fibra Shop",
-      "payment_frequency": "Quarterly",
-      "sector_exposure": [
-        {"sector": "Comercial", "weight": 1.00}
-      ]
-    }
-  ]
+        {
+            "ticker": "FMTY14",
+            "name": "Fibra Mty",
+            "payment_frequency": "Monthly",
+            "tenant_concentration_basis": "ingresos_totales",
+            "sector_exposure": [
+                {"sector": "Industrial", "weight": 0.80},
+                {"sector": "Oficinas",   "weight": 0.19},
+                {"sector": "Comercial",  "weight": 0.01}
+            ]
+        },
+        {
+            "ticker": "DANHOS13",
+            "name": "Fibra Danhos",
+            "payment_frequency": "Quarterly",
+            "tenant_concentration_basis": "renta_fija",
+            "sector_exposure": [
+                {"sector": "Comercial",  "weight": 0.72},
+                {"sector": "Oficinas",   "weight": 0.25},
+                {"sector": "Hotelero",   "weight": 0.02},
+                {"sector": "Industrial", "weight": 0.01}
+            ]
+        },
+        {
+            "ticker": "FIBRAPL14",
+            "name": "FIBRA Prologis",
+            "payment_frequency": "Quarterly",
+            "tenant_concentration_basis": "renta_neta_efectiva",
+            "sector_exposure": [
+                {"sector": "Industrial", "weight": 1.00}
+            ]
+        },
+        {
+            "ticker": "FSHOP13",
+            "name": "Fibra Shop",
+            "payment_frequency": "Quarterly",
+            "tenant_concentration_basis": "ingresos_totales",
+            "sector_exposure": [
+                {"sector": "Comercial", "weight": 1.00}
+            ]
+        },
+        {
+            "ticker": "FUNO11",
+            "name": "Fibra UNO",
+            "payment_frequency": "Quarterly",
+            "tenant_concentration_basis": "ingresos_totales",
+            "sector_exposure": [
+                {"sector": "Comercial", "weight": 0.37},
+                {"sector": "Oficinas", "weight": 0.15},
+                {"sector": "Industrial", "weight": 0.40},
+                {"sector": "Otros", "weight": 0.08}
+            ]
+        },
+        {
+            "ticker": "NEXT25",
+            "name": "Nearshoring Experts & Technology",
+            "payment_frequency": "Quarterly",
+            "tenant_concentration_basis": "ingresos_totales",
+            "sector_exposure": [
+                {"sector": "Industrial", "weight": 1.00}
+            ]
+        },
+        {
+            "ticker": "FNOVA17",
+            "name": "Fibra Nova",
+            "payment_frequency": "Quarterly",
+            "tenant_concentration_basis": "ingresos_totales",
+            "sector_exposure": [
+                {"sector": "Industrial", "weight": 0.72},
+                {"sector": "Agroindustrial", "weight": 0.13},
+                {"sector": "Educativo", "weight": 0.07},
+                {"sector": "Comercial", "weight": 0.03},
+                {"sector": "Otros", "weight": 0.5}
+            ]
+        }
+    ]
 }
