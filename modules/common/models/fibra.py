@@ -36,6 +36,8 @@ class Sector(StrEnum):
     HIPOTECARIO = "Hipotecario"
     EDUCATIVO = "Educativo"
     ALMACENAJE = "Almacenaje"
+    AGROINDUSTRIAL = "Agroindustrial"
+    OTROS = "Otros"
 
 
 class SectorExposure(BaseModel):

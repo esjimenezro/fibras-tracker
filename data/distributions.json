@@ -1,6 +1,126 @@
 {
     "distributions": [
         {
+            "ticker": "FIBRAMQ12",
+            "payment_date": "2025-01-29",
+            "reimbursement_total": 0.0,
+            "fiscal_result_total": 210.0
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2025-01-30",
+            "reimbursement_total": 46.70,
+            "fiscal_result_total": 81.95
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2025-02-27",
+            "reimbursement_total": 74.24,
+            "fiscal_result_total": 54.33
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2025-03-11",
+            "reimbursement_total": 74.24,
+            "fiscal_result_total": 54.33
+        },
+        {
+            "ticker": "FIBRAMQ12",
+            "payment_date": "2025-03-12",
+            "reimbursement_total": 0.0,
+            "fiscal_result_total": 210.00
+        },
+        {
+            "ticker": "DANHOS13",
+            "payment_date": "2025-03-12",
+            "reimbursement_total": 121.30,
+            "fiscal_result_total": 193.69
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2025-04-29",
+            "reimbursement_total": 133.76,
+            "fiscal_result_total": 0.0
+        },
+        {
+            "ticker": "DANHOS13",
+            "payment_date": "2025-05-12",
+            "reimbursement_total": 146.69,
+            "fiscal_result_total": 168.30
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2025-05-30",
+            "reimbursement_total": 133.61,
+            "fiscal_result_total": 0.0
+        },
+        {
+            "ticker": "FIBRAMQ12",
+            "payment_date": "2025-06-27",
+            "reimbursement_total": 0.0,
+            "fiscal_result_total": 281.75
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2025-07-04",
+            "reimbursement_total": 133.12,
+            "fiscal_result_total": 0.0
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2025-07-31",
+            "reimbursement_total": 103.56,
+            "fiscal_result_total": 25.89
+        },
+        {
+            "ticker": "DANHOS13",
+            "payment_date": "2025-08-13",
+            "reimbursement_total": 189.86,
+            "fiscal_result_total": 125.13
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2025-08-29",
+            "reimbursement_total": 103.56,
+            "fiscal_result_total": 25.89
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2025-09-26",
+            "reimbursement_total": 103.33,
+            "fiscal_result_total": 25.83
+        },
+        {
+            "ticker": "FIBRAMQ12",
+            "payment_date": "2025-09-26",
+            "reimbursement_total": 0.0,
+            "fiscal_result_total": 349.12
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2025-10-31",
+            "reimbursement_total": 50.46,
+            "fiscal_result_total": 75.70
+        },
+        {
+            "ticker": "DANHOS13",
+            "payment_date": "2025-11-13",
+            "reimbursement_total": 138.65,
+            "fiscal_result_total": 176.34
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2025-11-28",
+            "reimbursement_total": 50.46,
+            "fiscal_result_total": 75.70
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2025-12-26",
+            "reimbursement_total": 50.44,
+            "fiscal_result_total": 75.66
+        },
+        {
             "ticker": "FMTY14",
             "payment_date": "2026-01-30",
             "reimbursement_total": 0.0,
