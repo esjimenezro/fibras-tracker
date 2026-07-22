@@ -5912,7 +5912,7 @@
             "top10_tenants_pct": null
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "3T2017",
             "report_date": "2017-09-30",
             "total_revenues": 46292000,
@@ -5935,7 +5935,7 @@
             "top10_tenants_pct": 1.0
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "4T2017",
             "report_date": "2017-12-31",
             "total_revenues": 94151000,
@@ -5958,7 +5958,7 @@
             "top10_tenants_pct": 1.0
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "1T2018",
             "report_date": "2018-03-31",
             "total_revenues": 103543000,
@@ -5981,7 +5981,7 @@
             "top10_tenants_pct": 1.0
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "2T2018",
             "report_date": "2018-06-30",
             "total_revenues": 106790000,
@@ -6004,7 +6004,7 @@
             "top10_tenants_pct": 1.0
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "3T2018",
             "report_date": "2018-09-30",
             "total_revenues": 113876000,
@@ -6027,7 +6027,7 @@
             "top10_tenants_pct": 1.0
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "4T2018",
             "report_date": "2018-12-31",
             "total_revenues": 116578000,
@@ -6050,7 +6050,7 @@
             "top10_tenants_pct": 1.0
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "1T2019",
             "report_date": "2019-03-31",
             "total_revenues": 118206000,
@@ -6073,7 +6073,7 @@
             "top10_tenants_pct": 1.0
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "2T2019",
             "report_date": "2019-06-30",
             "total_revenues": 117847000,
@@ -6096,7 +6096,7 @@
             "top10_tenants_pct": 1.0
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "3T2019",
             "report_date": "2019-09-30",
             "total_revenues": 117436000,
@@ -6119,7 +6119,7 @@
             "top10_tenants_pct": 1.0
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "4T2019",
             "report_date": "2019-12-31",
             "total_revenues": 118836000,
@@ -6142,7 +6142,7 @@
             "top10_tenants_pct": 0.925
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "1T2020",
             "report_date": "2020-03-31",
             "total_revenues": 130233000,
@@ -6165,7 +6165,7 @@
             "top10_tenants_pct": 0.924
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "2T2020",
             "report_date": "2020-06-30",
             "total_revenues": 144439000,
@@ -6188,7 +6188,7 @@
             "top10_tenants_pct": 0.924
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "3T2020",
             "report_date": "2020-09-30",
             "total_revenues": 143831000,
@@ -6211,7 +6211,7 @@
             "top10_tenants_pct": 0.922
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "4T2020",
             "report_date": "2020-12-31",
             "total_revenues": 142672000,
@@ -6234,7 +6234,7 @@
             "top10_tenants_pct": 0.913
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "1T2021",
             "report_date": "2021-03-31",
             "total_revenues": 144088000,
@@ -6257,7 +6257,7 @@
             "top10_tenants_pct": 0.9
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "2T2021",
             "report_date": "2021-06-30",
             "total_revenues": 153099000,
@@ -6280,7 +6280,7 @@
             "top10_tenants_pct": 0.911
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "3T2021",
             "report_date": "2021-09-30",
             "total_revenues": 161753000,
@@ -6303,7 +6303,7 @@
             "top10_tenants_pct": 0.881
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "4T2021",
             "report_date": "2021-12-31",
             "total_revenues": 231587000,
@@ -6326,7 +6326,7 @@
             "top10_tenants_pct": 0.874
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "1T2022",
             "report_date": "2022-03-31",
             "total_revenues": 235178000,
@@ -6349,7 +6349,7 @@
             "top10_tenants_pct": 0.855
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "2T2022",
             "report_date": "2022-06-30",
             "total_revenues": 243514000,
@@ -6372,7 +6372,7 @@
             "top10_tenants_pct": 0.861
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "3T2022",
             "report_date": "2022-09-30",
             "total_revenues": 263037000,
@@ -6395,7 +6395,7 @@
             "top10_tenants_pct": 0.86
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "4T2022",
             "report_date": "2022-12-31",
             "total_revenues": 263660000,
@@ -6418,7 +6418,7 @@
             "top10_tenants_pct": 0.822
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "1T2023",
             "report_date": "2023-03-31",
             "total_revenues": 260117000,
@@ -6441,7 +6441,7 @@
             "top10_tenants_pct": 0.814
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "2T2023",
             "report_date": "2023-06-30",
             "total_revenues": 255164000,
@@ -6464,7 +6464,7 @@
             "top10_tenants_pct": 0.824
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "3T2023",
             "report_date": "2023-09-30",
             "total_revenues": 261433000,
@@ -6487,7 +6487,7 @@
             "top10_tenants_pct": 0.831
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "4T2023",
             "report_date": "2023-12-31",
             "total_revenues": 273299000,
@@ -6510,7 +6510,7 @@
             "top10_tenants_pct": 0.848
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "1T2024",
             "report_date": "2024-03-31",
             "total_revenues": 303823000,
@@ -6533,7 +6533,7 @@
             "top10_tenants_pct": 0.845
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "2T2024",
             "report_date": "2024-06-30",
             "total_revenues": 307311000,
@@ -6556,7 +6556,7 @@
             "top10_tenants_pct": 0.813
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "3T2024",
             "report_date": "2024-09-30",
             "total_revenues": 331487000,
@@ -6579,7 +6579,7 @@
             "top10_tenants_pct": 0.811
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "4T2024",
             "report_date": "2024-12-31",
             "total_revenues": 345752000,
@@ -6602,7 +6602,7 @@
             "top10_tenants_pct": 0.783
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "1T2025",
             "report_date": "2025-03-31",
             "total_revenues": 387005000,
@@ -6625,7 +6625,7 @@
             "top10_tenants_pct": 0.784
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "2T2025",
             "report_date": "2025-06-30",
             "total_revenues": 391751000,
@@ -6648,7 +6648,7 @@
             "top10_tenants_pct": 0.635
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "3T2025",
             "report_date": "2025-09-30",
             "total_revenues": 392344000,
@@ -6671,7 +6671,7 @@
             "top10_tenants_pct": 0.776
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "4T2025",
             "report_date": "2025-12-31",
             "total_revenues": 396950000,
@@ -6694,7 +6694,7 @@
             "top10_tenants_pct": 0.7744
         },
         {
-            "fibra": "FNOVA",
+            "ticker": "FNOVA17",
             "period": "1T2026",
             "report_date": "2026-03-31",
             "total_revenues": 396702000,
