@@ -1,12 +1,20 @@
 ---
 title: Sostenibilidad y reconocimientos ESG
 created: 2026-07-26
-updated: 2026-07-26
-quarters: [1T2025, 3T2025, 1T2026]
+updated: 2026-07-28
+quarters: [1T2024, 2T2024, 1T2025, 3T2025, 1T2026]
 confidence: high
 ---
 
 Fibra Mty reporta de forma recurrente su desempeño en certificaciones y benchmarks de sostenibilidad de terceros, como parte de su narrativa de gobierno corporativo alineado y disciplina de largo plazo. Estos reconocimientos no tienen efecto financiero directo en el AFFO ni en las distribuciones, pero la administración los presenta como evidencia de calidad institucional y como factor que amplía el universo de inversionistas (fondos con mandatos ESG).
+
+## 1T2024
+
+El 28 de febrero de 2024, en el marco del foro ejecutivo "Construyendo el Futuro" (Acciones Climáticas), el edificio de oficinas corporativas Redwood (Zapopan, Jalisco) de Fibra Mty recibió el galardón en la categoría "Edificios de Usos Mixtos" de los Premios Impulso SUMe a la Sustentabilidad 2024 (Saint-Gobain), que reconoce proyectos con certificación LEED.
+
+## 2T2024
+
+El 3 de julio de 2024, Fibra Mty publicó su informe de sustentabilidad 2023, reportando 108% de cumplimiento de los objetivos establecidos en su Plan Estratégico de Sustentabilidad 2023-2025. En el mismo periodo, completó el cuestionario de evaluación anual del Global Real Estate Sustainability Benchmark (GRESB) — los resultados de esa evaluación se publicarían en octubre, con expectativa de incremento respecto a la calificación del año anterior.
 
 ## 1T2025
 
@@ -24,6 +32,8 @@ Fibra Mty logró su primera inclusión en el *Sustainability Yearbook 2026* de S
 
 ## Trimestres que tocan este concepto
 
+- [[2024-Q1]] — Edificio Redwood gana categoría "Edificios de Usos Mixtos" en Premios Impulso SUMe a la Sustentabilidad 2024 (Saint-Gobain).
+- [[2024-Q2]] — Publicación del informe de sustentabilidad 2023 (108% de cumplimiento del Plan Estratégico 2023-2025); cuestionario GRESB completado.
 - [[2025-Q1]] — CSA S&P Global +15% vs meta anual (Top-3 nacional); GRESB +5%; mejoras en calificación PRI; certificación Great Place to Work.
 - [[2025-Q3]] — GRESB 74 puntos (+19% YoY); S&P Global CSA 62 puntos (106% de meta del Plan Estratégico de Sustentabilidad 2023-2025).
 - [[2026-Q1]] — Primera inclusión en el S&P Global Sustainability Yearbook 2026; inclusión en índices MSCI Small Cap.

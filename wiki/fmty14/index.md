@@ -1,5 +1,8 @@
 ## Trimestres
 
+- [[2024-Q1]] — Colocación de la Oferta Subsecuente de Capital de marzo 2024 (origen del ciclo de crecimiento); guía de resultados 2024 aprobada; análisis de fusión con Terrafina anunciado (sin continuidad posterior); cierre de la compra progresiva de La Perla.
+- [[2024-Q2]] — Cierre de la Oferta Subsecuente de Capital de marzo 2024 (séptima emisión, primera con tramo internacional simultáneo); adquisición de Aerotech; acuerdo vinculante de Batach; primeras ofertas por oficinas de bajo rendimiento.
+- [[2024-Q3]] — Primer trimestre completo de operación de Aerotech; origen del mecanismo de excedente de AFFO destinado a recompra de CBFIs; acuerdo vinculante de Batach en espera de autorización COFECE; refinanciamiento de deuda bancaria a menor sobretasa.
 - [[2024-Q4]] — Cierre del décimo aniversario; guía 2024 cumplida por décimo año consecutivo; pago parcial de Batach; venta de Axtel y oferta por Fortaleza; recompra de 16.6M de CBFIs (37.8M en el año) con revelación del mecanismo de cancelación fiscal; HR Ratings sube a AAA/BBB+.
 - [[2025-Q1]] — Firma del acuerdo vinculante para MeLi León (a concretarse en 2T25); recompra neta de 8.8M de CBFIs (FTSE); comentario sobre aranceles de EE.UU. y T-MEC; reconocimientos ESG (CSA S&P Global, GRESB, PRI, Great Place to Work).
 - [[2025-Q2]] — Adquisición de MeLi León (industrial, US$106.0M); Prometeo aprobado para desinversión; recolocación de 11.6M de CBFIs (FTSE); pérdida neta consolidada trimestral y semestral por apreciación del peso.

@@ -1,0 +1,204 @@
+{
+  "main": {
+    "id": "0f06ca37fdfdc707",
+    "type": "split",
+    "children": [
+      {
+        "id": "cd39aea8999b3e5f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7e56e216fc407402",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Vista gráfica"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "8042dcdd9b1817c6",
+    "type": "split",
+    "children": [
+      {
+        "id": "23d8656da0f3c17a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c7d45ec2192e3cc5",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Explorador de archivos"
+            }
+          },
+          {
+            "id": "fae47b13d591e87f",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Buscar"
+            }
+          },
+          {
+            "id": "9e88f5a22253d76d",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Marcadores"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "c47558f98cc98634",
+    "type": "split",
+    "children": [
+      {
+        "id": "7a57268127227e1e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "bde78bc533633259",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Enlaces entrantes"
+            }
+          },
+          {
+            "id": "d2b2d0ddd13655d5",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Enlaces salientes"
+            }
+          },
+          {
+            "id": "38638c26c4b80deb",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Etiquetas"
+            }
+          },
+          {
+            "id": "2af7893b70916033",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Todas las propiedades"
+            }
+          },
+          {
+            "id": "989dfef151e163fe",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Esquema"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Abrir selector rápido": false,
+      "graph:Abrir vista gráfica": false,
+      "canvas:Crear nuevo lienzo": false,
+      "daily-notes:Abrir la nota de hoy": false,
+      "templates:Insertar plantilla": false,
+      "command-palette:Abrir paleta de comandos": false,
+      "bases:Crear nueva base": false
+    }
+  },
+  "active": "7e56e216fc407402",
+  "lastOpenFiles": [
+    "log.md.tmp.222760.39276910d978",
+    "index.md.tmp.222760.4be186dba932",
+    "pages/quarters/2024-Q1.md",
+    "pages/concepts/sostenibilidad-esg.md.tmp.222760.1738d269e931",
+    "pages/concepts/sostenibilidad-esg.md.tmp.222760.d9ff7f72349b",
+    "pages/concepts/sostenibilidad-esg.md.tmp.222760.4a3ca5c78394",
+    "pages/concepts/exposicion-cambiaria.md.tmp.222760.20b75adcde3b",
+    "pages/concepts/exposicion-cambiaria.md.tmp.222760.5c513a591af6",
+    "pages/concepts/exposicion-cambiaria.md.tmp.222760.733371bd24b0",
+    "pages/concepts/estrategia-crecimiento-capital.md.tmp.222760.1a6707ca8fc3",
+    "pages/concepts/estrategia-crecimiento-capital.md.tmp.222760.61442f12d212",
+    "pages/concepts/estrategia-crecimiento-capital.md.tmp.222760.71d42f5a09c1",
+    "sources/2024-Q1-source.md",
+    "pages/quarters/2024-Q2.md",
+    "sources/2024-Q2-source.md",
+    "pages/quarters/2024-Q4.md",
+    "pages/quarters/2024-Q3.md",
+    "sources/2024-Q3-source.md",
+    "index.md",
+    "pages/quarters/2025-Q1.md",
+    "sources/2024-Q4.md",
+    "log.md"
+  ]
+}

@@ -1,12 +1,28 @@
 ---
 title: Exposición cambiaria (peso-dólar)
 created: 2026-07-26
-updated: 2026-07-26
-quarters: [4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026]
+updated: 2026-07-28
+quarters: [1T2024, 2T2024, 3T2024, 4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026]
 confidence: high
 ---
 
 Fibra Mty reporta en pesos mexicanos (moneda funcional y de registro), pero una proporción muy alta de sus ingresos de arrendamiento está denominada en dólares — 85.7% del portafolio total, 91.5% del segmento industrial específicamente (1T26). Esto hace que las fluctuaciones del tipo de cambio peso-dólar tengan un efecto material y recurrente sobre las métricas financieras reportadas en pesos, incluso cuando el desempeño operativo en dólares es positivo.
+
+## 1T2024
+
+El tipo de cambio de facturación mismos inmuebles del 1T24 mostró una apreciación del peso de 10.8% vs 1T23 (de Ps.18.9105 a Ps.17.0707), generando un efecto **desfavorable** de Ps.(26,110) miles en el ION mismos inmuebles — parcialmente compensado por incrementos de renta y ocupación (+Ps.17,313 miles). A nivel de valor razonable de propiedades, la comparación cierre-a-cierre trimestral también fue desfavorable: el peso se apreció de Ps.16.8935 (cierre 2023) a Ps.16.6780 (cierre 1T24), generando una disminución de Ps.(294,726) miles en la valuación de propiedades de inversión.
+
+## 2T2024
+
+A diferencia de los trimestres posteriores (dominados por depreciación del peso), en el 2T24 el dólar se **depreció** frente al peso dentro del trimestre (TC de facturación de Ps.17.9072 en 2T23 a Ps.17.0733 en 2T24), generando un efecto cambiario **desfavorable** de Ps.(21,763) miles en el ION mismos inmuebles — que absorbió casi por completo el desempeño positivo de incrementos de renta y ocupación (Ps.34,044 miles), dejando el ION mismos inmuebles prácticamente plano vs 2T23. El mismo mecanismo que en trimestres posteriores favorece ingresos también puede jugar en contra cuando el peso se aprecia intra-trimestre.
+
+A nivel de valor razonable de propiedades, sin embargo, la comparación cierre-a-cierre trimestral sí fue favorable: el peso se depreció de Ps.16.6780 (cierre 1T24) a Ps.18.3773 (cierre 2T24), generando +Ps.2,357.0 millones de ganancia por este concepto — la mayor parte de la ganancia total en valor razonable del trimestre (Ps.2,295.7 millones).
+
+## 3T2024
+
+La depreciación del peso durante el trimestre (TC de facturación de Ps.16.9611 en 3T23 a Ps.18.9297 en 3T24) generó una ganancia por valor razonable de propiedades de Ps.3,179.5 millones — Ps.1,922.2 millones atribuibles a la depreciación del peso de cierre a cierre trimestral (Ps.18.3773 a Ps.19.6697), complementados por condiciones de mercado favorables en naves industriales (+Ps.1,248.8 millones). A nivel de ION mismos inmuebles, el efecto cambiario favorable aportó Ps.52,940 miles del incremento vs 3T23.
+
+Pese a este efecto positivo en valuación e ingresos, el trimestre registró una pérdida por fluctuación cambiaria neta de Ps.(659,850) miles, derivada principalmente de la revaluación de la deuda denominada en dólares al depreciarse el peso — ilustrando que, para una FIBRA con deuda en dólares, la misma depreciación cambiaria que favorece ingresos y valuación de propiedades puede generar una pérdida contable no monetaria sobre el pasivo.
 
 ## 4T2024
 
@@ -48,6 +64,9 @@ Fibra Mty también mantiene coberturas de tasa de interés (swaps) sobre gran pa
 
 ## Trimestres que tocan este concepto
 
+- [[2024-Q1]] — Apreciación del peso de 10.8% interanual (TC facturación) genera efecto desfavorable en ION mismos inmuebles; apreciación cierre-a-cierre también desfavorable para el valor razonable de propiedades.
+- [[2024-Q2]] — Depreciación del dólar frente al peso (TC facturación) genera efecto desfavorable en ION mismos inmuebles; depreciación del peso cierre-a-cierre favorece valor razonable de propiedades.
+- [[2024-Q3]] — Depreciación del peso favorece valuación de propiedades e ingresos, pero genera pérdida cambiaria neta de Ps.(659.9) millones por revaluación de deuda en dólares.
 - [[2024-Q4]] — Depreciación del peso durante todo 2024 (Ps.16.8935 a Ps.20.5103) genera ganancia dominante por valor razonable en el trimestre y el año; 2 de 4 forwards de la colocación 2024 vencen en diciembre.
 - [[2025-Q1]] — Depreciación interanual del peso favorece ingresos e ION; primer indicio trimestral de apreciación del peso frente al cierre de 2024 en el efecto de valor razonable.
 - [[2025-Q2]] — Apreciación del peso reduce el valor razonable de propiedades de inversión, generando pérdida neta consolidada trimestral y semestral; 4 forwards vigentes por US$177.4 millones de nocional.

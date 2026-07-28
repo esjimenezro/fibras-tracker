@@ -18,8 +18,8 @@ Alcance v1: solo FMTY14. Sin vector DB, sin RAG — navegación por `index.md`.
 
 ## Naming y referencias cruzadas
 
-* **Nombres de archivo**: kebab-case. Páginas de concepto usan el slug en inglés/español según la regla de idioma de arriba (`affo-trend.md`, `concentracion-inquilinos.md`). Páginas de trimestre usan el código `YYYY-QN.md` (ej. `2024-Q1.md`) — mismo trimestre que `quarter: 1T2024` en frontmatter, pero en formato ordenable alfabéticamente.
-* **Referencias cruzadas entre páginas de la wiki** (trimestre ↔ concepto): usar `[[wikilinks]]` (ej. `[[affo-trend]]`, `[[2024-Q1]]`), no rutas relativas de markdown — esto es lo que permite que Obsidian (u otra herramienta compatible) resuelva el grafo de la wiki automáticamente.
+* **Nombres de archivo**: kebab-case. Páginas de concepto usan el slug en inglés/español según la regla de idioma de arriba (`affo-trend.md`, `concentracion-inquilinos.md`). Páginas de trimestre usan el código `YYYY-QN.md` (ej. `2024-Q1.md`) — mismo trimestre que `quarter: 1T2024` en frontmatter, pero en formato ordenable alfabéticamente. Los archivos de `sources/` usan el mismo código con sufijo `-source` (`YYYY-QN-source.md`, ej. `2024-Q1-source.md`) — **nunca el mismo nombre que su página de trimestre correspondiente**, precisamente para que no haya colisión de nombre entre `sources/2024-Q1-source.md` y `pages/quarters/2024-Q1.md` (un wikilink `[[2024-Q1]]` sería ambiguo si ambos se llamaran igual, ya que la resolución típica de wikilinks es por nombre de archivo, no por carpeta).
+* **Referencias cruzadas entre páginas de la wiki** (trimestre ↔ concepto): usar `[[wikilinks]]` (ej. `[[affo-trend]]`, `[[2024-Q1]]`), no rutas relativas de markdown — esto es lo que permite que Obsidian (u otra herramienta compatible) resuelva el grafo de la wiki automáticamente. `sources/` **nunca se referencia con wikilinks** — no es una página de la wiki, es una transcripción; se referencia con ruta relativa estándar o vía el campo `source_md` del frontmatter.
 * **Referencias a la fuente** (`raw/`): siempre enlazar de vuelta al PDF original con ruta relativa estándar de markdown, no wikilink — ej. `[reporte 1T2024](../../raw/1T2024.pdf)`. Esto distingue una página de la wiki (que se navega vía wikilink) de un documento fuente (que se cita con un link normal).
 
 ## Estructura de directorios
@@ -28,7 +28,7 @@ Alcance v1: solo FMTY14. Sin vector DB, sin RAG — navegación por `index.md`.
 wiki/
   fmty14/
     raw/                  # PDFs trimestrales tal cual, INMUTABLE
-    sources/              # conversión fiel de cada PDF a markdown (1:1, sin síntesis)
+    sources/              # conversión fiel de cada PDF a markdown (1:1, sin síntesis) — YYYY-QN-source.md
     pages/
       quarters/           # una página por trimestre
       concepts/           # páginas temáticas que persisten a través de trimestres
@@ -47,7 +47,7 @@ Un `wiki/index.md` agregador a nivel raíz (que solo apunte a los `index.md` de 
 ## Capas y su mutabilidad
 
 * **raw/** — inmutable. Nunca se edita ni se resume con pérdida. Fuente de verdad definitiva del contenido original.
-* **sources/** — transcripción fiel y completa del PDF a markdown (`sources/YYYY-QN.md`), incluyendo tablas. Es determinística (una función 1:1 de `raw/`, sin síntesis ni interpretación), por lo que es barata de regenerar si se pierde y no requiere el mismo escrutinio que `pages/`. **Autoridad numérica:** cualquier cifra en `sources/` es solo para verificación cruzada — `fundamentals.json` es la única fuente de verdad para cálculos o citas numéricas (pasó por validación de identidad contable, conversión de unidades y correcciones que `sources/` no tiene). Si un número difiere entre ambos, `fundamentals.json` gana.
+* **sources/** — transcripción fiel y completa del PDF a markdown (`sources/YYYY-QN-source.md`), incluyendo tablas. Es determinística (una función 1:1 de `raw/`, sin síntesis ni interpretación), por lo que es barata de regenerar si se pierde y no requiere el mismo escrutinio que `pages/`. **Autoridad numérica:** cualquier cifra en `sources/` es solo para verificación cruzada — `fundamentals.json` es la única fuente de verdad para cálculos o citas numéricas (pasó por validación de identidad contable, conversión de unidades y correcciones que `sources/` no tiene). Si un número difiere entre ambos, `fundamentals.json` gana.
 * **pages/** — el LLM la escribe y mantiene por completo, sintetizando a partir de `sources/` (no releyendo el PDF cada vez). El humano la lee y guía énfasis, no la edita a mano.
 * **outputs/** — reportes de lint fechados, uno por corrida (`lint-YYYY-MM-DD.md`). Son un registro histórico, no se editan retroactivamente — si algo cambia, se corre un lint nuevo.
 * **SCHEMA.md** — co-evoluciona con el humano.
@@ -64,7 +64,7 @@ ticker: FMTY14
 quarter: 1T2024
 report_date: 2024-03-31
 source_file: raw/1T2024.pdf
-source_md: sources/2024-Q1.md
+source_md: sources/2024-Q1-source.md
 concepts_touched: [affo-trend, ocupacion]
 created: 2026-07-26
 updated: 2026-07-26
@@ -129,7 +129,7 @@ Bitácora cronológica, append-only, un renglón por evento. Solo se registran m
 
 Uno a la vez (no batch), con el humano involucrado en cada paso:
 
-1. Lee el PDF en `raw/` y genera su transcripción fiel completa en `sources/YYYY-QN.md` (incluye tablas; sin síntesis, sin interpretación).
+1. Lee el PDF en `raw/` y genera su transcripción fiel completa en `sources/YYYY-QN-source.md` (incluye tablas; sin síntesis, sin interpretación).
 2. A partir de `sources/`, comenta los puntos narrativos clave con el humano; el humano guía énfasis.
 3. Escribe/actualiza la página de trimestre en `pages/quarters/`.
 4. Identifica y actualiza (o crea) las páginas de concepto correspondientes en `pages/concepts/`, siguiendo la regla de arriba. Enlaza entre página de trimestre y páginas de concepto usando `[[wikilinks]]` en ambos sentidos.
