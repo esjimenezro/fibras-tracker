@@ -16,4 +16,5 @@
 - [[rotacion-portafolio]] — Adquisición sostenida de industrial (Michigan) mientras se deprecia oficinas/comercial (46% oficinas y 100% comercial vendido/con acuerdo); actualizado a 1T2026.
 - [[exposicion-cambiaria]] — Alta ponderación de ingresos en dólares y su efecto en resultados reportados en pesos; actualizado a 1T2026.
 - [[sostenibilidad-esg]] — Reconocimientos externos de sostenibilidad (GRESB, S&P Global CSA, Sustainability Yearbook, MSCI); actualizado a 1T2026.
-- [[guia-resultados-anual]] — Ciclo anual de guía de AFFO/CBFI: objetivo, cumplimiento y guía del año entrante; actualizado a 4T2024.
+- [[guia-resultados-anual]] — Ciclo anual de guía de AFFO/CBFI: objetivo, cumplimiento y guía del año entrante (incl. el caso de 4T2025, donde la guía se difirió al 1T26); actualizado a 1T2026.
+- [[calificaciones-crediticias]] — Calificaciones de Fitch Ratings y HR Ratings, ambas en grado de inversión; trayectoria de mejora de HR Ratings (AA+/BBB→AAA/BBB+ en dic-2024); actualizado a 1T2026.
