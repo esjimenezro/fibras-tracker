@@ -1,4 +1,4 @@
-# wiki/SCHEMA.md — FibraLens Wiki (piloto FMTY14)
+# wiki/SCHEMA.md — FibraLens Wiki (multi-FIBRA)
 
 Este archivo gobierna cómo se mantiene la wiki. Se co-evoluciona con el tiempo: si detectas un error recurrente o una convención que falta, propón un cambio a este archivo antes de seguir ingiriendo.
 
@@ -6,7 +6,7 @@ Este archivo gobierna cómo se mantiene la wiki. Se co-evoluciona con el tiempo:
 
 Esta wiki NO duplica los datos numéricos que ya viven en `fundamentals.json` (NOI, AFFO, LTV, ocupación, etc. trimestre por trimestre — eso ya está resuelto por otro pipeline). Esta wiki captura el **contexto narrativo** que los números no cuentan por sí solos: qué dijo la administración, por qué se movió una cifra, qué eventos ocurrieron ese trimestre, cómo se conecta un trimestre con los anteriores.
 
-Alcance v1: solo FMTY14. Sin vector DB, sin RAG — navegación por `index.md`.
+Alcance: multi-FIBRA. Cada FIBRA vive en su propio `wiki/<ticker>/` (ej. `wiki/fmty14/`, `wiki/danhos13/`), con la misma estructura y las mismas reglas descritas en este documento — este `SCHEMA.md` es compartido entre todas. FMTY14 fue el piloto original (ver <issue id="ae2d6bc1-1c91-44e6-ab88-61975e9f450d" href="https://linear.app/esjimenezro/issue/ESJ-5/wiki-llm-patron-karpathy-piloto-fmty14">ESJ-5</issue> en Linear); DANHOS13 es la segunda FIBRA. Sin vector DB, sin RAG — navegación por `index.md` (uno por FIBRA, ver sección "Múltiples FIBRAs" más abajo).
 
 ## Convención de idioma
 
@@ -19,7 +19,7 @@ Alcance v1: solo FMTY14. Sin vector DB, sin RAG — navegación por `index.md`.
 ## Naming y referencias cruzadas
 
 * **Nombres de archivo**: kebab-case. Páginas de concepto usan el slug en inglés/español según la regla de idioma de arriba (`affo-trend.md`, `concentracion-inquilinos.md`). Páginas de trimestre usan el código `YYYY-QN.md` (ej. `2024-Q1.md`) — mismo trimestre que `quarter: 1T2024` en frontmatter, pero en formato ordenable alfabéticamente. Los archivos de `sources/` usan el mismo código con sufijo `-source` (`YYYY-QN-source.md`, ej. `2024-Q1-source.md`) — **nunca el mismo nombre que su página de trimestre correspondiente**, precisamente para que no haya colisión de nombre entre `sources/2024-Q1-source.md` y `pages/quarters/2024-Q1.md` (un wikilink `[[2024-Q1]]` sería ambiguo si ambos se llamaran igual, ya que la resolución típica de wikilinks es por nombre de archivo, no por carpeta).
-* **Referencias cruzadas entre páginas de la wiki** (trimestre ↔ concepto): usar `[[wikilinks]]` (ej. `[[affo-trend]]`, `[[2024-Q1]]`), no rutas relativas de markdown — esto es lo que permite que Obsidian (u otra herramienta compatible) resuelva el grafo de la wiki automáticamente. `sources/` **nunca se referencia con wikilinks** — no es una página de la wiki, es una transcripción; se referencia con ruta relativa estándar o vía el campo `source_md` del frontmatter.
+* **Referencias cruzadas entre páginas de la wiki** (trimestre ↔ concepto): usar `[[wikilinks]]` (ej. `[[affo-trend]]`, `[[2024-Q1]]`), no rutas relativas de markdown — esto es lo que permite que Obsidian (u otra herramienta compatible) resuelva el grafo de la wiki automáticamente. Dentro de la misma FIBRA, un wikilink corto (`[[2024-Q1]]`) siempre es suficiente y sin ambigüedad. **Referencia entre FIBRAs distintas** (relevante solo para contenido que cruce FIBRAs, ej. Radar — ver <issue id="180a53df-0b4f-45de-8b61-ca2e23858630" href="https://linear.app/esjimenezro/issue/ESJ-14/roadmap-34-queries-entre-fibras-indice-agregador">ESJ-14</issue>): como los nombres de página de trimestre y de concepto NO llevan prefijo de ticker (`2024-Q1.md`, `affo-trend.md` pueden repetirse en `wiki/fmty14/` y `wiki/danhos13/`), un wikilink que cruce FIBRAs debe calificarse con la carpeta: `[[danhos13/2024-Q1]]`, `[[fmty14/affo-trend]]`. Esta regla no aplica retroactivamente a contenido ya escrito — solo a contenido nuevo que referencie entre FIBRAs. `sources/` **nunca se referencia con wikilinks** — no es una página de la wiki, es una transcripción; se referencia con ruta relativa estándar o vía el campo `source_md` del frontmatter.
 * **Referencias a la fuente** (`raw/`): siempre enlazar de vuelta al PDF original con ruta relativa estándar de markdown, no wikilink — ej. `[reporte 1T2024](../../raw/1T2024.pdf)`. Esto distingue una página de la wiki (que se navega vía wikilink) de un documento fuente (que se cita con un link normal).
 
 ## Estructura de directorios
@@ -35,14 +35,23 @@ wiki/
     outputs/              # reportes de lint fechados (detalle completo)
     index.md
     log.md
-  SCHEMA.md               # este archivo
+  danhos13/                # misma estructura que fmty14/, repetida por FIBRA
+    raw/
+    sources/
+    pages/
+      quarters/
+      concepts/
+    outputs/
+    index.md
+    log.md
+  SCHEMA.md               # este archivo, compartido entre todas las FIBRAs
 ```
 
-## Extensión futura: múltiples FIBRAs
+## Múltiples FIBRAs
 
-`index.md` y `log.md` son **por FIBRA, no globales** — cada FIBRA es su propia mini-wiki independiente bajo `wiki/<ticker>/` (fuentes, páginas, bitácora propios). Cuando se agregue una segunda FIBRA (ej. DANHOS13), se repite la misma estructura bajo `wiki/danhos13/`, sin tocar la de FMTY14.
+`index.md` y `log.md` son **por FIBRA, no globales** — cada FIBRA es su propia mini-wiki independiente bajo `wiki/<ticker>/` (fuentes, páginas, bitácora propios). DANHOS13 repite exactamente la misma estructura que FMTY14, bajo `wiki/danhos13/`, sin tocar la de FMTY14.
 
-Un `wiki/index.md` agregador a nivel raíz (que solo apunte a los `index.md` de cada FIBRA, sin duplicar su contenido) es una extensión deliberadamente diferida — no se justifica con una sola FIBRA activa, y probablemente tenga más sentido cuando el módulo Radar (comparativa entre FIBRAs) lo necesite, no antes. Esta es una decisión consciente, no un olvido.
+Un `wiki/index.md` agregador a nivel raíz (que solo apunte a los `index.md` de cada FIBRA, sin duplicar su contenido) **sigue diferido** — no se justifica todavía con 2 FIBRAs activas, y probablemente tenga más sentido cuando el módulo Radar (comparativa entre FIBRAs) lo necesite. Sigue siendo una decisión consciente, no un olvido — revisar cuando se agregue la 3ra o 4ta FIBRA si conviene adelantarlo.
 
 ## Capas y su mutabilidad
 
