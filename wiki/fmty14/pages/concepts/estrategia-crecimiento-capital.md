@@ -1,8 +1,8 @@
 ---
 title: Estrategia de crecimiento y gestión de capital
 created: 2026-07-26
-updated: 2026-07-28
-quarters: [1T2024, 2T2024, 3T2024, 4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026]
+updated: 2026-07-29
+quarters: [2T2022, 3T2022, 4T2022, 1T2023, 2T2023, 4T2023, 1T2024, 2T2024, 3T2024, 4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026]
 confidence: high
 ---
 
@@ -11,6 +11,30 @@ Fibra Mty describe su modelo de inversión sobre cuatro pilares: gobierno corpor
 El programa de recompra/recolocación ha mostrado picos de volumen y utilidad hacia el cierre de trimestre coincidiendo con el rebalanceo trimestral de índices FTSE — visto de forma consecutiva en 1T2025, 2T2025 y 3T2025 — lo que sugiere que la administración lo usa activamente cuando detecta ventanas de demanda inusual, más allá de su función habitual de acrecencia ordenada.
 
 **Mecanismo de cancelación de CBFIs recomprados**: por disposición de la Resolución Miscelánea Fiscal vigente y las Políticas de Operación del Programa de Recompra de Valores Propios del Fideicomiso, los CBFIs recomprados que cumplen más de un año en el Fondo de Recompra sin haber sido recolocados **no pueden recolocarse y entran en proceso de cancelación** (extinción definitiva). Esto explica por qué la cifra de "monto neto acumulado recomprado" cae, trimestre a trimestre, más de lo que explicaría por sí sola la actividad de recompra/recolocación de ese trimestre — hay una salida adicional del fondo (cancelación) que no es ni recompra nueva ni recolocación. El reporte 4T2024 documenta explícitamente 5,292,747 CBFIs que cumplieron esta condición durante 2024.
+
+## 2T2022
+
+Fibra Mty inició el proceso para su quinta emisión de capital (hasta Ps.3,450 millones, concluida en 3T22 — ver abajo), enfocada en aprovechar las oportunidades del sector industrial derivadas del nearshoring. La Administración enmarcó la oportunidad en cuatro atributos: mejor calificación en Gobierno Corporativo entre FIBRAs (S&P Global CSA 2021), portafolio de calidad y diversificado, rendimiento históricamente por encima de comparables, y un historial de emisiones a precio cercano a valor en libros con aplicación ágil de recursos. Ver [[2022-Q2]].
+
+## 3T2022
+
+El 13 de septiembre de 2022, Fibra Mty concluyó su quinta emisión de capital por Ps.3,450.0 millones a Ps.12.20/CBFI (sobredemanda 1.2x), la FIBRA con más emisiones de capital del mercado en los últimos 7 años a esa fecha — primera en dirigir una campaña de educación financiera al mercado retail (Bursanet, GBM+). Los recursos, destinados a aprovechar oportunidades en el sector industrial, se mantuvieron invertidos en valores gubernamentales hasta su aplicación (meses después, en la adquisición de Zeus). Por el desfase fiscal de 3 meses entre generación y pago de distribuciones, Fibra Mty tomó Ps.58.7 millones de los recursos para nivelar el AFFO por CBFI del trimestre — el primer caso documentado del mecanismo de "estabilización por colocación" que se repite en emisiones posteriores. Ver [[2022-Q3]].
+
+## 4T2022
+
+En noviembre de 2022, Fibra Mty anunció el acuerdo para adquirir el portafolio industrial Zeus (46 naves, US$662 millones), a liquidarse combinando el efectivo disponible de la emisión de capital de septiembre de 2022, una nueva suscripción preferente de capital (US$300-400 millones objetivo, iniciada el 15-feb-2023) y deuda adicional. Dado que la distribución 2023 dependía de variables aún no determinadas en ese momento (CBFIs adicionales, tipo de cambio de la adquisición, tasa de la nueva deuda), la guía de resultados 2023 se difirió al reporte del 1T23 — ver [[guia-resultados-anual]]. El endeudamiento cerró 2022 en 23.7% (vs 29.7% en 2021), gracias a la emisión de capital de septiembre. Ver [[2022-Q4]].
+
+## 1T2023
+
+El 29 de marzo de 2023, Fibra Mty concluyó el primer cierre del portafolio industrial Zeus (43 de 46 propiedades, US$616.8 millones), financiado combinando tres fuentes: la primera liquidación de la Suscripción Preferente de Capital 2023 (1-mar-2023, 296.4 millones de CBFIs a Ps.12.20, Ps.3,615.9 millones), un nuevo crédito sindicado sin garantía de hasta US$300 millones — el más grande de la historia de la compañía, con mejores condiciones que créditos previos — y la disposición de US$100 millones del crédito sindicado 2021. El endeudamiento subió de 23.7% (cierre 2022) a 37.1% al cierre del 1T23, con expectativa de bajar a ~25% una vez aplicados los prepagos ya comprometidos con la segunda liquidación de la Suscripción y la devolución del IVA de la adquisición. En este mismo reporte, el Comité Técnico aprobó por primera vez la guía de resultados 2023 (ver [[guia-resultados-anual]]), y la Administración actualizó su estrategia de crecimiento inorgánico 2022-2026 para invertir Ps.15,000 millones adicionales al portafolio Zeus. Ver [[2023-Q1]].
+
+## 2T2023
+
+Para financiar la adquisición del portafolio Zeus sin comprometer la estructura de capital, Fibra Mty llevó a cabo una Suscripción Preferente de hasta 690 millones de CBFIs a Ps.12.20/CBFI — aprobada por la Asamblea de Tenedores el 23 de enero de 2023, con dos liquidaciones (1-mar-2023: 296.4 millones de CBFIs; 5-abr-2023: 263.0 millones de CBFIs). El monto bruto captado fue Ps.6,824.9 millones (~US$374 millones), 93.0% del objetivo original de US$400 millones; asesores BBVA y Actinver. Sumado a la emisión de septiembre de 2022, Fibra Mty había levantado más de US$545 millones de capital en 7 meses. Con esos recursos, más la devolución del IVA de la transacción, se prepagaron US$183.0 millones de líneas de crédito revolventes, bajando el endeudamiento de 37.1% (1T23) a 25.7% (2T23). El calendario de distribuciones se adelantó temporalmente (nov-2022 a mar-2023 pagadas antes de cada incremento de CBFIs) para evitar dilución, retomando el calendario mensual regular en julio de 2023. Ver [[2023-Q2]] y [[calificaciones-crediticias]] para el refinanciamiento de deuda asociado.
+
+## 4T2023
+
+Al cierre del 4T23, Fibra Mty se encontraba en proceso de autorización para una potencial emisión de capital — el primer caso documentado en esta wiki de este proceso, que culminaría en la Oferta Subsecuente de Capital del 15 de marzo de 2024 (ver 1T2024 abajo). La sensibilidad de la distribución estimada para 2024 al número de CBFIs adicionales llevó a diferir el anuncio de la guía de resultados 2024 al reporte del 1T24. En el frente de deuda, el nivel de endeudamiento cerró 2023 en 26.6% (vs 23.7% en 2022) por la adquisición del portafolio Zeus, financiada mayormente con capital: solo US$170 millones de deuda a plazo cubrieron una transacción que duplicó el ABR del Fideicomiso, resultado de la estrategia de mantener una estructura de capital balanceada. Ver [[guia-resultados-anual]] y [[2023-Q4]].
 
 ## 1T2024
 
@@ -72,6 +96,12 @@ En este mismo trimestre, días antes de la publicación del reporte, Fibra Mty l
 
 ## Trimestres que tocan este concepto
 
+- [[2022-Q2]] — Inicio del proceso de la quinta emisión de capital, enfocada en oportunidades del nearshoring industrial.
+- [[2022-Q3]] — Quinta emisión de capital (Ps.3,450M); origen del mecanismo de "estabilización por colocación".
+- [[2022-Q4]] — Acuerdo para adquirir Zeus anunciado (US$662M); guía de resultados 2023 diferida al 1T23; endeudamiento cierra 2022 en 23.7%.
+- [[2023-Q1]] — Primer cierre de Zeus (US$616.8M) financiado con capital + nuevo crédito sindicado US$300M; primer anuncio de la guía de resultados 2023; estrategia de crecimiento inorgánico actualizada (+Ps.15,000M).
+- [[2023-Q2]] — Suscripción Preferente de Capital 2023 (~US$374 millones, financia Zeus); prepago de US$183M en líneas revolventes; endeudamiento baja a 25.7%.
+- [[2023-Q4]] — Fibra Mty en proceso de autorización para una emisión de capital, guía 2024 diferida al 1T24; endeudamiento cierra 2023 en 26.6% tras financiar Zeus mayormente con capital.
 - [[2024-Q1]] — Colocación de la Oferta Subsecuente de Capital (15-mar-2024) que origina el ciclo; guía de resultados 2024 aprobada (Ps.0.9390–Ps.0.9553/CBFI); calendario de distribuciones adelantado por la emisión.
 - [[2024-Q2]] — Oferta Subsecuente de Capital de marzo 2024 (séptima emisión, ~US$467.9 millones, primera con tramo privado internacional simultáneo); adquisición de Aerotech; acuerdo vinculante de Batach.
 - [[2024-Q3]] — Origen del mecanismo de excedente de AFFO destinado a recompra (aprobado 15-oct-2024); recompra de 19.7M de CBFIs (26.5M acumulados); refinanciamiento de deuda bancaria a menor sobretasa.

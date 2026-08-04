@@ -1,5 +1,21 @@
 ## Trimestres
 
+- [[2020-Q1]] — Primera evaluación preliminar de impactos de COVID-19 (Director General dedica su carta íntegramente al tema); cambio a distribuciones mensuales; anuncio y suspensión (por la pandemia) del proyecto de adquisición La Perla; guía 2020 aún sin ajustar.
+- [[2020-Q2]] — Segunda evaluación preliminar de impactos de COVID-19; guía 2020 ajustada a la baja por la pandemia; refinanciamiento del crédito HSBC (US$35M, extensión a dic-2024).
+- [[2020-Q3]] — Resiliencia operativa en plena pandemia; comentarios del Director General sobre nearshoring y PropTech, semilla narrativa de lo que dos años después sería la adquisición de Zeus.
+- [[2020-Q4]] — Guía 2020 cumplida en el rango alto pese a la pandemia; primera emisión de CEBURES por una FIBRA en México (FMTY20D, US$100M); guía 2021 anunciada.
+- [[2021-Q1]] — Recuperación gradual pospandemia; reserva de mercado de Ps.14.7M creada; inicio del proceso de una segunda emisión bursátil (planeada como "FMTY21D", ejecutada después como reapertura del FMTY20D).
+- [[2021-Q2]] — Adquisición de La Perla (oficinas clase A, ~Ps.1,435.2M); desinversión de Casona Los Mochis (Ps.70.0M); anuncio de reapertura del CEBURE FMTY20D.
+- [[2021-Q3]] — Reapertura del CEBURE FMTY20D (US$115M, 3.73%) sustituye Crédito Sindicado 2018; anuncio de renovación anticipada de Whirlpool (~20% de ingresos); en buen camino para el rango alto de la guía 2021.
+- [[2021-Q4]] — Adquisición de Ciénega 2 y Ciénega 3 y venta de Cuprum (origen de la estrategia de reciclaje de activos); guía 2021 cumplida (distribución total Ps.0.8952/CBFI); guía 2022 anunciada (+7.2%); renovación anticipada de Whirlpool (18.3% de ingresos) hasta 2031.
+- [[2022-Q1]] — ION regresa a niveles prepandemia de forma orgánica; primera FIBRA mexicana con certificación EDGE Advanced; inicio de certificación LEED O+M para 11 edificios de oficinas; transición LIBOR→SOFR completada.
+- [[2022-Q2]] — Inicio del proceso de la quinta emisión de capital (hasta Ps.3,450M), enfocada en aprovechar oportunidades del nearshoring en el sector industrial.
+- [[2022-Q3]] — Quinta emisión de capital (Ps.3,450M, 13-sep-2022), primera FIBRA con campaña de educación financiera retail; origen del mecanismo de "estabilización por colocación"; en buen camino para el rango alto de la guía 2022.
+- [[2022-Q4]] — Octavo año consecutivo de guía cumplida (distribución total Ps.1.0046/CBFI); Zeus anunciado como acuerdo de adquisición (US$662M, aún no cerrado); Suscripción Preferente de Capital iniciada 15-feb-2023; guía de resultados 2023 diferida al reporte del 1T23.
+- [[2023-Q1]] — Primer cierre del portafolio Zeus (US$616.8M, 43/46 propiedades); primera liquidación de la Suscripción Preferente de Capital 2023; nuevo crédito sindicado US$300M (el más grande de la historia de la compañía); primer anuncio de la guía de resultados 2023; reconocimientos ESG (S&P CSA, Green Lease Leader oro, signatario UN-PRI).
+- [[2023-Q2]] — Margen UAFIDA récord (85.0%) tras integración completa de Zeus a 3 meses de su adquisición; upgrade de Fitch (12-abr-2023) permite refinanciar US$150M con BBVA a menor costo; cierre de la Suscripción Preferente de Capital 2023 (~US$374M); prepago de US$183M en líneas revolventes; guía 2023 actualizada por apreciación del peso.
+- [[2023-Q3]] — Segundo y último cierre del portafolio Zeus (US$45.2M, integración operativa completa); pipeline de expansiones industriales >US$90M; línea Scotiabank US$63M para expansiones; apreciación interanual del peso reduce distribución 6.0% pese a ganancia por valor razonable trimestral.
+- [[2023-Q4]] — Noveno año consecutivo de guía cumplida (AFFO Ps.0.9398/CBFI); guía 2024 diferida al 1T24 por proceso de autorización de una emisión de capital; cierre del segundo pago de Zeus; pérdida neta consolidada por apreciación del peso.
 - [[2024-Q1]] — Colocación de la Oferta Subsecuente de Capital de marzo 2024 (origen del ciclo de crecimiento); guía de resultados 2024 aprobada; análisis de fusión con Terrafina anunciado (sin continuidad posterior); cierre de la compra progresiva de La Perla.
 - [[2024-Q2]] — Cierre de la Oferta Subsecuente de Capital de marzo 2024 (séptima emisión, primera con tramo internacional simultáneo); adquisición de Aerotech; acuerdo vinculante de Batach; primeras ofertas por oficinas de bajo rendimiento.
 - [[2024-Q3]] — Primer trimestre completo de operación de Aerotech; origen del mecanismo de excedente de AFFO destinado a recompra de CBFIs; acuerdo vinculante de Batach en espera de autorización COFECE; refinanciamiento de deuda bancaria a menor sobretasa.
@@ -16,5 +32,6 @@
 - [[rotacion-portafolio]] — Adquisición sostenida de industrial (Michigan) mientras se deprecia oficinas/comercial (46% oficinas y 100% comercial vendido/con acuerdo); actualizado a 1T2026.
 - [[exposicion-cambiaria]] — Alta ponderación de ingresos en dólares y su efecto en resultados reportados en pesos; actualizado a 1T2026.
 - [[sostenibilidad-esg]] — Reconocimientos externos de sostenibilidad (GRESB, S&P Global CSA, Sustainability Yearbook, MSCI); actualizado a 1T2026.
-- [[guia-resultados-anual]] — Ciclo anual de guía de AFFO/CBFI: objetivo, cumplimiento y guía del año entrante (incl. el caso de 4T2025, donde la guía se difirió al 1T26); actualizado a 1T2026.
+- [[guia-resultados-anual]] — Ciclo anual de guía de AFFO/CBFI: objetivo, cumplimiento, guía del año entrante (diferimiento de anuncio 4T2023→1T2024 y 4T2025→1T2026) y revisiones a mitad de año (2T2020 por pandemia, 2T2023 por apreciación del peso); actualizado a 1T2026.
 - [[calificaciones-crediticias]] — Calificaciones de Fitch Ratings y HR Ratings, ambas en grado de inversión; trayectoria de mejora de HR Ratings (AA+/BBB→AAA/BBB+ en dic-2024); actualizado a 1T2026.
+- [[la-perla]] — Complejo de oficinas en Zapopan: anuncio en 2020, suspensión por la pandemia, adquisición parcial en 2021, compra progresiva concluida en 1T2024; actualizado a 1T2024.

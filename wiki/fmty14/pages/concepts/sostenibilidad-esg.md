@@ -1,12 +1,24 @@
 ---
 title: Sostenibilidad y reconocimientos ESG
 created: 2026-07-26
-updated: 2026-07-28
-quarters: [1T2024, 2T2024, 1T2025, 3T2025, 1T2026]
+updated: 2026-07-29
+quarters: [1T2022, 1T2023, 4T2023, 1T2024, 2T2024, 1T2025, 3T2025, 1T2026]
 confidence: high
 ---
 
 Fibra Mty reporta de forma recurrente su desempeño en certificaciones y benchmarks de sostenibilidad de terceros, como parte de su narrativa de gobierno corporativo alineado y disciplina de largo plazo. Estos reconocimientos no tienen efecto financiero directo en el AFFO ni en las distribuciones, pero la administración los presenta como evidencia de calidad institucional y como factor que amplía el universo de inversionistas (fondos con mandatos ESG).
+
+## 1T2022
+
+A inicios del trimestre, Fibra Mty se convirtió en la primera FIBRA mexicana en obtener el certificado EDGE Advanced (Excellence in Design for Greater Efficiencies) para su sede corporativa, emitido por Green Business Certification Inc. (GBCI) y promovido por la Corporación Financiera Internacional (IFC, Grupo Banco Mundial). También inició el proceso de certificación LEED en Operaciones y Mantenimiento v4.1 (USGBC) para 11 edificios de oficinas (141,186 m² rentables), con meta de certificación en ~18 meses.
+
+## 1T2023
+
+Fibra Mty mantuvo la mejor calificación entre FIBRAs en el criterio de Gobierno Corporativo de la Evaluación de Sostenibilidad Corporativa (CSA) de S&P Global, además de la mayor calificación entre emisoras mexicanas en el criterio de Biodiversidad. Recibió el reconocimiento Green Lease Leader nivel oro (Institute for Market Transformation / Better Buildings Alliance del Departamento de Energía de EE.UU.), siendo el único arrendador mexicano con ese nivel. Se convirtió también en signatario de los Principios de Inversión Responsable de la ONU (UN-PRI).
+
+## 4T2023
+
+Por tercer año consecutivo, Fibra Mty obtuvo la mejor calificación entre las FIBRAs evaluadas por S&P Global en el criterio de Gobierno Corporativo de la Evaluación de Sostenibilidad Corporativa (CSA), y por primera vez la calificación más alta en la totalidad de la dimensión Económica y de Gobernanza (G), alcanzando el primer lugar nacional del sector. La edición 2023 del GRESB (Índice Mundial de Sostenibilidad para el Mercado Inmobiliario) otorgó a Fibra Mty la clasificación "Green Star", ubicándola en el cuartil superior comparado con sus pares.
 
 ## 1T2024
 
@@ -32,6 +44,9 @@ Fibra Mty logró su primera inclusión en el *Sustainability Yearbook 2026* de S
 
 ## Trimestres que tocan este concepto
 
+- [[2022-Q1]] — Primera FIBRA mexicana con certificación EDGE Advanced; inicio de certificación LEED O+M v4.1 para 11 edificios de oficinas.
+- [[2023-Q1]] — Mejor calificación entre FIBRAs en S&P Global CSA (Gobierno Corporativo) y Biodiversidad; Green Lease Leader nivel oro (único arrendador mexicano); signatario UN-PRI.
+- [[2023-Q4]] — Mejor calificación S&P Global CSA en Gobierno Corporativo entre FIBRAs (3er año consecutivo), primer lugar nacional en dimensión Económica y de Gobernanza; GRESB Green Star.
 - [[2024-Q1]] — Edificio Redwood gana categoría "Edificios de Usos Mixtos" en Premios Impulso SUMe a la Sustentabilidad 2024 (Saint-Gobain).
 - [[2024-Q2]] — Publicación del informe de sustentabilidad 2023 (108% de cumplimiento del Plan Estratégico 2023-2025); cuestionario GRESB completado.
 - [[2025-Q1]] — CSA S&P Global +15% vs meta anual (Top-3 nacional); GRESB +5%; mejoras en calificación PRI; certificación Great Place to Work.

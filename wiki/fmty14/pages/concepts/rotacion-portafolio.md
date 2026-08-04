@@ -1,16 +1,24 @@
 ---
 title: Rotación de portafolio — crecimiento industrial y depuración de oficinas/comercial
 created: 2026-07-26
-updated: 2026-07-28
-quarters: [2T2024, 3T2024, 4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026]
+updated: 2026-07-29
+quarters: [2T2021, 4T2021, 4T2022, 1T2023, 3T2023, 2T2024, 3T2024, 4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026]
 confidence: high
 ---
 
-Fibra Mty ejecuta de forma consistente una estrategia de dos frentes: adquirir propiedades industriales (naves logísticas y de manufactura, mayoritariamente dolarizadas, bajo estructuras NNN) mientras deprecia/vende su exposición histórica a oficinas y comercial.
+Fibra Mty ejecuta de forma consistente una estrategia de dos frentes: adquirir propiedades industriales (naves logísticas y de manufactura, mayoritariamente dolarizadas, bajo estructuras NNN) mientras deprecia/vende su exposición histórica a oficinas y comercial. El patrón tiene un precedente temprano en el 4T2021 (Ciénega 2 y Ciénega 3 adquiridas mientras se vendían Casona Los Mochis y Cuprum), que el propio Director General enmarcó en ese momento como el inicio de una "estrategia de reciclaje de activos" — un año antes de que la adquisición de Zeus la consolidara como la estrategia central del Fideicomiso.
 
 ## Lado de adquisición — industrial
 
-El portafolio industrial se ha construido mediante adquisiciones sucesivas: Zeus y Aerotech (previas, aportaron reserva territorial), el portafolio Batach (6 naves en 4T24, 2 naves remanentes el 15-jul-2025), MeLi León (9-abr-2025), y el portafolio Michigan (17-mar-2026).
+El portafolio industrial se ha construido mediante adquisiciones sucesivas: Ciénega 2 y Ciénega 3 (4T2021, el precedente más temprano), Zeus y Aerotech (previas, aportaron reserva territorial), el portafolio Batach (6 naves en 4T24, 2 naves remanentes el 15-jul-2025), MeLi León (9-abr-2025), y el portafolio Michigan (17-mar-2026).
+
+**4T2021**: el 19 de noviembre de 2021, Fibra Mty adquirió el inmueble industrial Ciénega 2 (Ciénega de Flores, Nuevo León, ABR 30,194 m², contrato NNN a 15 años) por US$20.4 millones más IVA; el 8 de diciembre de 2021 adquirió Ciénega 3 (mismo municipio, ABR 30,087 m², contrato NNN a 10 años, único inquilino DHL Supply Chain México bajo sale-and-leaseback) por US$22.4 millones más IVA. Ambas se financiaron inicialmente con créditos revolventes en dólares, liquidados en el trimestre con la primera disposición del Crédito Sindicado 2021 (US$50.0 millones).
+
+**4T2022**: en noviembre de 2022, Fibra Mty anunció haber llegado a un acuerdo para adquirir el portafolio industrial Zeus — 46 naves industriales en 11 entidades, ABR de 822,052 m², ocupación de 98.3%, ingresos 92.0% dolarizados, por US$662 millones más impuestos y costos de cierre. La transacción ya contaba con las aprobaciones corporativas y gubernamentales (Asamblea de Tenedores, COFECE) y se encontraba en due diligence, con cierre estimado para la primera mitad de 2023.
+
+**1T2023**: el 29 de marzo de 2023, Fibra Mty concluyó el primer cierre del portafolio industrial Zeus — 43 de 46 propiedades, ABR de 780,984 m², reserva territorial de 64,432 m², por US$616.8 millones (US$613.3 millones en propiedades, US$3.5 millones en reserva territorial) a una tasa de capitalización en efectivo de 8.4%. Es la operación más transformadora en la historia de Fibra Mty hasta esa fecha: +80% de NOI en los siguientes 12 meses, superando por primera vez las 100 propiedades y el millón de m² de ABR.
+
+**3T2023**: el 20 de septiembre de 2023, Fibra Mty concluyó el segundo y último cierre del portafolio Zeus por US$45.2 millones (más IVA) — tres naves industriales y una reserva territorial de 818,291 m², principalmente en Puebla, con pago diferido al 31 de octubre de 2023. Con este cierre, la transacción Zeus queda completa: 46 naves en 11 entidades, ABR total de 822,052 m², reserva territorial de 882,723 m² y precio total de US$662.0 millones, a una tasa de capitalización en efectivo de 8.4%. Durante el trimestre también se firmaron expansiones sobre inmuebles industriales existentes (Aguascalientes FINSA 03, US$10.1 millones; ampliación de alcance en Danfoss, US$4.4 millones), financiadas con una nueva línea bilateral de Scotiabank (US$63.0 millones).
 
 **2T2024**: el 30 de mayo (5 naves) y 13 de junio (1 nave) de 2024, Fibra Mty concluyó la adquisición del portafolio industrial Aerotech — 6 naves clase A en Querétaro, ABR ~93,525 m², terreno ~253,611 m² (incluye 2 reservas territoriales), 100% contratos en dólares, plazo remanente 8.8 años, triple neto (NNN). Precio: US$83.3 millones + IVA. ION próximos 12 meses ~US$9.7 millones. En el mismo trimestre se concluyó formalmente el acuerdo vinculante para adquirir Batach (8 naves clase A en Nuevo León, ABR ~186,105 m², ~US$199.1 millones), con liquidación estimada para el 3T24.
 
@@ -30,6 +38,10 @@ El portafolio industrial se ha construido mediante adquisiciones sucesivas: Zeus
 
 ## Lado de desinversión — oficinas y comercial
 
+**2T2021**: el 23 de junio de 2021, Fibra Mty vendió el inmueble Casona Los Mochis por Ps.70.0 millones, en línea con la valuación de mercado de su valuador independiente — como parte de la estrategia de depuración del portafolio y el enfoque en mercados primarios del país.
+
+**4T2021** (nota: Cuprum es un inmueble industrial, no de oficinas/comercial, pero forma parte del mismo esfuerzo de depuración/reciclaje de activos — mismo tratamiento que Catacha en 4T2025 abajo): el 2 de diciembre de 2021, Fibra Mty vendió el inmueble industrial Cuprum por Ps.155.0 millones, desenlace de un proceso de reconversión iniciado en 2019. Junto con Casona Los Mochis (2T21), el Director General enmarcó ambas disposiciones como el inicio de la estrategia de reciclaje de activos del Fideicomiso — destinar recursos de propiedades con fundamentales más débiles a industrial de mejor calidad.
+
 **2T2024**: al cierre del trimestre, el saldo de activos disponibles para la venta ascendía a Ps.289.2 millones. Posterior al cierre del trimestre y a la fecha del reporte, Fibra Mty había recibido ofertas por encima de Ps.650 millones por propiedades de oficinas consideradas de bajo rendimiento (más de la mitad del valor de ese portafolio), en análisis de valor y mejor uso en paralelo a negociaciones de términos y condiciones. Es el segundo de los tres compromisos del roadshow de marzo 2024: comenzar la desinversión del portafolio de oficinas, iniciando por los inmuebles de mayor vacancia.
 
 **3T2024**: al cierre del trimestre, Fibra Mty tenía identificados como disponibles para la venta ~Ps.680 millones en propiedades de oficinas de bajo desempeño, con ofertas recibidas por la totalidad de dichos activos y desinversión estimada antes de que concluyera el año. El 26 de agosto de 2024 se anunció, vía evento relevante, una oferta vinculante por el inmueble Axtel (US$15.0 millones).
@@ -48,6 +60,11 @@ La administración enmarca esta depuración como búsqueda de plusvalía mediant
 
 ## Trimestres que tocan este concepto
 
+- [[2021-Q2]] — Venta de Casona Los Mochis (Ps.70.0 millones), depuración de portafolio.
+- [[2021-Q4]] — Adquisición de Ciénega 2 y Ciénega 3 (industrial, US$42.8 millones combinados) y venta de Cuprum (Ps.155.0 millones); origen explícito de la estrategia de reciclaje de activos, un año antes de Zeus.
+- [[2022-Q4]] — Acuerdo de adquisición del portafolio Zeus anunciado (US$662 millones), pendiente de cierre; aprobaciones corporativas y de COFECE ya obtenidas.
+- [[2023-Q1]] — Primer cierre del portafolio Zeus (43/46 propiedades, US$616.8 millones), duplicando prácticamente el tamaño del portafolio (+80% NOI estimado).
+- [[2023-Q3]] — Segundo y último cierre del portafolio Zeus (US$45.2 millones), completando la transacción (46 naves, US$662.0 millones total); expansiones firmadas sobre inmuebles industriales existentes por US$14.5 millones.
 - [[2024-Q2]] — Adquisición de Aerotech (US$83.3 millones); acuerdo vinculante de Batach firmado; ofertas recibidas por ~Ps.650 millones en oficinas de bajo rendimiento.
 - [[2024-Q3]] — Acuerdo vinculante de Batach en espera de autorización COFECE; dos ofertas por ~Ps.680 millones en oficinas de bajo desempeño, incluyendo oferta vinculante por Axtel.
 - [[2024-Q4]] — Pago parcial de Batach (6 de 8 naves, US$119.0 millones); venta de Axtel (US$15.0 millones); oferta vinculante por Fortaleza (Ps.360 millones).

@@ -1,12 +1,20 @@
 ---
 title: Exposición cambiaria (peso-dólar)
 created: 2026-07-26
-updated: 2026-07-28
-quarters: [1T2024, 2T2024, 3T2024, 4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026]
+updated: 2026-07-29
+quarters: [3T2023, 4T2023, 1T2024, 2T2024, 3T2024, 4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026]
 confidence: high
 ---
 
 Fibra Mty reporta en pesos mexicanos (moneda funcional y de registro), pero una proporción muy alta de sus ingresos de arrendamiento está denominada en dólares — 85.7% del portafolio total, 91.5% del segmento industrial específicamente (1T26). Esto hace que las fluctuaciones del tipo de cambio peso-dólar tengan un efecto material y recurrente sobre las métricas financieras reportadas en pesos, incluso cuando el desempeño operativo en dólares es positivo.
+
+## 3T2023
+
+El tipo de cambio promedio de facturación del 3T23 (Ps.16.9799) representó una apreciación del peso de 16.1% frente al promedio del 3T22 (Ps.20.2344), reduciendo el ION mismos inmuebles en Ps.(44,760) miles y la distribución por CBFI en 6.0% interanual (Ps.0.2354 vs Ps.0.2503); aislando el efecto cambiario, la distribución habría rondado Ps.0.26 por CBFI. En sentido contrario, el tipo de cambio de cierre se depreció ligeramente dentro del trimestre (de Ps.17.1187 al cierre del 2T23 a Ps.17.6195 al cierre del 3T23), generando una ganancia por valor razonable de propiedades de Ps.662.0 millones (la mayor parte de la ganancia total en valor razonable del trimestre, Ps.700.7 millones) y una utilidad neta consolidada de Ps.868.6 millones — ilustrando ya en este trimestre el mismo mecanismo de doble filo (apreciación interanual desfavorable para ingresos/distribución, movimiento de cierre favorable para valuación) que se repite en trimestres posteriores.
+
+## 4T2023
+
+El peso se apreció frente al dólar durante 2023: el tipo de cambio promedio de cobranza del 4T23 fue Ps.17.6077 por dólar, una apreciación de 11.2% frente al promedio del 4T22; en el acumulado anual, de Ps.20.1481 (2022) a Ps.17.6292 (2023), una apreciación de 12.5%. A nivel de resultados del trimestre, el gasto por valor razonable de propiedades fue de Ps.(1,070.9) millones (vs Ps.(210.0) millones en 4T22) — el principal factor detrás de la pérdida neta consolidada trimestral (Ps.(396.9) millones), sin efecto en flujo de efectivo ni en las distribuciones mensuales. A nivel del año completo, la apreciación del peso de cierre a cierre (de Ps.19.3615 al 31-dic-2022 a Ps.16.8935 al 31-dic-2023) explica la mayor parte de la disminución neta de Ps.(2,998.5) millones en el valor de las propiedades de inversión durante 2023 — el primer año de la serie cubierta por esta wiki en el que la apreciación del peso generó una pérdida por valor razonable (el patrón se invierte en 2024, ver [[2024-Q4]]).
 
 ## 1T2024
 
@@ -64,6 +72,8 @@ Fibra Mty también mantiene coberturas de tasa de interés (swaps) sobre gran pa
 
 ## Trimestres que tocan este concepto
 
+- [[2023-Q3]] — Apreciación interanual del peso (+16.1% en TC de facturación) reduce ION mismos inmuebles y distribución 6.0%; depreciación de cierre trimestral genera ganancia por valor razonable y utilidad neta consolidada positiva.
+- [[2023-Q4]] — Apreciación del peso (TC cobranza +11.2% vs 4T22) genera pérdida por valor razonable de propiedades (Ps.(1,070.9) millones en el trimestre; Ps.(2,998.5) millones en el año) y pérdida neta consolidada trimestral.
 - [[2024-Q1]] — Apreciación del peso de 10.8% interanual (TC facturación) genera efecto desfavorable en ION mismos inmuebles; apreciación cierre-a-cierre también desfavorable para el valor razonable de propiedades.
 - [[2024-Q2]] — Depreciación del dólar frente al peso (TC facturación) genera efecto desfavorable en ION mismos inmuebles; depreciación del peso cierre-a-cierre favorece valor razonable de propiedades.
 - [[2024-Q3]] — Depreciación del peso favorece valuación de propiedades e ingresos, pero genera pérdida cambiaria neta de Ps.(659.9) millones por revaluación de deuda en dólares.
