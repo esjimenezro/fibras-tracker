@@ -25,13 +25,14 @@
 - [[2025-Q3]] — Portafolio Batach completado (8 naves); venta de Fortaleza y acuerdo de Torres Moradas; recolocación de 5.4M de CBFIs; pérdida neta contable por efectos cambiarios no monetarios; primeros reconocimientos ESG (GRESB, S&P CSA).
 - [[2025-Q4]] — Cierre de 2025 en el rango alto de la guía (AFFO Ps.1.022/CBFI); venta de Catacha; reporte revela proceso de autorización en curso para una potencial emisión de capital; coberturas cambiarias vencen sin renovarse.
 - [[2026-Q1]] — Levantamiento de capital de US$488.1M (octava emisión), adquisición del portafolio industrial Michigan, anuncio de OPA por Fibra Macquarie, y apreciación del peso de 14.7% que golpea las métricas en pesos pese a crecimiento en dólares.
+- [[2026-Q2]] — Conclusión de la OPA por Fibra Macquarie (80.69%, Ps.29,449M, la mayor en México en más de una década); acuerdo de internalización de su administración (US$172.4M); portafolio combinado triplica su tamaño (383 propiedades, 5.58M m²); mejoras de calificación por S&P (BBB-→BBB) y Fitch (AA+→AAA nacional); suspensión total del programa de recompra de CBFIs.
 
 ## Conceptos
 
-- [[estrategia-crecimiento-capital]] — Modelo de crecimiento vía emisiones de capital y programa de recompra/recolocación de CBFIs (incl. mecanismo de cancelación fiscal); en 1T2026 incluye la OPA por Fibra Macquarie como posible escalada hacia M&A; actualizado a 1T2026.
-- [[rotacion-portafolio]] — Adquisición sostenida de industrial (Michigan) mientras se deprecia oficinas/comercial (46% oficinas y 100% comercial vendido/con acuerdo); actualizado a 1T2026.
-- [[exposicion-cambiaria]] — Alta ponderación de ingresos en dólares y su efecto en resultados reportados en pesos; actualizado a 1T2026.
+- [[estrategia-crecimiento-capital]] — Modelo de crecimiento vía emisiones de capital y programa de recompra/recolocación de CBFIs (incl. mecanismo de cancelación fiscal); en 2T2026 culmina con la adquisición de Fibra Macquarie y su internalización; actualizado a 2T2026.
+- [[rotacion-portafolio]] — Adquisición sostenida de industrial (Michigan, Fibra Macquarie) mientras se deprecia oficinas/comercial (46% oficinas y 100% comercial vendido/con acuerdo); actualizado a 2T2026.
+- [[exposicion-cambiaria]] — Alta ponderación de ingresos en dólares y su efecto en resultados reportados en pesos; dilución de la mezcla de moneda tras consolidar Fibra Macquarie; actualizado a 2T2026.
 - [[sostenibilidad-esg]] — Reconocimientos externos de sostenibilidad (GRESB, S&P Global CSA, Sustainability Yearbook, MSCI); actualizado a 1T2026.
 - [[guia-resultados-anual]] — Ciclo anual de guía de AFFO/CBFI: objetivo, cumplimiento, guía del año entrante (diferimiento de anuncio 4T2023→1T2024 y 4T2025→1T2026) y revisiones a mitad de año (2T2020 por pandemia, 2T2023 por apreciación del peso); actualizado a 1T2026.
-- [[calificaciones-crediticias]] — Calificaciones de Fitch Ratings y HR Ratings, ambas en grado de inversión; trayectoria de mejora de HR Ratings (AA+/BBB→AAA/BBB+ en dic-2024); actualizado a 1T2026.
+- [[calificaciones-crediticias]] — Calificaciones de Fitch Ratings, HR Ratings y (desde 1T2026) S&P Global Ratings, todas en grado de inversión; mejoras en 2T2026 (S&P BBB-→BBB, Fitch AA+→AAA nacional) tras la adquisición de Fibra Macquarie; actualizado a 2T2026.
 - [[la-perla]] — Complejo de oficinas en Zapopan: anuncio en 2020, suspensión por la pandemia, adquisición parcial en 2021, compra progresiva concluida en 1T2024; actualizado a 1T2024.

@@ -1,12 +1,12 @@
 ---
 title: Exposición cambiaria (peso-dólar)
 created: 2026-07-26
-updated: 2026-07-29
-quarters: [3T2023, 4T2023, 1T2024, 2T2024, 3T2024, 4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026]
+updated: 2026-08-07
+quarters: [3T2023, 4T2023, 1T2024, 2T2024, 3T2024, 4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026, 2T2026]
 confidence: high
 ---
 
-Fibra Mty reporta en pesos mexicanos (moneda funcional y de registro), pero una proporción muy alta de sus ingresos de arrendamiento está denominada en dólares — 85.7% del portafolio total, 91.5% del segmento industrial específicamente (1T26). Esto hace que las fluctuaciones del tipo de cambio peso-dólar tengan un efecto material y recurrente sobre las métricas financieras reportadas en pesos, incluso cuando el desempeño operativo en dólares es positivo.
+Fibra Mty reporta en pesos mexicanos (moneda funcional y de registro), pero una proporción muy alta de sus ingresos de arrendamiento está denominada en dólares — 85.7% del portafolio total, 91.5% del segmento industrial específicamente (1T26). Esto hace que las fluctuaciones del tipo de cambio peso-dólar tengan un efecto material y recurrente sobre las métricas financieras reportadas en pesos, incluso cuando el desempeño operativo en dólares es positivo. Tras la consolidación de Fibra Macquarie en 2T2026, el portafolio combinado reporta una mezcla de moneda de 79.9% USD / 20.1% MXN — ligeramente más diluida que la proporción histórica de Fibra Mty individual, ver sección de ese trimestre.
 
 ## 3T2023
 
@@ -70,6 +70,16 @@ El tipo de cambio promedio de facturación del 1T26 fue Ps.17.5310/US$, una **ap
 
 Fibra Mty también mantiene coberturas de tasa de interés (swaps) sobre gran parte de su deuda en dólares a tasa variable, un riesgo relacionado pero distinto (cobertura de tasa, no de tipo de cambio).
 
+## 2T2026
+
+El tipo de cambio promedio de facturación del 2T26 fue Ps.17.4044/US$, una apreciación del peso de ~10.9% frente al 2T25 (Ps.19.5445/US$). El reporte cuantifica el impacto en el ION mismos inmuebles (base comparable que excluye Fibra Macquarie y adquisiciones recientes): disminuyó Ps.(42.2) millones vs 2T25, de los cuales Ps.(71.3) millones corresponden al efecto cambiario desfavorable, compensado por incrementos de renta/ocupación (+Ps.29.1 millones); aislando el tipo de cambio, el ION mismos inmuebles en dólares creció 5.7%.
+
+A nivel de valor razonable de propiedades, la apreciación del peso dentro del trimestre (de Ps.18.1033 al cierre del 1T26 a Ps.17.5053 al cierre del 2T26) generó una disminución de Ps.(686.1) millones en los avalúos — efecto que quedó opacado en el resultado total del trimestre por la ganancia contable de Ps.3,694.9 millones derivada de la adquisición de Fibra Macquarie (ver [[estrategia-crecimiento-capital]]), llevando a una ganancia neta por valor razonable de Ps.3,495.5 millones.
+
+Con la consolidación de Fibra Macquarie, la mezcla de moneda del portafolio combinado se reporta en 79.9% USD / 20.1% MXN — una dilución frente al perfil históricamente más dolarizado de Fibra Mty individual (85.7% en 1T26), consistente con que Fibra Macquarie aporta una base de ingresos con mayor componente en pesos.
+
+**Coberturas**: el 7 de abril de 2026, Fibra Mty contrató un nuevo forward de tipo de cambio por US$55.7 millones con BBVA (liquidación 12-mar-2027, cobertura de flujo de efectivo), para mitigar la exposición cambiaria de los recursos remanentes de la sobreasignación de capital del 1T26. Adicionalmente, durante el trimestre se contrataron dos swaps de tasa de interés (US$200.0 millones y US$23.0 millones) para fijar la tasa de disposiciones de los créditos Banorte y Scotiabank LP — cobertura de tasa, no de tipo de cambio. Ver [[2026-Q2]].
+
 ## Trimestres que tocan este concepto
 
 - [[2023-Q3]] — Apreciación interanual del peso (+16.1% en TC de facturación) reduce ION mismos inmuebles y distribución 6.0%; depreciación de cierre trimestral genera ganancia por valor razonable y utilidad neta consolidada positiva.
@@ -83,3 +93,4 @@ Fibra Mty también mantiene coberturas de tasa de interés (swaps) sobre gran pa
 - [[2025-Q3]] — Apreciación del peso reduce el valor razonable de propiedades de inversión, generando pérdida neta contable no monetaria; nocional de coberturas cambiarias cae a solo US$87.2 millones.
 - [[2025-Q4]] — Apreciación del peso reduce ION mismos inmuebles; vencimiento total de coberturas de tipo de cambio al cierre de 2025, dejando a Fibra Mty sin cobertura cambiaria vigente.
 - [[2026-Q1]] — Apreciación del peso de 14.7% interanual reduce métricas en pesos pese a crecimiento en dólares; contratación de forwards de tipo de cambio por US$400 millones para cubrir el capital recién levantado.
+- [[2026-Q2]] — Apreciación del peso de ~10.9% interanual reduce ION mismos inmuebles; consolidación de Fibra Macquarie diluye la mezcla de moneda del portafolio (79.9% USD vs 85.7% histórico de Fibra Mty individual); nuevo forward de US$55.7 millones.

@@ -1,12 +1,12 @@
 ---
-title: Calificaciones crediticias (Fitch Ratings / HR Ratings)
+title: Calificaciones crediticias (Fitch Ratings / HR Ratings / S&P Global Ratings)
 created: 2026-07-28
-updated: 2026-07-29
-quarters: [2T2023, 3T2024, 4T2024, 1T2025, 4T2025, 1T2026]
+updated: 2026-08-07
+quarters: [2T2023, 3T2024, 4T2024, 1T2025, 4T2025, 1T2026, 2T2026]
 confidence: high
 ---
 
-Fibra Mty es evaluada por Fitch Ratings y HR Ratings, que califican tanto el CEBURE FMTY20D como el perfil crediticio general del Fideicomiso. La administración enmarca estas calificaciones como evidencia de disciplina financiera y como un factor que reduce directamente el costo de la deuda contratada.
+Fibra Mty es evaluada por Fitch Ratings, HR Ratings y, desde 1T2026, también por S&P Global Ratings, que califican tanto el CEBURE FMTY20D como el perfil crediticio general del Fideicomiso. La administración enmarca estas calificaciones como evidencia de disciplina financiera y como un factor que reduce directamente el costo de la deuda contratada.
 
 ## 2T2023
 
@@ -32,6 +32,10 @@ Al cierre de 2025, Fibra Mty mantenía calificaciones de grado de inversión en 
 
 El reporte destaca la ratificación reciente de las calificaciones internacionales de Fibra Mty en BBB- con perspectiva estable, atribuida a S&P y Fitch — grado de inversión en escala global. El Director General vinculó explícitamente esta solidez crediticia con la contratación, en el trimestre, de una línea de crédito sindicada en las condiciones de menor costo financiero para líneas comparables en la historia del Fideicomiso. Ver [[2026-Q1]].
 
+## 2T2026
+
+Como consecuencia directa de la adquisición de Fibra Macquarie (ver [[estrategia-crecimiento-capital]]), Fibra Mty recibió mejoras de calificación de ambas agencias durante el trimestre: S&P Global Ratings elevó la calificación corporativa global de BBB- a **BBB** (perspectiva estable), y Fitch Ratings incrementó la calificación nacional de largo plazo (y la del CEBURE FMTY20D) de AA+ a **AAA** (perspectiva estable), manteniendo la calificación global en BBB- pero bajo **Observación Positiva**. El reporte atribuye estas acciones a la mayor escala y diversificación del portafolio combinado y a la solidez del perfil financiero resultante. No hay mención de HR Ratings en este reporte. Ver [[2026-Q2]].
+
 ## Trimestres que tocan este concepto
 
 - [[2023-Q2]] — Fitch sube calificación a AA+(mex)/BBB-, junto con AA+ de HR Ratings, primer grado de inversión en ambas agencias; beneficio directo: refinanciamiento con BBVA a menor costo (12-jun-2023).
@@ -40,3 +44,4 @@ El reporte destaca la ratificación reciente de las calificaciones internacional
 - [[2025-Q1]] — Fitch reafirma BBB-/AA+(mex), perspectiva estable.
 - [[2025-Q4]] — Fitch AA+/BBB-, HR Ratings AAA/BBB+ al cierre de 2025.
 - [[2026-Q1]] — Ratificación de BBB- por S&P y Fitch.
+- [[2026-Q2]] — S&P sube BBB-→BBB; Fitch sube AA+→AAA (nacional), mantiene BBB- global bajo Observación Positiva; ambas mejoras atribuidas a la adquisición de Fibra Macquarie.

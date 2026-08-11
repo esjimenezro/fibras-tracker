@@ -1,8 +1,8 @@
 ---
 title: Estrategia de crecimiento y gestión de capital
 created: 2026-07-26
-updated: 2026-07-29
-quarters: [2T2022, 3T2022, 4T2022, 1T2023, 2T2023, 4T2023, 1T2024, 2T2024, 3T2024, 4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026]
+updated: 2026-08-07
+quarters: [2T2022, 3T2022, 4T2022, 1T2023, 2T2023, 4T2023, 1T2024, 2T2024, 3T2024, 4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026, 2T2026]
 confidence: high
 ---
 
@@ -94,6 +94,18 @@ El 11 de marzo de 2026, Fibra Mty completó una Oferta Subsecuente de Capital po
 
 En este mismo trimestre, días antes de la publicación del reporte, Fibra Mty lanzó una **OPA por el 100% de los CBFIs de Fibra Macquarie**. Según los comentarios del Director General, la lógica es construir "una plataforma más eficiente, con mayor escala, mayor bursatilidad y mejores condiciones estructurales para crear valor", basada en la complementariedad de portafolios, sinergias operativas/administrativas y la extensión del modelo de gobierno corporativo y administración internalizada de Fibra Mty. El reporte 1T26 no incluye cifras, términos ni cronograma de este proceso — es un evento anunciado y en desarrollo, no un resultado del trimestre. Representa una escalada cualitativa de la estrategia de crecimiento: de emisiones de capital para adquisiciones orgánicas/individuales a una potencial consolidación vía M&A dentro del sector de FIBRAs. Su desenlace deberá seguirse en trimestres futuros — ver [[2026-Q1]].
 
+## 2T2026
+
+El 29 de mayo de 2026, la OPA por Fibra Macquarie anunciada en 1T2026 (ver arriba) se concretó: Fibra Mty adquirió el 80.69% de los CBFIs de Fibra Macquarie (BMV: FIBRAMQ 12) por una contraprestación total de Ps.29,449 millones (Ps.4,955 millones en efectivo, Ps.24,494 millones en 1,721,277,018 CBFIs nuevos a Ps.14.23/CBFI), equivalente a Ps.45.28 por CBFI de Fibra Macquarie. Considerando pasivos proporcionales, el precio de adquisición asciende a Ps.48,086 millones (~US$2,800 millones) — la OPA de mayor escala en México en más de una década, y la escalada hacia M&A que el reporte de 1T2026 ya anticipaba cualitativamente. Tras compras adicionales en mercado secundario, la participación alcanzó 81.38% al cierre del trimestre.
+
+El 26 de junio de 2026, Fibra Mty acordó con Macquarie Asset Management (MAM) la internalización de la administración de Fibra Macquarie — extendiendo el modelo de administración 100% interna que caracteriza a Fibra Mty desde su origen — por una contraprestación de US$172.4 millones (Ps.3,017.9 millones), pagadera al cumplirse ciertas condiciones; mientras tanto, MAM continúa administrando Fibra MQ bajo un plan de transición ordenada.
+
+**Advertencia de comparabilidad**: las cifras del 2T26 consolidan solo un mes de operación de Fibra Macquarie (desde el 29-may-2026), mientras que los CBFIs emitidos para pagarla se cuentan en circulación desde el cierre — esto genera una caída generalizada y temporal en todas las métricas por CBFI (AFFO/CBFI -32.8% vs 2T25) que el propio reporte atribuye explícitamente a ese descalce, no a un deterioro del negocio. Se espera que se normalice en los siguientes trimestres, conforme se consolide un trimestre completo de Fibra MQ.
+
+Como consecuencia de la transacción, Fibra Mty recibió mejoras de calificación crediticia de S&P Global Ratings y Fitch Ratings (ver [[calificaciones-crediticias]]), su capitalización de mercado superó los US$4,000 millones (segunda emisora industrial más grande listada en la BMV), y contablemente se registró una ganancia de Ps.3,694.9 millones por el diferencial entre la contraprestación pagada y el valor asignado a las propiedades adquiridas — parcialmente compensada por el registro del pasivo de Ps.(3,038) millones asociado al acuerdo de internalización, que llevó el resultado subyacente del trimestre (aislando valor razonable, cambiario y plan ejecutivo basado en CBFIs) a una pérdida de Ps.(1,491.2) millones.
+
+Por el semestre terminado el 30 de junio de 2026, Fibra Mty no operó su programa de recompra/recolocación de CBFIs — pausa total del mecanismo mientras se absorbe la magnitud de la transacción, a diferencia del mismo periodo de 2025 (recompra neta de 12.5 millones de CBFIs). El reporte también revela que el remanente no adquirido de Fibra Macquarie está sujeto a una OPA subsecuente "actualmente en proceso de autorización", sin precio ni cronograma definidos aún. Ver [[2026-Q2]].
+
 ## Trimestres que tocan este concepto
 
 - [[2022-Q2]] — Inicio del proceso de la quinta emisión de capital, enfocada en oportunidades del nearshoring industrial.
@@ -111,3 +123,4 @@ En este mismo trimestre, días antes de la publicación del reporte, Fibra Mty l
 - [[2025-Q3]] — Recolocación neta de 5.4 millones de CBFIs (24.6 millones acumulados), impulsada por rebalanceo de índices FTSE.
 - [[2025-Q4]] — Recolocación neta de 1.0 millón de CBFIs (12.5 millones acumulados); reporte revela proceso de autorización en curso para una potencial emisión de capital.
 - [[2026-Q1]] — Oferta Subsecuente de Capital de US$488.1 millones (octava emisión); anuncio de OPA por Fibra Macquarie.
+- [[2026-Q2]] — Conclusión de la OPA por Fibra Macquarie (80.69%, Ps.29,449M); acuerdo de internalización de su administración; suspensión total del programa de recompra/recolocación; mejoras de calificación crediticia.

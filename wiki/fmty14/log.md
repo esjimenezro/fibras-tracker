@@ -1,3 +1,4 @@
+## [2026-08-07] ingest | 2T2026 FMTY14 — conclusión de la OPA por Fibra Macquarie (adquisición más grande de la historia de la compañía); secciones agregadas en estrategia-crecimiento-capital.md, rotacion-portafolio.md, exposicion-cambiaria.md y calificaciones-crediticias.md
 ## [2026-07-29] concepto | promoción la-perla FMTY14 (2020-Q1, 2021-Q2, 2023-Q3, 2023-Q4, 2024-Q1) — hallazgo 5a de lint-2026-07-29.md
 ## [2026-07-29] correccion | 2024-Q1.md — corregida afirmación errónea sobre el origen de La Perla ("iniciada en 2023" → adquisición original de 2021, enlace a [[2021-Q2]]) (hallazgo #3 de lint-2026-07-29.md)
 ## [2026-07-29] correccion | 2021-Q4.md — secciones "Reciclaje de activos" (Ciénega 2, Ciénega 3, Cuprum) y "Deuda" agregadas; rotacion-portafolio.md extendido con 2T2021 y 4T2021 como origen de la estrategia; concepts_touched sincronizado en 2021-Q2 y 2021-Q4 (hallazgo #2 de lint-2026-07-29.md)

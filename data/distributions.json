@@ -173,6 +173,24 @@
             "payment_date": "2026-06-18",
             "reimbursement_total": 191.10,
             "fiscal_result_total": 0.0
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2026-07-31",
+            "reimbursement_total": 113.88,
+            "fiscal_result_total": 0.0
+        },
+        {
+            "ticker": "FIBRAPL14",
+            "payment_date": "2026-08-04",
+            "reimbursement_total": 0.0,
+            "fiscal_result_total": 73.13
+        },
+        {
+            "ticker": "FSHOP13",
+            "payment_date": "2026-08-05",
+            "reimbursement_total": 204.4,
+            "fiscal_result_total": 0.0
         }
     ]
 }

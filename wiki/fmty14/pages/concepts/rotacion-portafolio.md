@@ -1,8 +1,8 @@
 ---
 title: Rotación de portafolio — crecimiento industrial y depuración de oficinas/comercial
 created: 2026-07-26
-updated: 2026-07-29
-quarters: [2T2021, 4T2021, 4T2022, 1T2023, 3T2023, 2T2024, 3T2024, 4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026]
+updated: 2026-08-07
+quarters: [2T2021, 4T2021, 4T2022, 1T2023, 3T2023, 2T2024, 3T2024, 4T2024, 1T2025, 2T2025, 3T2025, 4T2025, 1T2026, 2T2026]
 confidence: high
 ---
 
@@ -36,6 +36,8 @@ El portafolio industrial se ha construido mediante adquisiciones sucesivas: Cié
 
 **1T2026**: el 17 de marzo de 2026, Fibra Mty concluyó la adquisición del portafolio industrial Michigan mediante compra y arrendamiento simultáneo ("sale and leaseback") por US$99.7 millones — dos naves Clase A en Coahuila y Guanajuato, ABR 88,197 m², terreno total ~440,000 m² (más de la mitad como reserva territorial para expansión del inquilino). Contrato en dólares, incrementos anuales ligados a CPI, estructura NNN Absoluto, plazo forzoso inicial de 15 años. NOI anual estimado ~US$7.6 millones en los primeros doce meses. Como consecuencia, el portafolio industrial pasó de 95 a 97 propiedades trimestre contra trimestre.
 
+**2T2026**: el 29 de mayo de 2026, Fibra Mty concluyó la adquisición del 80.69% de Fibra Macquarie (246 propiedades industriales + 8 comerciales, más 9 comerciales adicionales en coinversión al 50% con Frisa Desarrollos Comerciales; ABR total 3,427,298 m²) — con enorme diferencia de escala frente a cualquier adquisición previa de esta wiki: el portafolio combinado pasó de 120 a 383 propiedades y de 2,138,593 m² a 5,576,600 m² de ABR en un solo trimestre. Precio de adquisición (incluyendo pasivos proporcionales) de Ps.48,086 millones (~US$2,800 millones). El reporte menciona además, sin identificarla por nombre, una adquisición industrial adicional "en negociación avanzada", con un primer pago comprometido de Ps.417.1 millones. Ver [[estrategia-crecimiento-capital]] para el detalle financiero completo de la transacción.
+
 ## Lado de desinversión — oficinas y comercial
 
 **2T2021**: el 23 de junio de 2021, Fibra Mty vendió el inmueble Casona Los Mochis por Ps.70.0 millones, en línea con la valuación de mercado de su valuador independiente — como parte de la estrategia de depuración del portafolio y el enfoque en mercados primarios del país.
@@ -56,6 +58,8 @@ El portafolio industrial se ha construido mediante adquisiciones sucesivas: Cié
 
 **1T2026**: el 27 de febrero de 2026 se firmó un acuerdo (sujeto a condiciones) para la venta de un portafolio de 5 propiedades — 4 edificios de oficinas y 1 inmueble comercial, en Nuevo León, San Luis Potosí y Chihuahua — por US$46.8 millones más IVA. Con esto, tomando la misma base del 1T24, Fibra Mty había vendido o firmado acuerdos de venta sujetos a condiciones por ~46% del portafolio de oficinas y la **totalidad** del portafolio comercial. Al cierre del 1T26, la compañía reporta ofertas adicionales por ~Ps.3,771 millones en potenciales desinversiones (principalmente oficinas), de las cuales Ps.2,725 millones ya tienen acuerdo firmado en proceso.
 
+**2T2026**: al cierre del trimestre, Fibra Mty contaba con ofertas por ~Ps.3,700 millones en potenciales desinversiones de oficinas, de las cuales Ps.2,683 millones ya tenían acuerdo firmado. Posterior al cierre del trimestre se concretó la venta de dos propiedades (Nuevo León y Jalisco) por Ps.941.6 millones más IVA, a precios en línea con el valor razonable determinado por el valuador externo.
+
 La administración enmarca esta depuración como búsqueda de plusvalía mediante reposicionamiento, reconversión y/o venta, según condiciones de mercado y características de cada propiedad/contrato — no como una salida forzada.
 
 ## Trimestres que tocan este concepto
@@ -73,3 +77,4 @@ La administración enmarca esta depuración como búsqueda de plusvalía mediant
 - [[2025-Q3]] — Portafolio Batach completado en su totalidad (8 naves, ~US$192.4 millones); venta de Fortaleza y acuerdo de venta de Torres Moradas, acercando a Fibra Mty al cumplimiento del compromiso de 2024 de desinvertir activos de bajo desempeño.
 - [[2025-Q4]] — Venta de Catacha (industrial); progreso de depuración a 33% de oficinas y 95% de comercial vendido/con acuerdo (base 1T24); más de 70% del objetivo de inversión industrial de US$700 millones desplegado.
 - [[2026-Q1]] — Adquisición del portafolio Michigan (industrial); nuevo acuerdo de venta de portafolio de oficinas/comercial por US$46.8 millones; hito de 46% de oficinas y 100% de comercial vendido/con acuerdo (base 1T24).
+- [[2026-Q2]] — Adquisición de Fibra Macquarie (246 propiedades industriales + 8 comerciales, ABR 3,427,298 m², ~US$2,800 millones): el portafolio combinado triplica su tamaño en un solo trimestre; venta post-cierre de dos propiedades por Ps.941.6 millones.
