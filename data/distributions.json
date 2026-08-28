@@ -191,6 +191,12 @@
             "payment_date": "2026-08-05",
             "reimbursement_total": 204.4,
             "fiscal_result_total": 0.0
+        },
+        {
+            "ticker": "DANHOS13",
+            "payment_date": "2026-08-13",
+            "reimbursement_total": 159.22,
+            "fiscal_result_total": 245.77
         }
     ]
 }

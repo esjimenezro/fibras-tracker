@@ -6855,7 +6855,7 @@
             "top10_tenants_pct": 0.786
         },
         {
-            "fibra": "FNOVA17",
+            "ticker": "FNOVA17",
             "period": "2T2026",
             "report_date": "2026-06-30",
             "total_revenues": 428958000,
