@@ -1,7 +1,6 @@
 from typing import Optional
 
 from pydantic import BaseModel
-from pydantic import Field
 
 from modules.common.models import Fibra
 from modules.common.models import InflationRecord
