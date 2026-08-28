@@ -605,6 +605,16 @@ uv sync
 pip install -r requirements.txt
 ```
 
+**Configure secrets:**
+
+```bash
+cp .env.example .env
+```
+
+Then set `ANTHROPIC_API_KEY` in `.env`. It is required only by the "Pregúntale a la wiki"
+chat inside the Fundamentales page; the rest of the app runs without it. `config.py` loads
+`.env` via `python-dotenv` on import.
+
 **Run the app:**
 
 ```bash
