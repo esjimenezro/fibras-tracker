@@ -20,3 +20,10 @@ def test_missing_ticker_raises(repo):
     """An unknown ticker raises FileNotFoundError."""
     with pytest.raises(FileNotFoundError):
         repo.retrieve_data("nonexistent")
+
+
+@pytest.mark.parametrize("ticker", ["..", "../..", "..\\..", "wiki/../.."])
+def test_rejects_path_traversal_ticker(repo, ticker):
+    """A ticker with path-traversal segments raises ValueError before any FS access."""
+    with pytest.raises(ValueError):
+        repo.retrieve_data(ticker)

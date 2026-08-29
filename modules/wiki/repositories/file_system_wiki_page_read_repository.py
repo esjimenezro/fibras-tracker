@@ -1,5 +1,6 @@
 from config import WIKI_DIR
 from modules.wiki.repositories.base import BaseWikiPageReadRepository
+from modules.wiki.repositories.wiki_slug_guard import validate_wiki_slug
 
 
 _PAGE_SUBDIRS = ("pages/quarters", "pages/concepts")
@@ -16,7 +17,9 @@ class FileSystemWikiPageReadRepository(BaseWikiPageReadRepository):
             2. On an Obsidian alias (``target|display``), keep ``target``.
             3. Strip a trailing ``.md`` if present.
             4. Reject a name containing ``/`` (cross-FIBRA form, out of scope).
-            5. Look up ``wiki/<ticker>/pages/quarters/<name>.md``; if absent, try
+            5. Reject ``ticker`` and the resolved name unless each is a safe slug
+               (path-traversal guard: no path separators, no ``..``).
+            6. Look up ``wiki/<ticker>/pages/quarters/<name>.md``; if absent, try
                ``wiki/<ticker>/pages/concepts/<name>.md``. Match is exact
                (case-sensitive) against on-disk filenames.
 
@@ -28,7 +31,8 @@ class FileSystemWikiPageReadRepository(BaseWikiPageReadRepository):
             str: Full markdown content of the resolved page.
 
         Raises:
-            ValueError: If the resolved name contains "/" (cross-FIBRA reference).
+            ValueError: If the resolved name contains "/" (cross-FIBRA reference),
+                or if ``ticker`` or the resolved name is not a safe slug.
             FileNotFoundError: If no quarter or concept page matches; the message
                 lists the valid page names for the ticker.
         """
@@ -43,6 +47,9 @@ class FileSystemWikiPageReadRepository(BaseWikiPageReadRepository):
             raise ValueError(
                 f"Cross-FIBRA wiki reference '{page_name}' is not supported for a single-FIBRA query"
             )
+
+        validate_wiki_slug(ticker, label="ticker")
+        validate_wiki_slug(name, label="page name")
 
         for subdir in _PAGE_SUBDIRS:
             candidate = WIKI_DIR / ticker / subdir / f"{name}.md"

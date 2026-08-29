@@ -37,6 +37,20 @@ def test_rejects_cross_fibra_reference(repo):
         repo.retrieve_data("danhos13", "fmty14/2024-Q1")
 
 
+@pytest.mark.parametrize("page_name", ["..", "..\\..\\secret", "2024-Q1\\..\\x"])
+def test_rejects_path_traversal_page_name(repo, page_name):
+    """A resolved page name with path-traversal segments raises ValueError."""
+    with pytest.raises(ValueError):
+        repo.retrieve_data("danhos13", page_name)
+
+
+@pytest.mark.parametrize("ticker", ["..", "..\\..", "fmty14/../.."])
+def test_rejects_path_traversal_ticker(repo, ticker):
+    """A ticker with path-traversal segments raises ValueError."""
+    with pytest.raises(ValueError):
+        repo.retrieve_data(ticker, "2024-Q1")
+
+
 def test_missing_page_raises_with_valid_names(repo):
     """An unknown page raises FileNotFoundError whose message lists valid names."""
     with pytest.raises(FileNotFoundError) as exc_info:

@@ -1,5 +1,6 @@
 from config import WIKI_DIR
 from modules.wiki.repositories.base import BaseWikiIndexReadRepository
+from modules.wiki.repositories.wiki_slug_guard import validate_wiki_slug
 
 
 class FileSystemWikiIndexReadRepository(BaseWikiIndexReadRepository):
@@ -15,8 +16,10 @@ class FileSystemWikiIndexReadRepository(BaseWikiIndexReadRepository):
             str: Full markdown content of the index page.
 
         Raises:
+            ValueError: If ``ticker`` is not a safe slug (path-traversal guard).
             FileNotFoundError: If ``wiki/<ticker>/index.md`` does not exist.
         """
+        validate_wiki_slug(ticker, label="ticker")
         index_path = WIKI_DIR / ticker / "index.md"
         if not index_path.is_file():
             raise FileNotFoundError(f"Wiki index not found for ticker '{ticker}': {index_path}")
