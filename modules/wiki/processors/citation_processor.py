@@ -26,8 +26,10 @@ class CitationProcessor:
                 when the answer contains no wikilinks.
         """
         targets: list[str] = []
+        seen: set[str] = set()
         for raw_target in _WIKILINK.findall(answer_text):
             target = raw_target.split("|", 1)[0].strip()
-            if target and target not in targets:
+            if target and target not in seen:
+                seen.add(target)
                 targets.append(target)
         return targets
