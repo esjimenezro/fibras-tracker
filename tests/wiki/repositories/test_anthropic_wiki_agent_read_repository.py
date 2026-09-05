@@ -125,7 +125,7 @@ def _tool_use_block(block_id, name, tool_input):
 
 
 def _final_message(content, stop_reason, *, input_tokens=100, output_tokens=20,
-                   cache_read_input_tokens=0):
+                   cache_read_input_tokens: int | None = 0):
     """Build a fake accumulated message with a usage record."""
     usage = SimpleNamespace(
         input_tokens=input_tokens,
