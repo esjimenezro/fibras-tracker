@@ -1,7 +1,6 @@
 from types import SimpleNamespace
 
 import anthropic
-import httpx2
 import pytest
 
 from modules.wiki.exceptions import WikiAgentError
@@ -135,12 +134,23 @@ def _final_message(content, stop_reason, *, input_tokens=100, output_tokens=20,
     return SimpleNamespace(content=content, stop_reason=stop_reason, usage=usage)
 
 
-_REQUEST = httpx2.Request("POST", "https://api.anthropic.com/v1/messages")
+class _FakeHttpResponse:
+    """Minimal stand-in for the httpx response an anthropic APIStatusError needs.
+
+    Exposes only what the exception constructors read (status_code, headers,
+    request), so the tests don't depend on anthropic's bundled http client.
+    """
+
+    status_code = 500
+    headers: dict = {}
+    request = object()
 
 
 def _status_error(cls, status):
     """Build an anthropic APIStatusError subclass instance for tests."""
-    return cls("boom", response=httpx2.Response(status, request=_REQUEST), body=None)
+    response = _FakeHttpResponse()
+    response.status_code = status
+    return cls("boom", response=response, body=None)
 
 
 @pytest.fixture
@@ -266,9 +276,9 @@ def test_missing_api_key_raises_wiki_auth_error(monkeypatch, repo, api_key):
     [
         pytest.param(_status_error(anthropic.AuthenticationError, 401), WikiAuthError, id="auth"),
         pytest.param(_status_error(anthropic.RateLimitError, 429), WikiRateLimitError, id="rate_limit"),
-        pytest.param(anthropic.APIConnectionError(message="down", request=_REQUEST),
+        pytest.param(anthropic.APIConnectionError(message="down", request=object()),
                      WikiConnectionError, id="connection"),
-        pytest.param(anthropic.APITimeoutError(_REQUEST), WikiConnectionError, id="timeout"),
+        pytest.param(anthropic.APITimeoutError(request=object()), WikiConnectionError, id="timeout"),
         pytest.param(_status_error(anthropic.BadRequestError, 400), WikiAgentError, id="bad_request"),
         pytest.param(anthropic.AnthropicError("weird"), WikiAgentError, id="other_anthropic_error"),
     ],
