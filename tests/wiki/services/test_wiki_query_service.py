@@ -23,6 +23,8 @@ from modules.wiki.repositories import FileSystemWikiIndexReadRepository
 from modules.wiki.repositories import FileSystemWikiPageReadRepository
 from modules.wiki.repositories import FileSystemWikiSchemaReadRepository
 from modules.wiki.services import WikiQueryService
+from modules.wiki.services._wiki_query_prompt import OUT_OF_SCOPE_MESSAGE
+from modules.wiki.services._wiki_query_prompt import UNGROUNDED_MESSAGE
 
 
 # --- Fake agent repository (the seam ESJ-25 tests through) -----------------
@@ -113,12 +115,15 @@ def _request(**overrides):
 # --- Happy path -------------------------------------------------------------
 
 def test_run_ok_extracts_citations(make_service):
-    """A single end_turn answer is returned with its wikilinks as citations."""
-    agent = _FakeAgentRepository([[
-        _text_delta("Según [[2024-Q1]] "),
-        _text_delta("el apalancamiento subió."),
-        _turn_end("Según [[2024-Q1]] el apalancamiento subió."),
-    ]])
+    """A grounded end_turn answer is returned with its wikilinks as citations."""
+    agent = _FakeAgentRepository([
+        [_turn_tool_use(_tool_use("t1", "read_index", ticker="DANHOS13"))],
+        [
+            _text_delta("Según [[2024-Q1]] "),
+            _text_delta("el apalancamiento subió."),
+            _turn_end("Según [[2024-Q1]] el apalancamiento subió."),
+        ],
+    ])
 
     result = make_service(agent).run(request=_request())
 
@@ -230,20 +235,19 @@ def test_tool_use_dispatches_read_index_and_feeds_result_back(make_service):
     assert "## Trimestres" in tool_result["content"]
 
 
-def test_tool_call_with_foreign_ticker_is_rejected_and_loop_continues(make_service):
-    """A tool call for another FIBRA returns is_error without reading anything."""
+def test_tool_call_with_foreign_ticker_aborts_with_fixed_reply(make_service):
+    """A tool call for another FIBRA aborts the query with the out-of-scope reply."""
     agent = _FakeAgentRepository([
         [_turn_tool_use(_tool_use("t1", "read_index", ticker="FMTY14"))],
-        [_turn_end("ok")],
+        [_turn_end("no debería llegar aquí")],
     ])
 
     result = make_service(agent).run(request=_request(ticker="DANHOS13"))
 
     assert result.status == ServiceStatus.OK
-    tool_result = agent.calls[1]["messages"][-1]["content"][0]
-    assert tool_result["is_error"] is True
-    assert "DANHOS13" in tool_result["content"]
-    assert "## Trimestres" not in tool_result["content"]
+    assert result.data.answer_text == OUT_OF_SCOPE_MESSAGE.format(ticker="DANHOS13")
+    assert result.data.citations == []
+    assert len(agent.calls) == 1  # aborted before dispatching or a second turn
 
 
 def test_read_fundamentals_dispatch_returns_filtered_json(make_service):
@@ -274,6 +278,49 @@ def test_read_page_miss_returns_is_error_with_valid_names(make_service):
     tool_result = agent.calls[1]["messages"][-1]["content"][0]
     assert tool_result["is_error"] is True
     assert "2024-Q1" in tool_result["content"]
+
+
+# --- Grounding guard -----------------------------------------------------
+
+def test_answer_without_any_tool_call_returns_ungrounded_reply(make_service):
+    """An answer with no in-scope tool read is replaced with the ungrounded reply."""
+    agent = _FakeAgentRepository([[
+        _text_delta("Fibra Uno tuvo un buen trimestre "),
+        _turn_end("Fibra Uno tuvo un buen trimestre según mi conocimiento general."),
+    ]])
+
+    result = make_service(agent).run(
+        request=_request(ticker="DANHOS13", question="¿cómo le fue a Fibra Uno?"),
+    )
+
+    assert result.status == ServiceStatus.OK
+    assert result.data.answer_text == UNGROUNDED_MESSAGE.format(ticker="DANHOS13")
+    assert result.data.citations == []
+
+
+def test_answer_after_only_failed_tool_calls_returns_ungrounded_reply(make_service):
+    """A failed tool call does not count as grounding; the answer is replaced."""
+    agent = _FakeAgentRepository([
+        [_turn_tool_use(_tool_use("t1", "read_page", ticker="DANHOS13", page_name="2099-Q9"))],
+        [_turn_end("Una respuesta cualquiera.")],
+    ])
+
+    result = make_service(agent).run(request=_request())
+
+    assert result.data.answer_text == UNGROUNDED_MESSAGE.format(ticker="DANHOS13")
+
+
+def test_answer_after_successful_tool_call_is_kept(make_service):
+    """A successful in-scope tool read grounds the query; the real answer is kept."""
+    agent = _FakeAgentRepository([
+        [_turn_tool_use(_tool_use("t1", "read_index", ticker="DANHOS13"))],
+        [_turn_end("Según [[2024-Q1]] el apalancamiento subió.")],
+    ])
+
+    result = make_service(agent).run(request=_request())
+
+    assert result.data.answer_text == "Según [[2024-Q1]] el apalancamiento subió."
+    assert result.data.citations == ["2024-Q1"]
 
 
 # --- Terminal errors ------------------------------------------------------
