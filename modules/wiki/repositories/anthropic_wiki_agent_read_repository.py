@@ -21,7 +21,7 @@ class AnthropicWikiAgentReadRepository(BaseWikiAgentReadRepository):
 
     def retrieve_data(
         self,
-        system: str,
+        system: str | list[dict],
         messages: list[dict],
         tools: list[dict],
         model: str,
@@ -35,7 +35,9 @@ class AnthropicWikiAgentReadRepository(BaseWikiAgentReadRepository):
         caller abandons this generator mid-turn (e.g. a Streamlit rerun).
 
         Args:
-            system: System prompt for this turn.
+            system: System prompt for this turn — plain text, or a list of
+                Anthropic content-block dicts (e.g. with a ``cache_control``
+                breakpoint), forwarded to ``client.messages.stream`` unchanged.
             messages: Conversation so far, as Anthropic message dicts.
             tools: Tool schemas available to the model this turn, as Anthropic tool
                 dicts.
