@@ -11,7 +11,7 @@ class BaseWikiAgentReadRepository(ABC):
     @abstractmethod
     def retrieve_data(
         self,
-        system: str,
+        system: str | list[dict],
         messages: list[dict],
         tools: list[dict],
         model: str,
@@ -23,7 +23,8 @@ class BaseWikiAgentReadRepository(ABC):
         multiple turns (e.g. after a tool result) is the caller's responsibility.
 
         Args:
-            system: System prompt for this turn.
+            system: System prompt for this turn. Either plain text, or a list of
+                provider content-block dicts (e.g. to attach a cache breakpoint).
             messages: Conversation so far, in the provider's raw message format.
             tools: Tool schemas available to the model this turn, in the
                 provider's raw tool format.
