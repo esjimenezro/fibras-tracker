@@ -30,7 +30,7 @@ fibras-tracker/
 │   ├── components/
 │   │   ├── common/         ← shared: page_header, error_banner
 │   │   ├── portfolio/      ← summary_card, positions_table, distributions_chart, sector_chart
-│   │   └── fundamentals/   ← detail_header, detail_chart, comparison_table, comparison_chart
+│   │   └── fundamentals/   ← detail_header, detail_chart, comparison_table, comparison_chart, citations
 │   ├── pages/              ← home.py, portfolio.py, fundamentals.py, radar.py
 │   └── styles/
 │       └── theme.py        ← color constants, number formatters, CSS injection
@@ -54,10 +54,19 @@ fibras-tracker/
 │   │   │                     fundamentals_history_processor
 │   │   ├── schemas/        ← FundamentalsDataRetrieverServiceSchema
 │   │   └── services/       ← fundamentals_data_retriever_service
+│   ├── wiki/               ← "Pregúntale a la wiki" chat (embedded in Fundamentales → Detalle)
+│   │   ├── models/         ← WikiChatMessage, WikiQueryRequest, WikiAnswer, WikiQueryResponse,
+│   │   │                     WikiAgentEvent, WikiStreamEvent (+ their StrEnums), WikiToolUse
+│   │   ├── exceptions.py   ← WikiAgentError + WikiAuthError/WikiRateLimitError/WikiConnectionError
+│   │   ├── repositories/   ← file_system_wiki_{index,page,schema,catalog}, anthropic_wiki_agent (+ base/)
+│   │   ├── processors/     ← citation_processor, fundamentals_query_filter_processor, wiki_message_processor
+│   │   ├── schemas/        ← WikiQueryServiceSchema
+│   │   └── services/       ← wiki_query_service (+ _wiki_query_prompt: tool schemas, shell, canned replies)
 │   └── radar/              ← (empty — reserved)
 ├── tests/
-│   ├── portfolio/          ← 37 tests (all three portfolio processors)
-│   └── fundamentals/       ← 86 tests (all three fundamentals processors)
+│   ├── portfolio/          ← tests/portfolio/processors/ (all three portfolio processors)
+│   ├── fundamentals/       ← tests/fundamentals/processors/ (all three fundamentals processors)
+│   └── wiki/               ← tests/wiki/{repositories,processors,services}/ (mirrors modules/wiki/)
 └── data/
     ├── catalog.json        ← static FIBRA catalog (name, frequency, sector weights)
     ├── positions.json      ← portfolio holdings
@@ -216,11 +225,32 @@ Complete:
   `AnnualFundamentalsRecord`, `FibraMetrics`, `FundamentalsHistory`; repository; three processors
   (`FundamentalsProcessor`, `AnnualFundamentalsProcessor`, `FundamentalsHistoryProcessor`); service,
   schema.
+- `modules/wiki/` — full pipeline for the "Pregúntale a la wiki" chat: models + domain exceptions;
+  four `FileSystem*` content repositories (index / page / schema / catalog) and the thin
+  `AnthropicWikiAgentReadRepository` port; `CitationProcessor`, `FundamentalsQueryFilterProcessor`,
+  `WikiMessageProcessor`; `WikiQueryService` (agentic tool loop, dispatch, ticker-scope + grounding
+  guards, domain-error taxonomy); `WikiQueryServiceSchema`.
 - UI — Portfolio page (summary, positions table, allocation donuts, distributions chart) and
-  Fundamentals page (Detalle tab: KPI detail header + unified KPI_CONFIG chart; Comparativa tab:
-  evaluative table + normalized comparison chart).
-- Unit tests — 123: 37 in `tests/portfolio/`, 86 in `tests/fundamentals/` (all five processors).
+  Fundamentals page (Detalle tab: KPI detail header + unified KPI_CONFIG chart + embedded
+  "Pregúntale a la wiki" chat; Comparativa tab: evaluative table + normalized comparison chart).
+- Unit tests — `tests/portfolio/` + `tests/fundamentals/` (five processors) + `tests/wiki/`
+  (content repos, processors, agent port, `WikiQueryService`).
 - Real data in all five `data/*.json` files. Formula-complete processor docstrings. `README.md`.
+
+## modules/wiki/ conventions
+
+- Only `modules/wiki/repositories/anthropic_wiki_agent_read_repository.py` may `import anthropic`.
+  Every other layer works with `WikiAgentEvent` / `WikiStreamEvent` and the domain exceptions.
+- `AnthropicWikiAgentReadRepository` is a thin port: one call = one model turn, streamed inside a
+  `with client.messages.stream(...)` block, client built lazily; the loop across turns is the
+  service's job.
+- `WikiQueryService.stream(request) -> Iterator[WikiStreamEvent]` is the primary API (never raises,
+  one terminal `FINAL`/`ERROR` event); `run(request) -> WikiQueryServiceSchema` drains it.
+- Ticker casing: `request.ticker` is upper-case BMV; the service lower-cases it for the wiki repos
+  (dirs are `wiki/<ticker>/` lower-case) and upper-cases it for the fundamentals filter.
+- `.env` + `python-dotenv` (`load_dotenv()` in `config.py`) supplies `ANTHROPIC_API_KEY`; the chat is
+  the only feature that needs it. The wiki content repos are unit-tested against the real committed
+  `wiki/` files; the agent port is tested with hand-built fakes (`monkeypatch` on `anthropic.Anthropic`).
 
 **Next step:** Radar page (`ui/pages/radar.py`) — currently a "Próximamente" placeholder.
 
