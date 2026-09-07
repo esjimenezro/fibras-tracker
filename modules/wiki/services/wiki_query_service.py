@@ -22,6 +22,11 @@ from modules.wiki.models import WikiToolUse
 from modules.wiki.processors import CitationProcessor
 from modules.wiki.processors import FundamentalsQueryFilterProcessor
 from modules.wiki.processors import WikiMessageProcessor
+from modules.wiki.repositories.base import BaseWikiAgentReadRepository
+from modules.wiki.repositories.base import BaseWikiIndexReadRepository
+from modules.wiki.repositories.base import BaseWikiPageReadRepository
+from modules.wiki.repositories.base import BaseWikiSchemaReadRepository
+from modules.fundamentals.repositories.base import BaseFundamentalsReadRepository
 from modules.wiki.repositories import AnthropicWikiAgentReadRepository
 from modules.wiki.repositories import FileSystemWikiIndexReadRepository
 from modules.wiki.repositories import FileSystemWikiPageReadRepository
@@ -62,11 +67,11 @@ class WikiQueryService:
 
     def __init__(
         self,
-        agent_repository=None,
-        index_repository=None,
-        page_repository=None,
-        schema_repository=None,
-        fundamentals_repository=None,
+        agent_repository: Optional[BaseWikiAgentReadRepository] = None,
+        index_repository: Optional[BaseWikiIndexReadRepository] = None,
+        page_repository: Optional[BaseWikiPageReadRepository] = None,
+        schema_repository: Optional[BaseWikiSchemaReadRepository] = None,
+        fundamentals_repository: Optional[BaseFundamentalsReadRepository] = None,
     ):
         """Wire the service, defaulting each repository to its concrete implementation.
 
