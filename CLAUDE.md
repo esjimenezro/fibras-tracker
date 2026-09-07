@@ -60,8 +60,9 @@ fibras-tracker/
 │   │   ├── exceptions.py   ← WikiAgentError + WikiAuthError/WikiRateLimitError/WikiConnectionError
 │   │   ├── repositories/   ← file_system_wiki_{index,page,schema,catalog}, anthropic_wiki_agent (+ base/)
 │   │   ├── processors/     ← citation_processor, fundamentals_query_filter_processor, wiki_message_processor
-│   │   ├── schemas/        ← WikiQueryServiceSchema
-│   │   └── services/       ← wiki_query_service (+ _wiki_query_prompt: tool schemas, shell, canned replies)
+│   │   ├── schemas/        ← WikiQueryServiceSchema, WikiCatalogServiceSchema
+│   │   └── services/       ← wiki_query_service (+ _wiki_query_prompt: tool schemas, shell,
+│   │                         canned replies), wiki_catalog_service
 │   └── radar/              ← (empty — reserved)
 ├── tests/
 │   ├── portfolio/          ← tests/portfolio/processors/ (all three portfolio processors)
@@ -246,8 +247,11 @@ Complete:
   service's job.
 - `WikiQueryService.stream(request) -> Iterator[WikiStreamEvent]` is the primary API (never raises,
   one terminal `FINAL`/`ERROR` event); `run(request) -> WikiQueryServiceSchema` drains it.
-- Ticker casing: `request.ticker` is upper-case BMV; the service lower-cases it for the wiki repos
-  (dirs are `wiki/<ticker>/` lower-case) and upper-cases it for the fundamentals filter.
+- Ticker casing: `request.ticker` is upper-case BMV; `WikiQueryService` lower-cases it for the wiki
+  repos (dirs are `wiki/<ticker>/` lower-case) and upper-cases it for the fundamentals filter.
+  `WikiCatalogService.run()` upper-cases outward, so the UI never sees the lower-case slugs.
+- The UI asks `WikiCatalogService` (never a repository) whether a FIBRA has a wiki, and shows its
+  own error banner when that read fails — distinct from the "esta FIBRA aún no tiene wiki" notice.
 - `.env` + `python-dotenv` (`load_dotenv()` in `config.py`) supplies `ANTHROPIC_API_KEY`; the chat is
   the only feature that needs it. The wiki content repos are unit-tested against the real committed
   `wiki/` files; the agent port is tested with hand-built fakes (`monkeypatch` on `anthropic.Anthropic`).
