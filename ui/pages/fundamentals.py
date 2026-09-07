@@ -14,7 +14,8 @@ from modules.wiki.models import WikiChatMessage
 from modules.wiki.models import WikiErrorCategory
 from modules.wiki.models import WikiQueryRequest
 from modules.wiki.models import WikiStreamEventType
-from modules.wiki.repositories import FileSystemWikiCatalogReadRepository
+from modules.wiki.schemas import WikiCatalogServiceSchema
+from modules.wiki.services import WikiCatalogService
 from modules.wiki.services import WikiQueryService
 from ui.components.common import render_error_banner
 from ui.components.common import render_page_header
@@ -45,13 +46,14 @@ def _load_fundamentals() -> FundamentalsDataRetrieverServiceSchema:
 
 
 @st.cache_data(ttl=300)
-def _wiki_tickers() -> set[str]:
-    """Return the lowercase ticker slugs that have a wiki, cached for 5 minutes.
+def _load_wiki_catalog() -> WikiCatalogServiceSchema:
+    """Fetch which FIBRAs have a wiki, cached for 5 minutes.
 
     Returns:
-        set[str]: e.g. {"danhos13", "fmty14"}.
+        WikiCatalogServiceSchema with status OK and the BMV tickers, or ERROR and
+            error_message.
     """
-    return set(FileSystemWikiCatalogReadRepository().retrieve_data())
+    return WikiCatalogService().run()
 
 
 def _render_wiki_chat(ticker: str) -> None:
@@ -157,7 +159,11 @@ with detalle_tab:
 
     st.divider()
     st.subheader("💬 Pregúntale a la wiki")
-    if selected_ticker.lower() not in _wiki_tickers():
+    wiki_catalog = _load_wiki_catalog()
+    if wiki_catalog.status == ServiceStatus.ERROR:
+        st.error("No se pudo leer el catálogo de wikis.")
+        st.caption(wiki_catalog.error_message)
+    elif selected_ticker not in wiki_catalog.data:
         st.info("Esta FIBRA aún no tiene wiki.")
     elif not os.environ.get("ANTHROPIC_API_KEY"):
         st.info(
