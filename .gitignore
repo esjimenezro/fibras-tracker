@@ -39,4 +39,4 @@ Thumbs.db
 *.log
 
 # Quarterly reports
-data/results/
+wiki/*/raw/
