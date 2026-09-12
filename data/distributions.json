@@ -197,6 +197,12 @@
             "payment_date": "2026-08-13",
             "reimbursement_total": 159.22,
             "fiscal_result_total": 245.77
+        },
+        {
+            "ticker": "FMTY14",
+            "payment_date": "2026-08-28",
+            "reimbursement_total": 113.88,
+            "fiscal_result_total": 0.0
         }
     ]
 }

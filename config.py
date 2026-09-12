@@ -9,7 +9,6 @@ BASE_DIR = Path(__file__).parent
 # Load variables from a local .env in the repo root before anything else reads the environment
 load_dotenv(dotenv_path=BASE_DIR / ".env", override=False)
 DATA_DIR = BASE_DIR / "data"
-HISTORICO_DIR = DATA_DIR / "historico"
 
 POSITIONS_DATA_PATH = DATA_DIR / "positions.json"
 DISTRIBUTIONS_DATA_PATH = DATA_DIR / "distributions.json"

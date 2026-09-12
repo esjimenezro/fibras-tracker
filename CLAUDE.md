@@ -154,8 +154,8 @@ A service is the only entry point a `page/` may call. It:
   on error → render components section by section.
 - **Component convention:** every component is a pure `render_<component>()` function. Stateless, no
   `st.session_state`, receives exactly the typed data it needs, never calls services/repositories.
-- **theme.py:** always import `format_mxn`, `format_mxn_compact`, `format_pct`, `color_return`,
-  `COLOR_POSITIVE/NEGATIVE/NEUTRAL` from here — never redefine colors/formatters in components.
+- **theme.py:** always import `format_mxn`, `format_mxn_label`, `format_mxn_compact`, `format_pct`,
+  `color_return`, `COLOR_POSITIVE/NEGATIVE/NEUTRAL` from here — never redefine colors/formatters in components.
   `load_custom_css()` is called once by `render_page_header()`; do not call it elsewhere.
 
 ## Stack
@@ -191,12 +191,29 @@ EnrichedPosition("FMTY14", 100, 12.5)                              # wrong
 
 ## FIBRAs in scope
 
+`data/catalog.json` is the source of truth — it currently tracks 7 FIBRAs, of which 4 are held
+positions (`data/positions.json`) and the rest are fundamentals-only, tracked for the Comparativa
+tab. Adding a FIBRA to the catalog does not make it a position, and vice versa.
+
+**Held in portfolio:**
+
 | Ticker    | Name           | Sector                    | Frequency |
 |-----------|----------------|---------------------------|-----------|
 | FMTY14    | Fibra Mty      | Industrial / Offices      | Monthly   |
 | DANHOS13  | Fibra Danhos   | Mixed-use / Retail        | Quarterly |
 | FIBRAPL14 | Fibra Prologis | Industrial / Logistics    | Quarterly |
 | FSHOP13   | Fibra Shop     | Retail / Shopping centers | Quarterly |
+
+**Catalog-only (fundamentals/Comparativa, not a position):**
+
+| Ticker  | Name                             | Sector                  | Frequency |
+|---------|----------------------------------|--------------------------|-----------|
+| FUNO11  | Fibra UNO                        | Retail / Offices / Industrial | Quarterly |
+| FNOVA17 | Fibra Nova                       | Industrial / Agroindustrial | Quarterly |
+| NEXT25  | Nearshoring Experts & Technology | Industrial               | Quarterly |
+
+Only `fmty14` and `danhos13` have a `wiki/<ticker>/` directory so far (see `README.md` → "Data
+files" → `wiki/`); the other five show the "esta FIBRA aún no tiene wiki" notice.
 
 yfinance tickers append `.MX` (e.g. `FMTY14.MX`).
 

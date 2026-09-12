@@ -73,7 +73,7 @@
                 {"sector": "Agroindustrial", "weight": 0.13},
                 {"sector": "Educativo", "weight": 0.07},
                 {"sector": "Comercial", "weight": 0.03},
-                {"sector": "Otros", "weight": 0.5}
+                {"sector": "Otros", "weight": 0.05}
             ]
         }
     ]

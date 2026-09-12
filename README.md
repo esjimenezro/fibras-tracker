@@ -97,6 +97,21 @@ list[EnrichedFundamentalsRecord] + list[Fibra]
   → [FundamentalsHistoryProcessor] → FundamentalsHistory  (with per-FIBRA FibraMetrics)
 ```
 
+**Wiki** (`modules/wiki/`)
+
+```
+WikiQueryRequest (ticker, question, history)
+  → [WikiQueryService] — agentic tool loop over three read-only tools
+      (wiki index / wiki page / fundamentals lookup), dispatched through
+      AnthropicWikiAgentReadRepository (one call = one model turn)
+  → stream of WikiStreamEvent (TEXT / STATUS / terminal FINAL or ERROR)
+```
+
+Unlike the Portfolio and Fundamentals pipelines, this is not a pure data transformation: the
+service drives a multi-turn conversation with the model, dispatching tool calls to the wiki content
+repositories (`wiki/<ticker>/`) and the fundamentals repository, until the model produces a grounded
+answer or the loop hits a guard (ticker out of scope, no grounding, provider error).
+
 ### Repository pattern
 
 Each entity has an abstract interface in `repositories/base/` that defines the `retrieve_data()` contract. Concrete implementations provide the actual data source (JSON file, Yahoo Finance, etc.). Swapping data sources requires only a new concrete implementation — services, processors, and pages remain untouched.
@@ -114,7 +129,7 @@ fibras-tracker/
 │   ├── components/
 │   │   ├── common/             ← shared: page_header, error_banner
 │   │   ├── portfolio/          ← summary_card, positions_table, distributions_chart, sector_chart
-│   │   └── fundamentals/       ← detail_header, detail_chart, comparison_table, comparison_chart
+│   │   └── fundamentals/       ← detail_header, detail_chart, comparison_table, comparison_chart, citations
 │   ├── pages/                  ← Streamlit page scripts (one per module)
 │   │   ├── home.py
 │   │   ├── portfolio.py
@@ -145,16 +160,35 @@ fibras-tracker/
 │   │   │                         FundamentalsHistoryProcessor
 │   │   ├── schemas/            ← FundamentalsDataRetrieverServiceSchema
 │   │   └── services/           ← FundamentalsDataRetrieverService
+│   ├── wiki/                   ← "Ask the wiki" chat pipeline (agentic, not a data transform)
+│   │   ├── models/             ← WikiChatMessage, WikiQueryRequest/Response, WikiAnswer,
+│   │   │                         WikiAgentEvent, WikiStreamEvent (+ their StrEnums), WikiToolUse
+│   │   ├── exceptions.py       ← WikiAgentError + WikiAuthError/WikiRateLimitError/WikiConnectionError
+│   │   ├── repositories/       ← file-system wiki content repos (index/page/schema/catalog) +
+│   │   │   └── base/             AnthropicWikiAgentReadRepository (the only module that imports `anthropic`)
+│   │   ├── processors/         ← CitationProcessor, FundamentalsQueryFilterProcessor, WikiMessageProcessor
+│   │   ├── schemas/            ← WikiQueryServiceSchema, WikiCatalogServiceSchema
+│   │   └── services/           ← WikiQueryService (tool loop + dispatch), WikiCatalogService
 │   └── radar/                  ← (empty — reserved)
 ├── tests/
-│   ├── portfolio/              ← unit tests for all three portfolio processors (37 tests)
-│   └── fundamentals/           ← unit tests for all three fundamentals processors (86 tests)
-└── data/
-    ├── catalog.json            ← static FIBRA catalog (name, frequency, sector weights)
-    ├── positions.json          ← portfolio holdings
-    ├── distributions.json      ← distribution payment history
-    ├── fundamentals.json       ← quarterly KPI history per FIBRA
-    └── inflation.json          ← annual Mexican inflation (INPC) history
+│   ├── portfolio/              ← unit tests for all three portfolio processors (38 tests)
+│   ├── fundamentals/           ← unit tests for all three fundamentals processors (86 tests)
+│   └── wiki/                   ← unit tests for modules/wiki/ repositories, processors, services (60 tests)
+├── data/
+│   ├── catalog.json            ← static FIBRA catalog (name, frequency, sector weights)
+│   ├── positions.json          ← portfolio holdings
+│   ├── distributions.json      ← distribution payment history
+│   ├── fundamentals.json       ← quarterly KPI history per FIBRA
+│   └── inflation.json          ← annual Mexican inflation (INPC) history
+└── wiki/                       ← narrative content read by modules/wiki/ (see "Data files" below)
+    ├── SCHEMA.md                 ← shared schema/conventions for every per-FIBRA wiki
+    └── <ticker>/                 ← one per FIBRA with a wiki (lower-case, e.g. fmty14/, danhos13/)
+        ├── raw/                   ← source PDFs, immutable
+        ├── sources/               ← 1:1 markdown transcription of each PDF
+        ├── pages/{quarters,concepts}/  ← curated wiki pages, cross-linked via [[wikilinks]]
+        ├── outputs/               ← dated lint reports
+        ├── index.md               ← navigation entry point
+        └── log.md                 ← ingest/change history
 ```
 
 ---
@@ -168,9 +202,9 @@ fibras-tracker/
 | `ui/assets/` | Static files (SVG logo) |
 | `ui/components/common/` | Shared components reused across all pages (`page_header`, `error_banner`) |
 | `ui/components/portfolio/` | `summary_card`, `positions_table`, `distributions_chart`, `sector_chart` |
-| `ui/components/fundamentals/` | `detail_header`, `detail_chart`, `comparison_table`, `comparison_chart` |
+| `ui/components/fundamentals/` | `detail_header`, `detail_chart`, `comparison_table`, `comparison_chart`, `citations` |
 | `ui/pages/` | One script per application page; these are the files Streamlit runs |
-| `ui/styles/theme.py` | Color constants, number formatters (`format_mxn`, `format_pct`), and CSS injection |
+| `ui/styles/theme.py` | Color constants (`COLOR_POSITIVE`/`NEGATIVE`/`NEUTRAL`), number formatters (`format_mxn`, `format_mxn_label`, `format_mxn_compact`, `format_pct`, `color_return`), and CSS injection |
 
 ### How to add a new page
 
@@ -395,6 +429,34 @@ Annual Mexican inflation history (year-over-year change of the INPC, December to
 | `inflation[].annual_inflation` | Year-over-year inflation as a decimal (e.g. `0.0421` = 4.21%) |
 
 Only the `inflation` array is read (into `InflationRecord`). To extend the series, append a `{year, annual_inflation}` object. Coverage must span the full range of complete fundamentals years for `cagr_inflation` to be computed for a FIBRA.
+
+---
+
+### `wiki/` (narrative content, not a `data/*.json` file)
+
+Unlike the other data files, `wiki/` is a tree of markdown files, not JSON, and it feeds the "Ask
+the wiki" chat rather than the Portfolio/Fundamentals pipelines. Structure and editorial rules are
+governed by `wiki/SCHEMA.md` (shared across every FIBRA); the short version:
+
+```
+wiki/
+  SCHEMA.md              ← conventions all per-FIBRA wikis follow
+  <ticker>/               ← lower-case slug, e.g. fmty14/, danhos13/
+    raw/                  ← source quarterly report PDFs, immutable
+    sources/              ← 1:1 markdown transcription of each PDF (no synthesis)
+    pages/
+      quarters/           ← one curated page per quarter (YYYY-QN.md)
+      concepts/           ← thematic pages that persist across quarters
+    outputs/              ← dated lint reports
+    index.md              ← human navigation entry point
+    log.md                ← ingest/change history
+```
+
+`WikiCatalogService` reports which BMV tickers have a `wiki/<ticker>/` directory — that list drives
+whether the Fundamentals page shows the chat for the selected FIBRA. As of this writing, two of the
+seven FIBRAs in `catalog.json` have a wiki: `fmty14` and `danhos13`. Content is added via the
+`wiki-ingest` skill, checked with `wiki-lint`, and queried through `WikiQueryService` — never edited
+by hand outside those flows except for `SCHEMA.md` itself.
 
 ---
 
@@ -679,7 +741,7 @@ Max line length: 200 characters (configured in `.flake8`).
 uv run pytest tests/ -v
 ```
 
-Tests use real Pydantic instances — no mocks, no network calls, no file I/O. Expected values are hardcoded from the business rule formulas. Use `pytest.approx` for all float assertions.
+184 tests total. `tests/portfolio/` (38) and `tests/fundamentals/` (86) use real Pydantic instances — no mocks, no network calls, no file I/O; expected values are hardcoded from the business rule formulas, and `pytest.approx` is used for all float assertions. `tests/wiki/` (60) departs from this: the file-system content repositories are tested against the real files committed under `wiki/`, and `AnthropicWikiAgentReadRepository` — the module's only network boundary — is tested with hand-built fakes (`monkeypatch` on `anthropic.Anthropic`).
 
 ---
 
@@ -689,10 +751,11 @@ Tests use real Pydantic instances — no mocks, no network calls, no file I/O. E
 - `modules/common/` — `Sector`, `SectorExposure`, `Fibra`, `PaymentFrequency`, `MarketPrice`, `InflationRecord`, `ServiceStatus`; catalog, market price, and inflation repositories (`JsonCatalogReadRepository`, `YFinanceMarketPriceReadRepository`, `JsonInflationReadRepository`)
 - `modules/portfolio/` — full pipeline: models (raw + enriched + `Portfolio` with `PositionShare` and `SectorShare`), repositories, three processors, service, schema
 - `modules/fundamentals/` — full pipeline: models (`FundamentalsRecord`, `EnrichedFundamentalsRecord`, `AnnualFundamentalsRecord`, `FibraMetrics`, `FundamentalsHistory`), repository, three processors (`FundamentalsProcessor`, `AnnualFundamentalsProcessor`, `FundamentalsHistoryProcessor`), service, schema
-- All five `data/*.json` files populated with real data
-- Unit test suite — 123 tests: 37 covering all three portfolio processors (`tests/portfolio/`), 86 covering all three fundamentals processors (`tests/fundamentals/`)
+- `modules/wiki/` — full pipeline for the "Ask the wiki" chat: models + domain exceptions, four file-system content repositories plus the `AnthropicWikiAgentReadRepository` port, three processors (`CitationProcessor`, `FundamentalsQueryFilterProcessor`, `WikiMessageProcessor`), `WikiQueryService` (agentic tool loop) and `WikiCatalogService`
+- All five `data/*.json` files populated with real data; narrative wiki content ingested for two of the seven FIBRAs tracked in `catalog.json` so far (`wiki/fmty14/`, `wiki/danhos13/`)
+- Unit test suite — 184 tests: 38 covering all three portfolio processors (`tests/portfolio/`), 86 covering all three fundamentals processors (`tests/fundamentals/`), 60 covering `modules/wiki/` repositories, processors, and services (`tests/wiki/`)
 - Portfolio page (`ui/pages/portfolio.py`) — summary metrics, positions table, FIBRA + sector allocation donuts, distributions history
-- Fundamentals page (`ui/pages/fundamentals.py`) — Detalle tab (KPI detail header + unified KPI_CONFIG indicator chart) and Comparativa tab (evaluative table + normalized comparison chart)
+- Fundamentals page (`ui/pages/fundamentals.py`) — Detalle tab (KPI detail header + unified KPI_CONFIG indicator chart + "Pregúntale a la wiki" chat) and Comparativa tab (evaluative table + normalized comparison chart)
 
 **Next:**
 - Radar page (`ui/pages/radar.py`) — currently a "Próximamente" placeholder
