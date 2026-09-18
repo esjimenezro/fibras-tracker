@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Let `WikiQueryService` answer questions that cross ≥2 FIBRAs, in both Fundamentales → Detalle (implicit, model-discovered) and Fundamentales → Comparativa (explicit, user-selected).
+**Goal:** Let `WikiQueryService` answer questions that cross ≥2 FIBRAs, in both Fundamentales → Detalle (anchored on the selected FIBRA, open to the rest) and Fundamentales → Comparativa (fully open scope, no anchor, no pre-selection).
 
 **Architecture:** `WikiQueryRequest.ticker: str` becomes a `tickers: list[str]` scope guard plus an optional `primary_ticker` anchor for prompt framing; a new `WikiRosterProcessor` joins `catalog.json` with the wiki ticker roster into one formatted roster string consumed both by a new `read_wiki_catalog` tool (runtime discovery) and a generation script that writes a committed `wiki/index.md` (Obsidian navigation). No repository-level cross-FIBRA wikilink parsing is needed — every tool call already carries `ticker` as its own argument.
 
@@ -987,16 +987,26 @@ git commit -m "feat(wiki): open Detalle's wiki chat scope to every FIBRA with a 
 
 ---
 
-## Task 5: UI — Comparativa tab multiselect + comparative chat, docs update
+## Task 5: UI — Comparativa tab open-scope comparative chat, docs update
 
 **Files:**
 - Modify: `ui/pages/fundamentals.py`
 - Modify: `README.md`
 
 **Interfaces:**
-- Consumes: `_render_wiki_chat` (Task 4), `WikiCatalogServiceSchema.data: list[str]`, `history.fibras: list[Fibra]` (already loaded at module scope).
+- Consumes: `_render_wiki_chat` (Task 4), `WikiCatalogServiceSchema.data: list[str]`.
 
-- [ ] **Step 1: Add the multiselect + chat to the Comparativa tab**
+No selector precedes this chat: the user asks directly about any combination
+of the FIBRAs with a wiki (e.g. "¿cuál tiene mayor exposición cambiaria,
+FMTY14 o FIBRAPL14?") and the model discovers and reads whichever FIBRAs the
+question needs via `read_wiki_catalog` + `read_index` — the same open-scope
+mechanism Task 4 gives Detalle, just without a `primary_ticker` anchor. This
+was corrected mid-plan: the original design required an `st.multiselect` with
+≥2 FIBRAs picked upfront, which the user rejected as inconsistent with
+Detalle's own open-scope UX ("debería poder preguntar de cualquier
+combinación de las FIBRAs ya habilitadas").
+
+- [ ] **Step 1: Add the open-scope chat to the Comparativa tab**
 
 In the `comparativa_tab` block, after the existing `render_comparison_chart(...)` call, append:
 
@@ -1013,21 +1023,16 @@ In the `comparativa_tab` block, after the existing `render_comparison_chart(...)
             "(copiá `.env.example` a `.env` y completá la clave)."
         )
     else:
-        comparison_tickers = st.multiselect(
-            label="FIBRAs a comparar",
-            options=wiki_catalog.data,
-            format_func=lambda t: next((f.name for f in history.fibras if f.ticker == t), t),
+        st.caption("FIBRAs disponibles: " + ", ".join(wiki_catalog.data))
+        _render_wiki_chat(
+            tickers=wiki_catalog.data,
+            primary_ticker=None,
+            thread_key="comparativa",
+            placeholder="Pregunta comparando dos o más FIBRAs…",
         )
-        if len(comparison_tickers) < 2:
-            st.info("Elegí al menos 2 FIBRAs para comparar.")
-        else:
-            _render_wiki_chat(
-                tickers=comparison_tickers,
-                primary_ticker=None,
-                thread_key="|".join(sorted(comparison_tickers)),
-                placeholder=f"Pregunta comparando {', '.join(comparison_tickers)}…",
-            )
 ```
+
+`wiki_catalog.data` is the same cached call Detalle already uses — no new repository call, no pre-selection step, and a single shared thread for the tab (`thread_key="comparativa"`) since there is no user-chosen combination to key on anymore.
 
 - [ ] **Step 2: Update README.md**
 
@@ -1061,17 +1066,17 @@ to:
 
 At `README.md:240`, after the existing `render_comparison_chart(...)` bullet, add a third bullet:
 ```
-3. **💬 Pregúntale a la wiki (comparativo)** — a `st.multiselect` (options = tickers with a wiki) requires ≥2 FIBRAs before showing a chat scoped to exactly that set, with no default focus (`WikiQueryRequest.primary_ticker = None`). Reuses the same `_render_wiki_chat` helper as Detalle; the thread is keyed by the sorted, `"|"`-joined ticker combination, so changing the selection starts a fresh thread.
+3. **💬 Pregúntale a la wiki (comparativo)** — shown directly (same `ANTHROPIC_API_KEY`/catalog gating as Detalle), scoped to every FIBRA with a wiki with no default focus (`WikiQueryRequest.primary_ticker = None`) and no FIBRA picker: the user asks about any combination directly and the model discovers which FIBRAs to read via `read_wiki_catalog`. Reuses the same `_render_wiki_chat` helper as Detalle, in a single shared thread (`thread_key="comparativa"`).
 ```
 
 - [ ] **Step 2: Manual verification**
 
 Run: `streamlit run app.py`
 1. Open Fundamentales → Comparativa.
-2. Confirm no chat appears with 0 or 1 FIBRA selected (info message shown instead).
-3. Select ≥2 FIBRAs (e.g. FMTY14 and FIBRAPL14) and ask a comparative question (e.g. "¿cuál de las dos tiene mayor exposición cambiaria?").
+2. Confirm the chat is shown directly, with no FIBRA picker beforehand.
+3. Ask a comparative question naming two FIBRAs (e.g. "¿cuál tiene mayor exposición cambiaria, FMTY14 o FIBRAPL14?").
 4. Confirm the answer reads naturally as a comparison (no single FIBRA framed as primary) and citations are qualified (`[[fmty14/...]]`, `[[fibrapl14/...]]`) when both are cited.
-5. Change the selection and confirm a fresh, empty thread opens (no leftover history from the previous combination).
+5. Ask a question about a third combination in the same thread and confirm prior turns don't confuse the answer (a single shared thread, unlike Detalle's per-ticker ones).
 
 - [ ] **Step 3: Commit**
 

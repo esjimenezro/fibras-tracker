@@ -28,8 +28,9 @@ Permitir dos experiencias nuevas, ambas sobre el mismo `WikiQueryService`:
    "¿pasó algo similar en otra FIBRA?" sin nombrar cuál — el modelo debe poder
    descubrir y consultar otras FIBRAs de la wiki cuando lo juzgue relevante,
    mientras la respuesta sigue anclada a la FIBRA seleccionada.
-2. **Fundamentales → Comparativa:** el usuario elige explícitamente ≥2 FIBRAs y
-   pregunta de forma comparativa entre ellas, sin foco por defecto en ninguna.
+2. **Fundamentales → Comparativa:** el usuario pregunta directamente de forma
+   comparativa entre cualquier combinación de las FIBRAs habilitadas, sin
+   elegirlas de antemano y sin foco por defecto en ninguna.
 
 ## No objetivos
 
@@ -99,8 +100,12 @@ primary_ticker: Optional[str] = None    # ancla de la respuesta; None = comparac
   `tickers=[T]`, `primary_ticker=T`.
 - **Detalle, scope abierto (nuevo):** `tickers=<las FIBRAs con wiki>`,
   `primary_ticker=<FIBRA seleccionada>`.
-- **Comparativa (nuevo):** `tickers=<N FIBRAs elegidas por el usuario>`,
-  `primary_ticker=None`.
+- **Comparativa, scope abierto sin ancla (nuevo):** `tickers=<las FIBRAs con
+  wiki>`, `primary_ticker=None`. Sin selector previo: el usuario pregunta
+  directamente sobre cualquier combinación de las FIBRAs habilitadas (ej.
+  "comparar exposición cambiaria entre FMTY14 y FIBRAPL14") y el modelo
+  descubre y consulta las FIBRAs mencionadas vía `read_wiki_catalog` +
+  `read_index`, igual que en Detalle, solo que sin FIBRA ancla.
 
 El guard (`_has_foreign_ticker`) pasa de comparar contra un único ticker a
 comprobar membresía case-insensitive en `tickers`. Los mensajes fijos
@@ -128,10 +133,14 @@ el request correctamente.
   el request ahora manda como `tickers` el roster completo de FIBRAs con wiki.
 - **Comparativa:** hoy no existe ningún selector de FIBRAs — la tabla y el chart
   siempre muestran las 7 juntas (`ui/pages/fundamentals.py`, `comparativa_tab`).
-  Se agrega un `st.multiselect` (opciones = tickers con wiki, vía la
-  `_load_wiki_catalog()` ya cacheada) que exige ≥2 selecciones antes de mostrar
-  el chat. El hilo se guarda con clave `tuple(sorted(tickers))`, así cambiar la
-  selección abre un hilo nuevo en vez de arrastrar contexto de otra combinación.
+  **Sin selector nuevo tampoco para el chat**: se muestra directamente (mismo
+  gating de `ANTHROPIC_API_KEY`/catálogo que Detalle), con `tickers=<todas las
+  FIBRAs con wiki>` y `primary_ticker=None` — el usuario pregunta sobre
+  cualquier combinación sin elegirla de antemano, igual que en Detalle pero sin
+  ancla. Un `st.caption` informativo (no interactivo) lista las FIBRAs con wiki
+  disponibles. Un solo hilo compartido para la tab
+  (`thread_key="comparativa"`) — no hay combinación de tickers que trackear
+  porque ya no hay selección previa.
 - El helper privado `_render_wiki_chat` (en `ui/pages/fundamentals.py`, no es un
   componente — sigue la convención de que las páginas orquestan, los
   componentes no llaman servicios) se generaliza para aceptar `tickers`,
@@ -153,7 +162,7 @@ scripts/
   generate_wiki_root_index.py          ← NUEVO (Decisión 1)
 wiki/
   index.md                             ← NUEVO, generado (Decisión 1)
-ui/pages/fundamentals.py               ← Detalle: scope abierto; Comparativa: multiselect + chat
+ui/pages/fundamentals.py               ← Detalle: scope abierto; Comparativa: scope abierto sin ancla
 ```
 
 Ningún cambio en `modules/wiki/repositories/` (Decisión 2), ni en
@@ -182,4 +191,4 @@ Cada fase es un sub-issue de ESJ-14 en Linear, siguiendo el patrón de ESJ-13.
 2. Fase 2 — `WikiRosterProcessor` + tool `read_wiki_catalog`.
 3. Fase 3 — Script `generate_wiki_root_index.py` + `wiki/index.md` committeado.
 4. Fase 4 — UI Detalle: scope abierto a las 7 FIBRAs.
-5. Fase 5 — UI Comparativa: multiselect + chat comparativo.
+5. Fase 5 — UI Comparativa: chat comparativo de scope abierto (sin selector previo).
