@@ -17,7 +17,7 @@ def processor():
 
 def _request(question="pregunta nueva", history=None):
     """Build a WikiQueryRequest for the message-processor tests."""
-    return WikiQueryRequest(ticker="DANHOS13", question=question, history=history or [])
+    return WikiQueryRequest(tickers=["DANHOS13"], primary_ticker="DANHOS13", question=question, history=history or [])
 
 
 # --- initial_messages --------------------------------------------------------

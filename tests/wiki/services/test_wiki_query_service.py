@@ -107,7 +107,11 @@ def make_service():
 
 def _request(**overrides):
     """Build a WikiQueryRequest with sensible defaults for tests."""
-    kwargs = {"ticker": "DANHOS13", "question": "¿por qué subió el apalancamiento?"}
+    kwargs = {
+        "tickers": ["DANHOS13"],
+        "primary_ticker": "DANHOS13",
+        "question": "¿por qué subió el apalancamiento?",
+    }
     kwargs.update(overrides)
     return WikiQueryRequest(**kwargs)
 
@@ -242,10 +246,10 @@ def test_tool_call_with_foreign_ticker_aborts_with_fixed_reply(make_service):
         [_turn_end("no debería llegar aquí")],
     ])
 
-    result = make_service(agent).run(request=_request(ticker="DANHOS13"))
+    result = make_service(agent).run(request=_request())
 
     assert result.status == ServiceStatus.OK
-    assert result.data.answer_text == OUT_OF_SCOPE_MESSAGE.format(ticker="DANHOS13")
+    assert result.data.answer_text == OUT_OF_SCOPE_MESSAGE.format(tickers="DANHOS13")
     assert result.data.citations == []
     assert len(agent.calls) == 1  # aborted before dispatching or a second turn
 
@@ -280,6 +284,43 @@ def test_read_page_miss_returns_is_error_with_valid_names(make_service):
     assert "2024-Q1" in tool_result["content"]
 
 
+def test_multi_ticker_tool_use_dispatches_to_the_ticker_in_the_call(make_service):
+    """Two tool calls in one scope route to their own FIBRA, not a single default."""
+    agent = _FakeAgentRepository([
+        [_turn_tool_use(
+            _tool_use("t1", "read_index", ticker="FMTY14"),
+            _tool_use("t2", "read_index", ticker="DANHOS13"),
+        )],
+        [_turn_end("Listo.")],
+    ])
+
+    result = make_service(agent).run(
+        request=_request(tickers=["FMTY14", "DANHOS13"], primary_ticker=None),
+    )
+
+    assert result.status == ServiceStatus.OK
+    tool_results = agent.calls[1]["messages"][-1]["content"]
+    assert tool_results[0]["is_error"] is False
+    assert tool_results[1]["is_error"] is False
+    assert tool_results[0]["content"] != tool_results[1]["content"]
+
+
+def test_tool_call_outside_allowed_tickers_aborts_with_fixed_reply(make_service):
+    """A tool call for a ticker outside the allowed set aborts with the fixed reply."""
+    agent = _FakeAgentRepository([
+        [_turn_tool_use(_tool_use("t1", "read_index", ticker="FUNO11"))],
+        [_turn_end("no debería llegar aquí")],
+    ])
+
+    result = make_service(agent).run(
+        request=_request(tickers=["FMTY14", "DANHOS13"], primary_ticker="FMTY14"),
+    )
+
+    assert result.status == ServiceStatus.OK
+    assert result.data.answer_text == OUT_OF_SCOPE_MESSAGE.format(tickers="FMTY14, DANHOS13")
+    assert len(agent.calls) == 1
+
+
 # --- Grounding guard -----------------------------------------------------
 
 def test_answer_without_any_tool_call_returns_ungrounded_reply(make_service):
@@ -290,11 +331,11 @@ def test_answer_without_any_tool_call_returns_ungrounded_reply(make_service):
     ]])
 
     result = make_service(agent).run(
-        request=_request(ticker="DANHOS13", question="¿cómo le fue a Fibra Uno?"),
+        request=_request(question="¿cómo le fue a Fibra Uno?"),
     )
 
     assert result.status == ServiceStatus.OK
-    assert result.data.answer_text == UNGROUNDED_MESSAGE.format(ticker="DANHOS13")
+    assert result.data.answer_text == UNGROUNDED_MESSAGE.format(tickers="DANHOS13")
     assert result.data.citations == []
 
 
@@ -307,7 +348,7 @@ def test_answer_after_only_failed_tool_calls_returns_ungrounded_reply(make_servi
 
     result = make_service(agent).run(request=_request())
 
-    assert result.data.answer_text == UNGROUNDED_MESSAGE.format(ticker="DANHOS13")
+    assert result.data.answer_text == UNGROUNDED_MESSAGE.format(tickers="DANHOS13")
 
 
 def test_answer_after_successful_tool_call_is_kept(make_service):

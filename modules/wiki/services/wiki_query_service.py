@@ -32,7 +32,10 @@ from modules.wiki.repositories import FileSystemWikiIndexReadRepository
 from modules.wiki.repositories import FileSystemWikiPageReadRepository
 from modules.wiki.repositories import FileSystemWikiSchemaReadRepository
 from modules.wiki.schemas import WikiQueryServiceSchema
-from modules.wiki.services._wiki_query_prompt import INSTRUCTIONS_SHELL
+from modules.wiki.services._wiki_query_prompt import FOCUS_COMPARISON_TEMPLATE
+from modules.wiki.services._wiki_query_prompt import FOCUS_PRIMARY_TEMPLATE
+from modules.wiki.services._wiki_query_prompt import INSTRUCTIONS_HEADER
+from modules.wiki.services._wiki_query_prompt import INSTRUCTIONS_TOOLS
 from modules.wiki.services._wiki_query_prompt import OUT_OF_SCOPE_MESSAGE
 from modules.wiki.services._wiki_query_prompt import STATUS_CONSULTING
 from modules.wiki.services._wiki_query_prompt import TOOL_SCHEMAS
@@ -145,9 +148,15 @@ class WikiQueryService:
                 raises; failures become a terminal ERROR event.
         """
         try:
+            tickers_label = ", ".join(request.tickers)
+            focus = (
+                FOCUS_PRIMARY_TEMPLATE.format(primary_ticker=request.primary_ticker, tickers=tickers_label)
+                if request.primary_ticker
+                else FOCUS_COMPARISON_TEMPLATE.format(tickers=tickers_label)
+            )
             system = [{
                 "type": "text",
-                "text": INSTRUCTIONS_SHELL.format(ticker=request.ticker) + self._schema_repository.retrieve_data(),
+                "text": INSTRUCTIONS_HEADER + focus + INSTRUCTIONS_TOOLS + self._schema_repository.retrieve_data(),
                 "cache_control": {"type": "ephemeral"},
             }]
             messages = self._message_processor.initial_messages(request=request)
@@ -168,18 +177,15 @@ class WikiQueryService:
                         turn = event
 
                 if turn is not None and turn.stop_reason == "tool_use":
-                    if self._has_foreign_ticker(turn=turn, request_ticker=request.ticker):
-                        yield self._fixed_answer_event(OUT_OF_SCOPE_MESSAGE.format(ticker=request.ticker))
+                    if self._has_foreign_ticker(turn=turn, allowed_tickers=request.tickers):
+                        yield self._fixed_answer_event(OUT_OF_SCOPE_MESSAGE.format(tickers=tickers_label))
                         return
                     messages.append({
                         "role": "assistant",
                         "content": self._message_processor.assistant_content(turn=turn),
                     })
                     yield WikiStreamEvent(type=WikiStreamEventType.STATUS, text=STATUS_CONSULTING)
-                    results = [
-                        self._dispatch(tool_use=tool_use, request_ticker=request.ticker)
-                        for tool_use in turn.tool_uses
-                    ]
+                    results = [self._dispatch(tool_use=tool_use) for tool_use in turn.tool_uses]
                     if any(not result["is_error"] for result in results):
                         grounded = True
                     messages.append({"role": "user", "content": results})
@@ -193,7 +199,7 @@ class WikiQueryService:
                     )
                     return
                 if not grounded:
-                    yield self._fixed_answer_event(UNGROUNDED_MESSAGE.format(ticker=request.ticker))
+                    yield self._fixed_answer_event(UNGROUNDED_MESSAGE.format(tickers=tickers_label))
                     return
                 citations = self._citation_processor.process(answer_text=answer_text)
                 yield WikiStreamEvent(
@@ -214,37 +220,40 @@ class WikiQueryService:
         except Exception as exc:
             yield self._error_event(category=WikiErrorCategory.INTERNAL, message=str(exc))
 
-    def _has_foreign_ticker(self, turn: WikiAgentEvent, request_ticker: str) -> bool:
-        """Report whether any tool call in the turn targets a different FIBRA.
+    def _has_foreign_ticker(self, turn: WikiAgentEvent, allowed_tickers: list[str]) -> bool:
+        """Report whether any tool call in the turn targets a ticker outside the allowed scope.
 
         Args:
             turn: The TURN_COMPLETE event whose stop_reason was "tool_use".
-            request_ticker: The FIBRA ticker this query is scoped to.
+            allowed_tickers: The FIBRA tickers this query may read from.
 
         Returns:
-            bool: True if at least one tool_use has a non-matching ``ticker``
-                argument (compared case-insensitively).
+            bool: True if at least one tool_use both carries a ``ticker`` argument
+                and that argument matches none of ``allowed_tickers``
+                (case-insensitive). A tool_use with no ``ticker`` argument never
+                counts as foreign.
         """
+        allowed = {ticker.casefold() for ticker in allowed_tickers}
         return any(
-            str(tool_use.input.get("ticker", "")).casefold() != request_ticker.casefold()
+            "ticker" in tool_use.input and str(tool_use.input["ticker"]).casefold() not in allowed
             for tool_use in turn.tool_uses
         )
 
-    def _dispatch(self, tool_use: WikiToolUse, request_ticker: str) -> dict:
+    def _dispatch(self, tool_use: WikiToolUse) -> dict:
         """Execute one (already scope-approved) tool call and return its tool_result.
 
         A bad tool call (missing arg, unknown page, cross-FIBRA name) becomes an
         ``is_error`` result rather than raising.
 
         Args:
-            tool_use: The requested tool call (id, name, input).
-            request_ticker: The FIBRA ticker this query is scoped to.
+            tool_use: The requested tool call (id, name, input), already validated
+                to target a ticker within the request's allowed scope.
 
         Returns:
             dict: An Anthropic ``tool_result`` block for ``tool_use.id``.
         """
         try:
-            content = self._run_tool(tool_use=tool_use, request_ticker=request_ticker)
+            content = self._run_tool(tool_use=tool_use)
             return self._message_processor.tool_result(
                 tool_use_id=tool_use.id, content=content, is_error=False,
             )
@@ -253,12 +262,13 @@ class WikiQueryService:
                 tool_use_id=tool_use.id, content=str(exc), is_error=True,
             )
 
-    def _run_tool(self, tool_use: WikiToolUse, request_ticker: str) -> str:
+    def _run_tool(self, tool_use: WikiToolUse) -> str:
         """Route a tool call to its repository/processor and return the raw payload.
 
         Args:
-            tool_use: The requested tool call.
-            request_ticker: The FIBRA ticker this query is scoped to.
+            tool_use: The requested tool call. Its own ``ticker`` input (not a
+                service-wide default) selects which FIBRA's data is read, since a
+                multi-ticker query can dispatch different tickers per call.
 
         Returns:
             str: The raw tool payload (wiki markdown, or fundamentals as JSON).
@@ -268,17 +278,18 @@ class WikiQueryService:
             ValueError: If the page name is malformed, or the tool name is unknown.
             KeyError: If a required tool argument is absent.
         """
+        ticker = tool_use.input["ticker"]
         if tool_use.name == "read_index":
-            return self._index_repository.retrieve_data(ticker=request_ticker.lower())
+            return self._index_repository.retrieve_data(ticker=ticker.lower())
         if tool_use.name == "read_page":
             return self._page_repository.retrieve_data(
-                ticker=request_ticker.lower(),
+                ticker=ticker.lower(),
                 page_name=tool_use.input["page_name"],
             )
         if tool_use.name == "read_fundamentals":
             records = self._fundamentals_filter.process(
                 records=self._fundamentals_repository.retrieve_data(),
-                ticker=request_ticker.upper(),
+                ticker=ticker.upper(),
                 period=tool_use.input.get("period"),
             )
             return json.dumps(
