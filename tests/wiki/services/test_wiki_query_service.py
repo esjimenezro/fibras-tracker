@@ -366,6 +366,17 @@ def test_answer_after_successful_tool_call_is_kept(make_service):
 
 # --- Terminal errors ------------------------------------------------------
 
+def test_empty_tickers_yields_internal_error_without_calling_the_agent(make_service):
+    """An empty tickers scope is a caller bug, not a normal out-of-scope/ungrounded case."""
+    agent = _FakeAgentRepository([[_turn_end("no debería llegar aquí")]])
+
+    result = make_service(agent).run(request=_request(tickers=[], primary_ticker=None))
+
+    assert result.status == ServiceStatus.ERROR
+    assert "tickers" in result.error_message
+    assert len(agent.calls) == 0
+
+
 def test_iteration_cap_without_answer_yields_incomplete(make_service):
     """Exhausting the tool-iteration cap ends with ERROR / INCOMPLETE."""
     turns = [

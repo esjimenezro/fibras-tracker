@@ -138,16 +138,20 @@ class WikiQueryService:
         A FINAL is also emitted, carrying a fixed reply, when the model calls a
         tool for a different FIBRA or answers without a successful in-scope tool
         call. Exhausting the cap, or a final turn with no text, yields
-        ERROR / INCOMPLETE.
+        ERROR / INCOMPLETE. An empty ``request.tickers`` is a caller bug (there is
+        no scope to answer within) and also yields ERROR / INTERNAL, rather than
+        assembling a prompt with nothing in scope.
 
         Args:
-            request: The wiki query (one FIBRA, one question plus history).
+            request: The wiki query (an allowed FIBRA scope, one question plus history).
 
         Returns:
             Iterator[WikiStreamEvent]: The event stream described above. Never
                 raises; failures become a terminal ERROR event.
         """
         try:
+            if not request.tickers:
+                raise ValueError("WikiQueryRequest.tickers must not be empty")
             tickers_label = ", ".join(request.tickers)
             focus = (
                 FOCUS_PRIMARY_TEMPLATE.format(primary_ticker=request.primary_ticker, tickers=tickers_label)

@@ -418,6 +418,44 @@ def test_tool_call_outside_allowed_tickers_aborts_with_fixed_reply(make_service)
     assert len(agent.calls) == 1
 ```
 
+- [x] **Step 5b (added during code review of ESJ-34): guard against an empty `tickers` scope**
+
+Code review on the PR flagged that `WikiQueryRequest.tickers` is documented as
+containing at least one item but nothing enforces it — with `tickers=[]` the
+service builds a broken prompt (`"...en igualdad de condiciones: ."`) and, if
+the model attempts any tool call, the scope guard treats every ticker as
+foreign and returns `OUT_OF_SCOPE_MESSAGE.format(tickers="")` as a normal
+`FINAL`/`OK` answer instead of rejecting the invalid request. Fixed in the
+service, not the model — this repo's models carry no validators (`Field`
+constraints included; none exist anywhere in `modules/*/models/`), so the
+"fail loud on invalid input" guard belongs where the request is acted on:
+
+In `modules/wiki/services/wiki_query_service.py`, at the top of the `try`
+block in `stream()`:
+```python
+try:
+    if not request.tickers:
+        raise ValueError("WikiQueryRequest.tickers must not be empty")
+    tickers_label = ", ".join(request.tickers)
+```
+This raises before any prompt is assembled or the agent is called; the
+existing generic `except Exception as exc` at the bottom of `stream()` turns
+it into a terminal `ERROR` / `INTERNAL` event like any other internal failure.
+
+Test, added to `tests/wiki/services/test_wiki_query_service.py` (in the
+"Terminal errors" section, before `test_iteration_cap_without_answer_yields_incomplete`):
+```python
+def test_empty_tickers_yields_internal_error_without_calling_the_agent(make_service):
+    """An empty tickers scope is a caller bug, not a normal out-of-scope/ungrounded case."""
+    agent = _FakeAgentRepository([[_turn_end("no debería llegar aquí")]])
+
+    result = make_service(agent).run(request=_request(tickers=[], primary_ticker=None))
+
+    assert result.status == ServiceStatus.ERROR
+    assert "tickers" in result.error_message
+    assert len(agent.calls) == 0
+```
+
 - [ ] **Step 6: Run the wiki test suite and lint**
 
 Run: `uv run pytest tests/wiki/ -v`
