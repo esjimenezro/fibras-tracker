@@ -6,6 +6,7 @@ import pytest
 from config import WIKI_QUERY_MAX_TOKENS
 from config import WIKI_QUERY_MAX_TOOL_ITERATIONS
 from config import WIKI_QUERY_MODEL
+from modules.common.repositories import JsonCatalogReadRepository
 from modules.common.schemas import ServiceStatus
 from modules.fundamentals.repositories import JsonFundamentalsReadRepository
 from modules.wiki.exceptions import WikiAgentError
@@ -19,6 +20,7 @@ from modules.wiki.models import WikiErrorCategory
 from modules.wiki.models import WikiQueryRequest
 from modules.wiki.models import WikiStreamEventType
 from modules.wiki.models import WikiToolUse
+from modules.wiki.repositories import FileSystemWikiCatalogReadRepository
 from modules.wiki.repositories import FileSystemWikiIndexReadRepository
 from modules.wiki.repositories import FileSystemWikiPageReadRepository
 from modules.wiki.repositories import FileSystemWikiSchemaReadRepository
@@ -101,6 +103,8 @@ def make_service():
             page_repository=FileSystemWikiPageReadRepository(),
             schema_repository=FileSystemWikiSchemaReadRepository(),
             fundamentals_repository=JsonFundamentalsReadRepository(),
+            catalog_repository=JsonCatalogReadRepository(),
+            wiki_catalog_repository=FileSystemWikiCatalogReadRepository(),
         )
     return _make
 
@@ -319,6 +323,34 @@ def test_tool_call_outside_allowed_tickers_aborts_with_fixed_reply(make_service)
     assert result.status == ServiceStatus.OK
     assert result.data.answer_text == OUT_OF_SCOPE_MESSAGE.format(tickers="FMTY14, DANHOS13")
     assert len(agent.calls) == 1
+
+
+def test_read_wiki_catalog_dispatch_lists_wiki_tickers(make_service):
+    """read_wiki_catalog returns the roster without needing a ticker argument."""
+    agent = _FakeAgentRepository([
+        [_turn_tool_use(_tool_use("t1", "read_wiki_catalog"))],
+        [_turn_end("ok")],
+    ])
+
+    make_service(agent).run(request=_request())
+
+    tool_result = agent.calls[1]["messages"][-1]["content"][0]
+    assert tool_result["is_error"] is False
+    assert "FMTY14" in tool_result["content"]
+    assert "DANHOS13" in tool_result["content"]
+
+
+def test_read_wiki_catalog_does_not_trigger_the_scope_guard(make_service):
+    """A read_wiki_catalog call (no ticker input) never counts as a foreign-ticker call."""
+    agent = _FakeAgentRepository([
+        [_turn_tool_use(_tool_use("t1", "read_wiki_catalog"))],
+        [_turn_end("Según el catálogo, hay 7 FIBRAs.")],
+    ])
+
+    result = make_service(agent).run(request=_request())
+
+    assert result.status == ServiceStatus.OK
+    assert result.data.answer_text == "Según el catálogo, hay 7 FIBRAs."
 
 
 # --- Grounding guard -----------------------------------------------------

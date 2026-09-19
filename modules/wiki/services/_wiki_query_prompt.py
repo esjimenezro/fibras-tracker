@@ -26,6 +26,14 @@ READ_FUNDAMENTALS_DESCRIPTION = (
     "tool cuando necesites un número exacto en vez de una cifra parafraseada en la wiki."
 )
 
+READ_WIKI_CATALOG_DESCRIPTION = (
+    "Devuelve la lista de FIBRAs que tienen wiki disponible, cada una con su "
+    "nombre, su exposición sectorial y un link a su propio índice. Sin "
+    "argumentos. Úsala cuando la pregunta mencione o sugiera otra FIBRA sin "
+    "decir cuál, para descubrir qué otras FIBRAs existen antes de decidir si "
+    "vale la pena abrir su wiki."
+)
+
 INSTRUCTIONS_HEADER = (
     "Eres un asistente que responde preguntas sobre FIBRAs mexicanas usando su "
     "wiki de contexto narrativo y sus cifras de fundamentals.json.\n\n"
@@ -45,13 +53,16 @@ FOCUS_COMPARISON_TEMPLATE = (
 )
 
 INSTRUCTIONS_TOOLS = (
-    "Tienes tres tools de solo lectura:\n"
+    "Tienes cuatro tools de solo lectura:\n"
+    "- read_wiki_catalog(): la lista de FIBRAs con wiki disponible, con nombre y sector.\n"
     "- read_index(ticker): el índice de navegación de la wiki de la FIBRA.\n"
     "- read_page(ticker, page_name): una página de trimestre (p. ej. \"2024-Q1\") o "
     "de concepto (p. ej. \"plan-crecimiento\").\n"
     "- read_fundamentals(ticker, period?): las cifras crudas para la FIBRA, "
     "opcionalmente filtradas por período (formato \"1T2026\").\n\n"
-    "Flujo: primero read_index para ubicar páginas candidatas; luego read_page para "
+    "Flujo: si la pregunta menciona o sugiere otra FIBRA sin nombrarla, usa primero "
+    "read_wiki_catalog para ubicarla; luego read_index para encontrar páginas "
+    "candidatas de cada FIBRA en el conjunto permitido; luego read_page para "
     "leerlas; usa read_fundamentals cuando necesites una cifra exacta. No inventes "
     "datos que no estén en la wiki o en fundamentals.\n\n"
     "Cita cada afirmación con el wikilink de la página de la que proviene, con el "
@@ -79,6 +90,15 @@ UNGROUNDED_MESSAGE = (
 )
 
 TOOL_SCHEMAS: list[dict] = [
+    {
+        "name": "read_wiki_catalog",
+        "description": READ_WIKI_CATALOG_DESCRIPTION,
+        "input_schema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+        },
+    },
     {
         "name": "read_index",
         "description": READ_INDEX_DESCRIPTION,

@@ -5,6 +5,8 @@ from typing import Optional
 from config import WIKI_QUERY_MAX_TOKENS
 from config import WIKI_QUERY_MAX_TOOL_ITERATIONS
 from config import WIKI_QUERY_MODEL
+from modules.common.repositories import JsonCatalogReadRepository
+from modules.common.repositories.base import BaseCatalogReadRepository
 from modules.common.schemas import ServiceStatus
 from modules.fundamentals.repositories import JsonFundamentalsReadRepository
 from modules.wiki.exceptions import WikiAgentError
@@ -22,12 +24,15 @@ from modules.wiki.models import WikiToolUse
 from modules.wiki.processors import CitationProcessor
 from modules.wiki.processors import FundamentalsQueryFilterProcessor
 from modules.wiki.processors import WikiMessageProcessor
+from modules.wiki.processors import WikiRosterProcessor
 from modules.wiki.repositories.base import BaseWikiAgentReadRepository
+from modules.wiki.repositories.base import BaseWikiCatalogReadRepository
 from modules.wiki.repositories.base import BaseWikiIndexReadRepository
 from modules.wiki.repositories.base import BaseWikiPageReadRepository
 from modules.wiki.repositories.base import BaseWikiSchemaReadRepository
 from modules.fundamentals.repositories.base import BaseFundamentalsReadRepository
 from modules.wiki.repositories import AnthropicWikiAgentReadRepository
+from modules.wiki.repositories import FileSystemWikiCatalogReadRepository
 from modules.wiki.repositories import FileSystemWikiIndexReadRepository
 from modules.wiki.repositories import FileSystemWikiPageReadRepository
 from modules.wiki.repositories import FileSystemWikiSchemaReadRepository
@@ -75,6 +80,8 @@ class WikiQueryService:
         page_repository: Optional[BaseWikiPageReadRepository] = None,
         schema_repository: Optional[BaseWikiSchemaReadRepository] = None,
         fundamentals_repository: Optional[BaseFundamentalsReadRepository] = None,
+        catalog_repository: Optional[BaseCatalogReadRepository] = None,
+        wiki_catalog_repository: Optional[BaseWikiCatalogReadRepository] = None,
     ):
         """Wire the service, defaulting each repository to its concrete implementation.
 
@@ -89,15 +96,22 @@ class WikiQueryService:
                 FileSystemWikiSchemaReadRepository.
             fundamentals_repository: Raw fundamentals reader. Defaults to
                 JsonFundamentalsReadRepository.
+            catalog_repository: FIBRA catalog reader, used by read_wiki_catalog.
+                Defaults to JsonCatalogReadRepository.
+            wiki_catalog_repository: Wiki ticker roster reader, used by
+                read_wiki_catalog. Defaults to FileSystemWikiCatalogReadRepository.
         """
         self._agent_repository = agent_repository or AnthropicWikiAgentReadRepository()
         self._index_repository = index_repository or FileSystemWikiIndexReadRepository()
         self._page_repository = page_repository or FileSystemWikiPageReadRepository()
         self._schema_repository = schema_repository or FileSystemWikiSchemaReadRepository()
         self._fundamentals_repository = fundamentals_repository or JsonFundamentalsReadRepository()
+        self._catalog_repository = catalog_repository or JsonCatalogReadRepository()
+        self._wiki_catalog_repository = wiki_catalog_repository or FileSystemWikiCatalogReadRepository()
         self._citation_processor = CitationProcessor()
         self._fundamentals_filter = FundamentalsQueryFilterProcessor()
         self._message_processor = WikiMessageProcessor()
+        self._roster_processor = WikiRosterProcessor()
 
     def run(self, request: WikiQueryRequest) -> WikiQueryServiceSchema:
         """Drain stream() and map its single terminal event to the output schema.
@@ -273,15 +287,22 @@ class WikiQueryService:
             tool_use: The requested tool call. Its own ``ticker`` input (not a
                 service-wide default) selects which FIBRA's data is read, since a
                 multi-ticker query can dispatch different tickers per call.
+                ``read_wiki_catalog`` takes no ``ticker`` at all.
 
         Returns:
-            str: The raw tool payload (wiki markdown, or fundamentals as JSON).
+            str: The raw tool payload (wiki markdown, roster text, or
+                fundamentals as JSON).
 
         Raises:
             FileNotFoundError: If a wiki page or index is missing.
             ValueError: If the page name is malformed, or the tool name is unknown.
             KeyError: If a required tool argument is absent.
         """
+        if tool_use.name == "read_wiki_catalog":
+            return self._roster_processor.process(
+                fibras=self._catalog_repository.retrieve_data(),
+                wiki_tickers=self._wiki_catalog_repository.retrieve_data(),
+            )
         ticker = tool_use.input["ticker"]
         if tool_use.name == "read_index":
             return self._index_repository.retrieve_data(ticker=ticker.lower())
