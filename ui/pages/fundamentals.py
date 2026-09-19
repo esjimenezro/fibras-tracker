@@ -56,26 +56,38 @@ def _load_wiki_catalog() -> WikiCatalogServiceSchema:
     return WikiCatalogService().run()
 
 
-def _render_wiki_chat(ticker: str) -> None:
-    """Render the per-ticker "Pregúntale a la wiki" chat below the detail chart.
+def _render_wiki_chat(
+    tickers: list[str],
+    primary_ticker: Optional[str],
+    thread_key: str,
+    placeholder: str,
+) -> None:
+    """Render a "Pregúntale a la wiki" chat scoped to one or more FIBRAs.
 
-    Conversation history is kept per ticker in ``st.session_state["wiki_chat"]`` so
-    switching FIBRA preserves each thread. The WikiQueryService stream is consumed
-    here (never cached): TEXT events grow a placeholder, STATUS events show a
-    progress caption, and the terminal FINAL/ERROR event renders the answer with
-    its sources line or an inline banner keyed by ``error_category``.
+    Conversation history is kept per ``thread_key`` in
+    ``st.session_state["wiki_chat"]`` so switching FIBRA (Detalle) or FIBRA
+    combination (Comparativa) preserves each thread independently. The
+    WikiQueryService stream is consumed here (never cached): TEXT events grow a
+    placeholder, STATUS events show a progress caption, and the terminal
+    FINAL/ERROR event renders the answer with its sources line or an inline
+    banner keyed by ``error_category``.
 
     Args:
-        ticker: BMV ticker of the selected FIBRA (e.g. "DANHOS13").
+        tickers: BMV tickers this query may read from.
+        primary_ticker: The FIBRA the answer should focus on by default, or
+            None for a comparison across all of ``tickers``.
+        thread_key: Session-state key identifying this conversation thread (a
+            single ticker for Detalle, a sorted combination for Comparativa).
+        placeholder: Text shown inside the empty chat input box.
     """
     threads: dict[str, list[WikiChatMessage]] = st.session_state.setdefault("wiki_chat", {})
-    history = threads.setdefault(ticker, [])
+    history = threads.setdefault(thread_key, [])
 
     for message in history:
         with st.chat_message(message.role):
             st.markdown(message.content)
 
-    question = st.chat_input(f"Pregunta sobre {ticker}…")
+    question = st.chat_input(placeholder)
     if not question:
         return
 
@@ -83,8 +95,8 @@ def _render_wiki_chat(ticker: str) -> None:
         st.markdown(question)
 
     request = WikiQueryRequest(
-        tickers=[ticker],
-        primary_ticker=ticker,
+        tickers=tickers,
+        primary_ticker=primary_ticker,
         question=question,
         history=list(history),
     )
@@ -176,7 +188,12 @@ with detalle_tab:
             "(copiá `.env.example` a `.env` y completá la clave)."
         )
     else:
-        _render_wiki_chat(ticker=selected_ticker)
+        _render_wiki_chat(
+            tickers=wiki_catalog.data,
+            primary_ticker=selected_ticker,
+            thread_key=selected_ticker,
+            placeholder=f"Pregunta sobre {selected_ticker}…",
+        )
 
 with comparativa_tab:
     render_comparison_table(
