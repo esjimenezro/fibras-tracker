@@ -854,7 +854,9 @@ Create `scripts/generate_wiki_root_index.py`:
 """Regenerate wiki/index.md from catalog.json + the wiki/ directory roster.
 
 Run manually whenever the roster of FIBRAs with a wiki changes (a rare event —
-see wiki/SCHEMA.md, "Múltiples FIBRAs"). Not part of the per-quarter ingest.
+see wiki/SCHEMA.md, "Múltiples FIBRAs"), or whenever catalog.json's ``name`` or
+``sector_exposure`` changes for a FIBRA that already has a wiki, since both are
+embedded in the generated lines. Not part of the per-quarter ingest.
 
 Usage (from the repo root, so "config" and "modules" resolve on sys.path):
     uv run python -m scripts.generate_wiki_root_index
