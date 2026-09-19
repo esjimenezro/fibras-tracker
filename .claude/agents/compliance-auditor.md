@@ -22,7 +22,7 @@ standard is what this project's own docs say, not a generic style guide.
 
 ## What to check
 
-Work through the codebase (`modules/`, `ui/`, `scripts/`, `tests/`, `config.py`, `app.py`) and
+Work through the codebase (`src/modules/`, `src/ui/`, `scripts/`, `tests/`, `src/config.py`, `src/app.py`) and
 verify it matches CLAUDE.md, in particular:
 
 - **Layer flow** (`pages/ → services/ → repositories/` with `processors/` beside `services/`):

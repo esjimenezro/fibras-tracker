@@ -5,10 +5,11 @@ from dotenv import load_dotenv
 
 # Path configurations
 BASE_DIR = Path(__file__).parent
+PROJECT_ROOT = BASE_DIR.parent
 
 # Load variables from a local .env in the repo root before anything else reads the environment
-load_dotenv(dotenv_path=BASE_DIR / ".env", override=False)
-DATA_DIR = BASE_DIR / "data"
+load_dotenv(dotenv_path=PROJECT_ROOT / ".env", override=False)
+DATA_DIR = PROJECT_ROOT / "data"
 
 POSITIONS_DATA_PATH = DATA_DIR / "positions.json"
 DISTRIBUTIONS_DATA_PATH = DATA_DIR / "distributions.json"
@@ -17,7 +18,7 @@ CATALOG_DATA_PATH = DATA_DIR / "catalog.json"
 INFLATION_DATA_PATH = DATA_DIR / "inflation.json"
 
 # Wiki (narrative context) — root and shared schema for modules/wiki/
-WIKI_DIR = BASE_DIR / "wiki"
+WIKI_DIR = PROJECT_ROOT / "wiki"
 WIKI_SCHEMA_PATH = WIKI_DIR / "SCHEMA.md"
 
 # Wiki query module (ESJ-13): agentic tool-use chat over a single FIBRA's wiki

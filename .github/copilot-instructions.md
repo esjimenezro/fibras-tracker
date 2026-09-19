@@ -84,7 +84,7 @@ Full detail, a worked example, and known exceptions:
   `status=ServiceStatus.ERROR, error_message=str(exc)` — or, for `WikiQueryService.stream()`, a
   terminal `ERROR` stream event carrying an `error_category`.
 - Domain-specific exceptions (`WikiAuthError`, `WikiRateLimitError`, `WikiConnectionError`,
-  `WikiAgentError` in `modules/wiki/exceptions.py`) wrap third-party SDK exceptions at the one
+  `WikiAgentError` in `src/modules/wiki/exceptions.py`) wrap third-party SDK exceptions at the one
   module allowed to import that SDK. A third-party exception type must never leak past that
   boundary.
 

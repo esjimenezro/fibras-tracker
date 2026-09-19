@@ -26,7 +26,7 @@ in this order. Do not merge them into general prose.
    - For each finding: name the specific rule violated (e.g. "Rule 2 — Pages call services,
      never repositories") and cite the diff line.
    - Do not flag the known, already-documented import-order debt in
-     `modules/wiki/services/wiki_query_service.py` as a new finding unless the diff makes it
+     `src/modules/wiki/services/wiki_query_service.py` as a new finding unless the diff makes it
      worse.
 
 Each section stands on its own — a clean result in one section does not excuse skipping the

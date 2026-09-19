@@ -122,55 +122,57 @@ Each entity has an abstract interface in `repositories/base/` that defines the `
 
 ```
 fibras-tracker/
-├── app.py                      ← Streamlit entry point (registers pages via st.navigation)
-├── config.py                   ← file paths, FIBRALens branding, business constants
-├── ui/
-│   ├── assets/                 ← static files (SVG logo)
-│   ├── components/
-│   │   ├── common/             ← shared: page_header, error_banner
-│   │   ├── portfolio/          ← summary_card, positions_table, distributions_chart, sector_chart
-│   │   └── fundamentals/       ← detail_header, detail_chart, comparison_table, comparison_chart, citations
-│   ├── pages/                  ← Streamlit page scripts (one per module)
-│   │   ├── home.py
-│   │   ├── portfolio.py
-│   │   ├── fundamentals.py
-│   │   └── radar.py            ← placeholder ("Próximamente")
-│   └── styles/
-│       └── theme.py            ← color constants, number formatters, CSS injection
-├── modules/
-│   ├── common/
-│   │   ├── models/             ← Sector, SectorExposure, Fibra, PaymentFrequency, MarketPrice, InflationRecord
-│   │   ├── repositories/       ← catalog, market price, and inflation repositories
-│   │   │   └── base/           ← abstract interfaces
-│   │   └── schemas/            ← ServiceStatus (shared across all modules)
-│   ├── portfolio/
-│   │   ├── models/             ← Position, EnrichedPosition, Distribution, EnrichedDistribution,
-│   │   │                         Portfolio (PositionShare, SectorShare)
-│   │   ├── repositories/       ← data access layer
-│   │   │   └── base/           ← abstract interfaces
-│   │   ├── processors/         ← DistributionsProcessor, PositionsProcessor, PortfolioProcessor
-│   │   ├── schemas/            ← PortfolioDataRetrieverServiceSchema
-│   │   └── services/           ← PortfolioDataRetrieverService
-│   ├── fundamentals/
-│   │   ├── models/             ← FundamentalsRecord, EnrichedFundamentalsRecord,
-│   │   │                         AnnualFundamentalsRecord, FibraMetrics, FundamentalsHistory
-│   │   ├── repositories/       ← data access layer
-│   │   │   └── base/           ← abstract interfaces
-│   │   ├── processors/         ← FundamentalsProcessor, AnnualFundamentalsProcessor,
-│   │   │                         FundamentalsHistoryProcessor
-│   │   ├── schemas/            ← FundamentalsDataRetrieverServiceSchema
-│   │   └── services/           ← FundamentalsDataRetrieverService
-│   ├── wiki/                   ← "Ask the wiki" chat pipeline (agentic, not a data transform)
-│   │   ├── models/             ← WikiChatMessage, WikiQueryRequest/Response, WikiAnswer,
-│   │   │                         WikiAgentEvent, WikiStreamEvent (+ their StrEnums), WikiToolUse
-│   │   ├── exceptions.py       ← WikiAgentError + WikiAuthError/WikiRateLimitError/WikiConnectionError
-│   │   ├── repositories/       ← file-system wiki content repos (index/page/schema/catalog) +
-│   │   │   └── base/             AnthropicWikiAgentReadRepository (the only module that imports `anthropic`)
-│   │   ├── processors/         ← CitationProcessor, FundamentalsQueryFilterProcessor,
-│   │   │                         WikiMessageProcessor, WikiRosterProcessor
-│   │   ├── schemas/            ← WikiQueryServiceSchema, WikiCatalogServiceSchema
-│   │   └── services/           ← WikiQueryService (tool loop + dispatch), WikiCatalogService
-│   └── radar/                  ← (empty — reserved)
+├── pyproject.toml, uv.lock, requirements.txt, .python-version, .flake8  ← Python tooling (repo root)
+├── src/                         ← app code, isolated from root-level config/docs
+│   ├── app.py                   ← Streamlit entry point (registers pages via st.navigation)
+│   ├── config.py                ← file paths, FIBRALens branding, business constants
+│   ├── ui/
+│   │   ├── assets/                 ← static files (SVG logo)
+│   │   ├── components/
+│   │   │   ├── common/             ← shared: page_header, error_banner
+│   │   │   ├── portfolio/          ← summary_card, positions_table, distributions_chart, sector_chart
+│   │   │   └── fundamentals/       ← detail_header, detail_chart, comparison_table, comparison_chart, citations
+│   │   ├── pages/                  ← Streamlit page scripts (one per module)
+│   │   │   ├── home.py
+│   │   │   ├── portfolio.py
+│   │   │   ├── fundamentals.py
+│   │   │   └── radar.py            ← placeholder ("Próximamente")
+│   │   └── styles/
+│   │       └── theme.py            ← color constants, number formatters, CSS injection
+│   └── modules/
+│       ├── common/
+│       │   ├── models/             ← Sector, SectorExposure, Fibra, PaymentFrequency, MarketPrice, InflationRecord
+│       │   ├── repositories/       ← catalog, market price, and inflation repositories
+│       │   │   └── base/           ← abstract interfaces
+│       │   └── schemas/            ← ServiceStatus (shared across all modules)
+│       ├── portfolio/
+│       │   ├── models/             ← Position, EnrichedPosition, Distribution, EnrichedDistribution,
+│       │   │                         Portfolio (PositionShare, SectorShare)
+│       │   ├── repositories/       ← data access layer
+│       │   │   └── base/           ← abstract interfaces
+│       │   ├── processors/         ← DistributionsProcessor, PositionsProcessor, PortfolioProcessor
+│       │   ├── schemas/            ← PortfolioDataRetrieverServiceSchema
+│       │   └── services/           ← PortfolioDataRetrieverService
+│       ├── fundamentals/
+│       │   ├── models/             ← FundamentalsRecord, EnrichedFundamentalsRecord,
+│       │   │                         AnnualFundamentalsRecord, FibraMetrics, FundamentalsHistory
+│       │   ├── repositories/       ← data access layer
+│       │   │   └── base/           ← abstract interfaces
+│       │   ├── processors/         ← FundamentalsProcessor, AnnualFundamentalsProcessor,
+│       │   │                         FundamentalsHistoryProcessor
+│       │   ├── schemas/            ← FundamentalsDataRetrieverServiceSchema
+│       │   └── services/           ← FundamentalsDataRetrieverService
+│       ├── wiki/                   ← "Ask the wiki" chat pipeline (agentic, not a data transform)
+│       │   ├── models/             ← WikiChatMessage, WikiQueryRequest/Response, WikiAnswer,
+│       │   │                         WikiAgentEvent, WikiStreamEvent (+ their StrEnums), WikiToolUse
+│       │   ├── exceptions.py       ← WikiAgentError + WikiAuthError/WikiRateLimitError/WikiConnectionError
+│       │   ├── repositories/       ← file-system wiki content repos (index/page/schema/catalog) +
+│       │   │   └── base/             AnthropicWikiAgentReadRepository (the only module that imports `anthropic`)
+│       │   ├── processors/         ← CitationProcessor, FundamentalsQueryFilterProcessor,
+│       │   │                         WikiMessageProcessor, WikiRosterProcessor
+│       │   ├── schemas/            ← WikiQueryServiceSchema, WikiCatalogServiceSchema
+│       │   └── services/           ← WikiQueryService (tool loop + dispatch), WikiCatalogService
+│       └── radar/                  ← (empty — reserved)
 ├── scripts/
 │   └── generate_wiki_root_index.py  ← regenerates wiki/index.md from catalog.json + the wiki roster
 ├── tests/
@@ -195,6 +197,13 @@ fibras-tracker/
         └── log.md                 ← ingest/change history
 ```
 
+`data/` and `wiki/` are siblings of `src/` at the repo root, not nested inside it — `config.py`
+resolves both from `PROJECT_ROOT = Path(__file__).parent.parent`. `modules` and `ui` remain
+top-level import names (imports are unchanged); `pyproject.toml` sets
+`[tool.pytest.ini_options] pythonpath = ["src"]` so `tests/` resolves them, and the app is run
+with `src/` as the working directory (see "Setup and installation" below) so `ui/assets/...`
+inside `config.py` still resolves.
+
 ---
 
 ## UI layer
@@ -217,7 +226,7 @@ fibras-tracker/
    - Wrap the service call in `@st.cache_data(ttl=300)`.
    - Check `result.status`; call `render_error_banner()` + `st.stop()` on error.
    - Render components section by section with `st.divider()`.
-2. Register it in `app.py` inside `st.navigation([…])`:
+2. Register it in `src/app.py` inside `st.navigation([…])`:
    ```python
    st.Page("ui/pages/<name>.py", title="Page Title", icon="emoji")
    ```
@@ -697,16 +706,19 @@ cp .env.example .env
 ```
 
 Then set `ANTHROPIC_API_KEY` in `.env`. It is required only by the "Pregúntale a la wiki"
-chat inside the Fundamentales page; the rest of the app runs without it. `config.py` loads
-`.env` via `python-dotenv` on import.
+chat inside the Fundamentales page; the rest of the app runs without it. `.env` and
+`config.py` both live one level apart (`.env` at the repo root, `config.py` in `src/`);
+`config.py` resolves the repo root itself and loads `.env` from there via `python-dotenv`.
 
 **Run the app:**
 
 ```bash
-uv run streamlit run app.py
+cd src && uv run streamlit run app.py
 # or without uv:
-streamlit run app.py
+cd src && streamlit run app.py
 ```
+
+The app is run from `src/` so relative paths inside it (e.g. `ui/assets/...`) resolve correctly.
 
 Live market prices require an internet connection. If Yahoo Finance is unreachable, the app will display an error returned by `PortfolioDataRetrieverService`.
 
@@ -746,7 +758,7 @@ Google style, mandatory on every class and method:
 ### Linting
 
 ```bash
-flake8 modules/ tests/
+flake8 src/ tests/
 ```
 
 Max line length: 200 characters (configured in `.flake8`).

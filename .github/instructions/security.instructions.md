@@ -1,5 +1,5 @@
 ---
-applyTo: "modules/**/*.py,ui/**/*.py,scripts/**/*.py,tests/**/*.py,app.py,config.py"
+applyTo: "src/modules/**/*.py,src/ui/**/*.py,scripts/**/*.py,tests/**/*.py,src/app.py,src/config.py"
 ---
 
 # Security review — fibras-tracker
@@ -20,8 +20,8 @@ Yahoo Finance APIs. Review against the categories below, in order.
   ultimately traces back to a data file, PDF, or model output.
 - **Template/HTML injection (this repo's actual injection surface)**: several UI components pass
   raw f-string HTML into Streamlit's `unsafe_allow_html=True`
-  (`ui/components/common/page_header.py`, `ui/components/fundamentals/comparison_table.py`,
-  `ui/styles/theme.py`). Today every interpolated value comes from `catalog.json` or
+  (`src/ui/components/common/page_header.py`, `src/ui/components/fundamentals/comparison_table.py`,
+  `src/ui/styles/theme.py`). Today every interpolated value comes from `catalog.json` or
   `fundamentals.json` — developer-controlled, not runtime user input.
 
   **Vulnerable** — interpolating text that ultimately comes from a user-typed question or an LLM
@@ -31,7 +31,7 @@ Yahoo Finance APIs. Review against the categories below, in order.
   st.markdown(f"<div class='answer'>{terminal.data.answer_text}</div>", unsafe_allow_html=True)
   ```
   **Secure** — the pattern this repo already uses for `_render_wiki_chat` in
-  `ui/pages/fundamentals.py`: render user/model text through plain `st.markdown(answer_text)`
+  `src/ui/pages/fundamentals.py`: render user/model text through plain `st.markdown(answer_text)`
   (no `unsafe_allow_html`), and reserve `unsafe_allow_html` for strings built entirely from
   trusted, developer-controlled data (catalog names, formatted numbers, static CSS):
   ```python
@@ -44,7 +44,7 @@ Yahoo Finance APIs. Review against the categories below, in order.
 ## 2. Hardcoded credentials / secrets
 
 - The only credential in this app is `ANTHROPIC_API_KEY`, read via `os.environ` /
-  `python-dotenv`'s `load_dotenv()` in `config.py`. Never hardcoded, never logged — confirm any
+  `python-dotenv`'s `load_dotenv()` in `src/config.py`. Never hardcoded, never logged — confirm any
   new logging statement near `AnthropicWikiAgentReadRepository` or `WikiQueryService` logs
   `request_id`/token usage, not the key or full request/response bodies.
 - Flag any string literal that looks like a key (`sk-ant-...`, a bearer token, a password) in
@@ -58,7 +58,7 @@ Yahoo Finance APIs. Review against the categories below, in order.
 - No `pickle`, no `yaml.load` with an unsafe loader, no `eval`/`exec` on external content exist
   in this repo today. Flag any of these if introduced.
 - The safe pattern already in use: every `data/*.json` file is parsed straight into a Pydantic
-  model on read (e.g. `modules/common/repositories/json_catalog_read_repository.py`:
+  model on read (e.g. `src/modules/common/repositories/json_catalog_read_repository.py`:
   `[Fibra(**item) for item in data["fibras"]]`), so malformed shape is rejected at the boundary
   by Pydantic's own validation rather than trusted blindly downstream. Any new JSON/external-data
   reader should follow the same immediate-validation pattern.
@@ -67,11 +67,11 @@ Yahoo Finance APIs. Review against the categories below, in order.
 
 This app has one real external-input boundary worth scrutinizing closely: **`tool_use.input`** —
 an arbitrary dict the Anthropic model constructs during the agentic wiki chat
-(`modules/wiki/services/wiki_query_service.py`). It is not fully trusted: its contents can be
+(`src/modules/wiki/services/wiki_query_service.py`). It is not fully trusted: its contents can be
 steered by injected text inside a wiki page or a source PDF transcription (indirect prompt
 injection), and it is used to build filesystem paths under `wiki/`.
 
-The repo's own correct pattern — `modules/wiki/repositories/wiki_slug_guard.py` — is the
+The repo's own correct pattern — `src/modules/wiki/repositories/wiki_slug_guard.py` — is the
 reference for any new code that turns model- or user-supplied text into a path segment:
 
 **Vulnerable** — using a model-supplied value directly in a path:
@@ -101,7 +101,7 @@ raw `.replace("..", "")`.
 - `FileSystemWikiPageReadRepository` also rejects any `page_name` containing `/` outright (the
   cross-FIBRA wikilink form is out of scope for that call) — flag any change that loosens this
   without an explicit, reviewed reason.
-- Flag any new tool schema (in `modules/wiki/services/_wiki_query_prompt.py`) whose
+- Flag any new tool schema (in `src/modules/wiki/services/_wiki_query_prompt.py`) whose
   `input_schema` accepts a free-form string that later reaches a filesystem path, a subprocess
   argument, or a URL, without a validation step matching the pattern above.
 

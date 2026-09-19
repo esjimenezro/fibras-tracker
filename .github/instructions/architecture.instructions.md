@@ -1,5 +1,5 @@
 ---
-applyTo: "modules/**/*.py,ui/**/*.py,scripts/**/*.py"
+applyTo: "src/modules/**/*.py,src/ui/**/*.py,scripts/**/*.py"
 ---
 
 # Architecture rules — fibras-tracker
@@ -18,7 +18,7 @@ otherwise.
 `ui/components/**` render functions receive only `.models`/`.schemas` instances the page already
 fetched. They must never import `modules.*.services` or `modules.*.repositories`.
 
-**Correct** (`ui/components/fundamentals/detail_header.py` pattern):
+**Correct** (`src/ui/components/fundamentals/detail_header.py` pattern):
 ```python
 def render_detail_header(
     record: EnrichedFundamentalsRecord,
@@ -41,7 +41,7 @@ Flag any new `import` of `modules.*.services` or `modules.*.repositories` inside
 `ui/pages/**` may only call a `<Module>Service`. Verified with zero exceptions in both
 `fundamentals.py` and `portfolio.py` today.
 
-**Correct** (`ui/pages/fundamentals.py`):
+**Correct** (`src/ui/pages/fundamentals.py`):
 ```python
 @st.cache_data(ttl=300, show_spinner="Cargando datos fundamentales...")
 def _load_fundamentals() -> FundamentalsDataRetrieverServiceSchema:
@@ -61,7 +61,7 @@ never passed in. The public `run()`/`stream()` wraps the whole pipeline in
 escape.
 
 **Correct** — the repo's own reference implementation,
-`modules/fundamentals/services/fundamentals_data_retriever_service.py`:
+`src/modules/fundamentals/services/fundamentals_data_retriever_service.py`:
 ```python
 class FundamentalsDataRetrieverService:
     def __init__(
@@ -94,7 +94,7 @@ def run(self) -> FundamentalsHistory:  # ✗ returns the raw model, not a schema
 Concrete repository classes take no `__init__` at all (verified: zero `__init__` methods across
 every file in `modules/*/repositories/`). Anything dynamic is a parameter of `retrieve_data`.
 
-**Correct** (`modules/wiki/repositories/file_system_wiki_index_read_repository.py` pattern):
+**Correct** (`src/modules/wiki/repositories/file_system_wiki_index_read_repository.py` pattern):
 ```python
 class FileSystemWikiIndexReadRepository(BaseWikiIndexReadRepository):
     def retrieve_data(self, ticker: str) -> str:
@@ -118,7 +118,7 @@ never `services/`, `processors/`, or `pages/`. Flag any change to a service/proc
 No `__init__`, no I/O, no imports of `modules.*.repositories`. Invalid or empty input raises
 (usually `ValueError`) rather than silently defaulting.
 
-**Correct** (`modules/portfolio/processors/positions_processor.py`):
+**Correct** (`src/modules/portfolio/processors/positions_processor.py`):
 ```python
 if market_price is None:
     raise ValueError(f"No market price found for ticker '{position.ticker}'")
@@ -181,7 +181,7 @@ from modules.fundamentals.services import FundamentalsDataRetrieverService
 
 ### Known architecture debt
 
-`modules/wiki/services/wiki_query_service.py` currently violates Rule 7: the internal-import
+`src/modules/wiki/services/wiki_query_service.py` currently violates Rule 7: the internal-import
 block interleaves `modules.fundamentals.repositories(.base)` imports in the middle of a run of
 `modules.wiki.repositories.base` imports instead of grouping `modules.fundamentals` before
 `modules.wiki` (or otherwise keeping a stable, sorted order). This is **not** the pattern to

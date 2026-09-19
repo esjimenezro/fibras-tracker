@@ -38,16 +38,16 @@ of how small the diff is:
     ticker, filename, or any value tracing back to a data file, PDF, or model output.
   - **Template/HTML injection — this repo's actual injection surface.** Several UI components pass
     raw f-string HTML into Streamlit's `unsafe_allow_html=True`
-    (`ui/components/common/page_header.py`, `ui/components/fundamentals/comparison_table.py`,
-    `ui/styles/theme.py`). Today every interpolated value there comes from `catalog.json` /
+    (`src/ui/components/common/page_header.py`, `src/ui/components/fundamentals/comparison_table.py`,
+    `src/ui/styles/theme.py`). Today every interpolated value there comes from `catalog.json` /
     `fundamentals.json` (developer-controlled). Flag any new `unsafe_allow_html=True` call whose
     interpolated value includes a user-typed string, an LLM-generated string, or anything read
     from `wiki/*/sources/` or `wiki/*/pages/` (transcribed from external PDFs) — e.g.
     `st.markdown(f"<div>{terminal.data.answer_text}</div>", unsafe_allow_html=True)` is Important.
     The safe, already-used pattern is plain `st.markdown(answer_text)` with no
-    `unsafe_allow_html` (see `_render_wiki_chat` in `ui/pages/fundamentals.py`).
+    `unsafe_allow_html` (see `_render_wiki_chat` in `src/ui/pages/fundamentals.py`).
 - **Hardcoded credentials/secrets**: `ANTHROPIC_API_KEY` is the only credential, read via
-  `os.environ`/`python-dotenv` in `config.py` — flag any literal that looks like a key
+  `os.environ`/`python-dotenv` in `src/config.py` — flag any literal that looks like a key
   (`sk-ant-...`, a bearer token, a password) in source, tests, or fixtures; any new logging near
   `AnthropicWikiAgentReadRepository`/`WikiQueryService` that logs the key or a full request/response
   body instead of just `request_id`/token usage; any credential stored outside `.env` (e.g. a
@@ -60,14 +60,14 @@ of how small the diff is:
   the same immediate-validation pattern instead of trusting a raw `dict` downstream.
 - **Missing input validation**, especially the one real external-input boundary in this app:
   `tool_use.input` — an arbitrary dict the Anthropic model constructs during the agentic wiki chat
-  (`modules/wiki/services/wiki_query_service.py`). It is not fully trusted (indirect prompt
+  (`src/modules/wiki/services/wiki_query_service.py`). It is not fully trusted (indirect prompt
   injection via wiki/source-PDF content can steer it) and is used to build filesystem paths under
-  `wiki/`. The reference pattern is `modules/wiki/repositories/wiki_slug_guard.py::validate_wiki_slug`
+  `wiki/`. The reference pattern is `src/modules/wiki/repositories/wiki_slug_guard.py::validate_wiki_slug`
   — any new code that turns a `tool_use.input[...]` value, or a Streamlit free-text widget value,
   into a path segment, filename, or shell argument must validate it through an equivalent allowlist
   regex, never a denylist or an ad hoc `.replace("..", "")`. Also flag any change that loosens
   `FileSystemWikiPageReadRepository`'s rejection of `/` in a `page_name`, or any new tool schema in
-  `modules/wiki/services/_wiki_query_prompt.py` whose `input_schema` accepts a free-form string
+  `src/modules/wiki/services/_wiki_query_prompt.py` whose `input_schema` accepts a free-form string
   that later reaches a path/subprocess argument/URL without going through this validation.
 - **Auth/authorization**: this is a single-user local app with no login/sessions — do not invent a
   missing login system as a finding. The one access-control-adjacent concern is the wiki ticker
@@ -94,7 +94,7 @@ Report as Important any violation of the rules documented in `CLAUDE.md`, in par
   validator; a processor-derived field added to a raw model instead of an `Enriched<Name>`
   subclass.
 - `modules/wiki/` conventions: any file outside
-  `modules/wiki/repositories/anthropic_wiki_agent_read_repository.py` importing `anthropic`
+  `src/modules/wiki/repositories/anthropic_wiki_agent_read_repository.py` importing `anthropic`
   directly instead of working with `WikiAgentEvent`/`WikiStreamEvent`/the domain exceptions.
 - If the diff shows the *same* pattern handled inconsistently in old vs. new code (e.g. one
   repository following the constructor convention and a new one not), call this out explicitly
