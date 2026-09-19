@@ -27,6 +27,7 @@ env/
 .idea/
 *.swp
 *.swo
+.obsidian/
 
 # OS
 .DS_Store
