@@ -208,3 +208,23 @@ with comparativa_tab:
         fibras=history.fibras,
         inflation_records=history.inflation_records,
     )
+
+    st.divider()
+    st.subheader("💬 Pregúntale a la wiki (comparativo)")
+    wiki_catalog = _load_wiki_catalog()
+    if wiki_catalog.status == ServiceStatus.ERROR:
+        st.error("No se pudo leer el catálogo de wikis.")
+        st.caption(wiki_catalog.error_message)
+    elif not os.environ.get("ANTHROPIC_API_KEY"):
+        st.info(
+            "El chat de wiki necesita configurar `ANTHROPIC_API_KEY` en el archivo `.env` "
+            "(copiá `.env.example` a `.env` y completá la clave)."
+        )
+    else:
+        st.caption("FIBRAs disponibles: " + ", ".join(wiki_catalog.data))
+        _render_wiki_chat(
+            tickers=wiki_catalog.data,
+            primary_ticker=None,
+            thread_key="comparativa",
+            placeholder="Pregunta comparando dos o más FIBRAs…",
+        )

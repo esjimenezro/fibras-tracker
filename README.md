@@ -100,17 +100,17 @@ list[EnrichedFundamentalsRecord] + list[Fibra]
 **Wiki** (`modules/wiki/`)
 
 ```
-WikiQueryRequest (ticker, question, history)
-  → [WikiQueryService] — agentic tool loop over three read-only tools
-      (wiki index / wiki page / fundamentals lookup), dispatched through
-      AnthropicWikiAgentReadRepository (one call = one model turn)
+WikiQueryRequest (tickers, primary_ticker, question, history)
+  → [WikiQueryService] — agentic tool loop over four read-only tools
+      (wiki catalog / wiki index / wiki page / fundamentals lookup), dispatched
+      through AnthropicWikiAgentReadRepository (one call = one model turn)
   → stream of WikiStreamEvent (TEXT / STATUS / terminal FINAL or ERROR)
 ```
 
 Unlike the Portfolio and Fundamentals pipelines, this is not a pure data transformation: the
 service drives a multi-turn conversation with the model, dispatching tool calls to the wiki content
 repositories (`wiki/<ticker>/`) and the fundamentals repository, until the model produces a grounded
-answer or the loop hits a guard (ticker out of scope, no grounding, provider error).
+answer or the loop hits a guard (ticker outside the allowed scope, no grounding, provider error).
 
 ### Repository pattern
 
@@ -233,11 +233,12 @@ The fundamentals page (`ui/pages/fundamentals.py`) calls `FundamentalsDataRetrie
 1. A FIBRA selectbox.
 2. `render_detail_header(record, fibra, prior_year_record)` — four KPI sections (operation & debt; generation & distribution per CBFI; market valuation; distribution predictability), with traffic-light icons on threshold metrics (margins, occupancy, LTV) and year-over-year deltas on FFO/AFFO per CBFI and NAV.
 3. `render_detail_chart(records, annual_records, inflation_records)` — a single **KPI_CONFIG**-driven indicator selector plus a Trimestral/Anual radio toggle. KPI_CONFIG is one dictionary that defines every selectable indicator (label, quarterly/annual source fields, chart `kind`, format, thresholds). Three chart kinds are rendered: `single` (one line, optional threshold bands and inflation reference), `combined` (multi-line with a Total/Margen/Por CBFI mode toggle), and `dual_axis` (two Y-axes).
-4. **💬 Pregúntale a la wiki** — a chat scoped to the selected FIBRA, shown only when `wiki/<ticker>/` exists (checked via `WikiCatalogService().run()`, cached, which returns BMV tickers) and `ANTHROPIC_API_KEY` is set. The page script owns the orchestration: per-ticker history in `st.session_state`, `WikiQueryService().stream(request)` consumed inline (never cached), TEXT events grow an `st.empty()` placeholder, STATUS events show a progress caption, and the terminal `FINAL`/`ERROR` event renders the answer with `render_citations(...)` or an inline banner keyed by `error_category`.
+4. **💬 Pregúntale a la wiki** — a chat anchored on the selected FIBRA but scoped to every FIBRA with a wiki (via `read_wiki_catalog`, so the model can discover and read another FIBRA's wiki when a question calls for it), shown only when `wiki/<ticker>/` exists (checked via `WikiCatalogService().run()`, cached, which returns BMV tickers) and `ANTHROPIC_API_KEY` is set. The page script owns the orchestration: per-ticker history in `st.session_state`, `WikiQueryService().stream(request)` consumed inline (never cached), TEXT events grow an `st.empty()` placeholder, STATUS events show a progress caption, and the terminal `FINAL`/`ERROR` event renders the answer with `render_citations(...)` or an inline banner keyed by `error_category`.
 
 **Comparativa tab**
 1. `render_comparison_table(latest_by_ticker, fibras, fibra_metrics, annual_records)` — an HTML evaluative table grouped into three supercolumns: **Propósito** (constant / growing / vs-inflation distribution), **Predictibilidad** (NAV, revenue, AFFO per-CBFI growth; payout ratio; occupancy; LTV), and **Contratos** (WALE, top tenant, top-10 tenants). FIBRAs with fewer than three complete annual years are greyed and suffixed with `*`.
 2. `render_comparison_chart(annual_records, fibras, inflation_records)` — a multi-FIBRA, multi-indicator chart. Direct indicators (payout ratio, LTV, occupancy) plot raw values; normalized indicators (distribution, AFFO, revenue, NAV per CBFI) rebase every series to **1000** at a common base year, and distribution adds an inflation reference line.
+3. **💬 Pregúntale a la wiki (comparativo)** — shown directly (same `ANTHROPIC_API_KEY`/catalog gating as Detalle), scoped to every FIBRA with a wiki with no default focus (`WikiQueryRequest.primary_ticker = None`) and no FIBRA picker: the user asks about any combination directly and the model discovers which FIBRAs to read via `read_wiki_catalog`. Reuses the same `_render_wiki_chat` helper as Detalle, in a single shared thread (`thread_key="comparativa"`).
 
 ---
 
