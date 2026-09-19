@@ -1,18 +1,25 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 from modules.wiki.models.wiki_chat_message import WikiChatMessage
 
 
 class WikiQueryRequest(BaseModel):
-    """Input contract for one wiki query: a single FIBRA, one question plus history.
+    """Input contract for one wiki query: an allowed FIBRA scope, one question plus history.
 
     Attributes:
-        ticker: BMV ticker of the FIBRA the question is about (e.g. "DANHOS13").
-            The agent rejects any tool call whose ticker differs from this one.
+        tickers: BMV tickers this query may read from (e.g. ["FMTY14",
+            "FIBRAPL14"]), at least one. The agent rejects any tool call whose
+            ticker is not in this set.
+        primary_ticker: The FIBRA the answer should focus on by default, e.g.
+            "FMTY14". None when the query has no single focus — a comparison
+            across all of ``tickers`` on equal footing.
         question: The user's natural-language question for this turn.
-        history: Prior turns for this ticker, oldest first. Empty on the first turn.
+        history: Prior turns for this thread, oldest first. Empty on the first turn.
     """
 
-    ticker: str
+    tickers: list[str]
+    primary_ticker: Optional[str] = None
     question: str
     history: list[WikiChatMessage] = []

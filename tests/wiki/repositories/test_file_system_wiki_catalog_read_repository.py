@@ -5,4 +5,6 @@ def test_lists_committed_wiki_tickers_sorted():
     """retrieve_data returns exactly the ticker slugs with a committed index.md, sorted."""
     repo = FileSystemWikiCatalogReadRepository()
 
-    assert repo.retrieve_data() == ["danhos13", "fmty14"]
+    assert repo.retrieve_data() == [
+        "danhos13", "fibrapl14", "fmty14", "fnova17", "fshop13", "funo11", "next25",
+    ]

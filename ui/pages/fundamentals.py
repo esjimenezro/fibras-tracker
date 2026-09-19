@@ -82,7 +82,12 @@ def _render_wiki_chat(ticker: str) -> None:
     with st.chat_message("user"):
         st.markdown(question)
 
-    request = WikiQueryRequest(ticker=ticker, question=question, history=list(history))
+    request = WikiQueryRequest(
+        tickers=[ticker],
+        primary_ticker=ticker,
+        question=question,
+        history=list(history),
+    )
     with st.chat_message("assistant"):
         status_slot = st.empty()
         text_slot = st.empty()

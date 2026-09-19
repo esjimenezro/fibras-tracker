@@ -34,7 +34,9 @@ def test_run_uppercases_committed_wiki_tickers():
     result = service.run()
 
     assert result.status == ServiceStatus.OK
-    assert result.data == ["DANHOS13", "FMTY14"]
+    assert result.data == [
+        "DANHOS13", "FIBRAPL14", "FMTY14", "FNOVA17", "FSHOP13", "FUNO11", "NEXT25",
+    ]
     assert result.error_message is None
 
 
