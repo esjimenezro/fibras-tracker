@@ -466,11 +466,13 @@ and queried through `WikiQueryService` — never edited by hand outside those fl
 
 The root `wiki/index.md` is a generated exception to that rule: it's a mechanical join of
 `catalog.json` (ticker, name, sector) and the wiki ticker roster — no narrative synthesis, so it's
-never hand-edited either. `scripts/generate_wiki_root_index.py` (run manually, only when the wiki
-roster or a FIBRA's catalog metadata changes) and the `read_wiki_catalog` tool both format that join
-through the same `WikiRosterProcessor`, so the file and the tool's live view never drift apart. The
-file exists purely for human/Obsidian navigation across the whole `wiki/` tree — the tool is what the
-model actually calls to discover other FIBRAs during a query.
+never hand-edited either. `scripts/generate_wiki_root_index.py` and the `read_wiki_catalog` tool
+both format that join through the same `WikiRosterProcessor`, guaranteeing identical formatting
+whenever the file is regenerated — but regeneration is a manual step, not automatic: rerun the
+script whenever the wiki roster changes, or whenever a FIBRA that already has a wiki gets a new
+`name` or `sector_exposure` in `catalog.json`, or the committed file goes stale relative to what the
+tool reports live. The file exists purely for human/Obsidian navigation across the whole `wiki/`
+tree — the tool is what the model actually calls to discover other FIBRAs during a query.
 
 ---
 

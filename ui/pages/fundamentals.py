@@ -215,6 +215,8 @@ with comparativa_tab:
     if wiki_catalog.status == ServiceStatus.ERROR:
         st.error("No se pudo leer el catálogo de wikis.")
         st.caption(wiki_catalog.error_message)
+    elif not wiki_catalog.data:
+        st.info("Todavía no hay ninguna FIBRA con wiki disponible.")
     elif not os.environ.get("ANTHROPIC_API_KEY"):
         st.info(
             "El chat de wiki necesita configurar `ANTHROPIC_API_KEY` en el archivo `.env` "
