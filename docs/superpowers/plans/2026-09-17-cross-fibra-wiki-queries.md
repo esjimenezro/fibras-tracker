@@ -856,8 +856,8 @@ Create `scripts/generate_wiki_root_index.py`:
 Run manually whenever the roster of FIBRAs with a wiki changes (a rare event —
 see wiki/SCHEMA.md, "Múltiples FIBRAs"). Not part of the per-quarter ingest.
 
-Usage:
-    uv run python scripts/generate_wiki_root_index.py
+Usage (from the repo root, so "config" and "modules" resolve on sys.path):
+    uv run python -m scripts.generate_wiki_root_index
 """
 
 from config import WIKI_DIR
@@ -887,7 +887,10 @@ if __name__ == "__main__":
 
 - [ ] **Step 2: Run it and inspect the output**
 
-Run: `uv run python scripts/generate_wiki_root_index.py`
+Run: `uv run python -m scripts.generate_wiki_root_index` (running the file
+directly with `uv run python scripts/generate_wiki_root_index.py` fails with
+`ModuleNotFoundError: No module named 'config'` — the repo root isn't on
+`sys.path` unless invoked as a module from there; `-m` fixes that).
 Then: `cat wiki/index.md`
 Expected: a header followed by 7 sorted bullet lines, one per FIBRA ticker, each with a sector breakdown and a `[[<slug>/index]]` link — matching the format asserted in `test_wiki_roster_processor.py`.
 
