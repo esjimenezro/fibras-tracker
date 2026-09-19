@@ -150,6 +150,30 @@ A service is the only entry point a `page/` may call. It:
 
 `PortfolioDataRetrieverService` and `FundamentalsDataRetrieverService` are the reference implementations.
 
+## Error handling
+
+- `repositories/` — raise the standard exception that matches the failure: `FileNotFoundError` for
+  a missing data file (e.g. `json_catalog_read_repository.py`, `json_positions_read_repository.py`),
+  `ValueError` for malformed/unsafe input (e.g. `wiki_slug_guard.validate_wiki_slug` rejecting a
+  ticker that isn't a safe path segment — the path-traversal guard for every `wiki/<ticker>/` file
+  read). Never swallow a read failure into a default value.
+- `processors/` — fail loud with `ValueError` on invalid/inconsistent input (missing
+  price/catalog/fundamentals entries, empty positions, etc.). Never return partial or silently
+  coerced results.
+- `services/` — the only layer allowed to catch broadly. `run()` wraps the whole repo → processor
+  pipeline in `try/except Exception` and always returns the typed `<ServiceName>Schema`
+  (`status=OK`/`ERROR`); exceptions are translated into `error_message`, never re-raised past the
+  service boundary and never silently dropped without setting `status=ERROR`.
+- **Domain-specific exception hierarchies** are used where callers need to distinguish failure
+  modes instead of a flat `ValueError`/`Exception`: `modules/wiki/exceptions.py` defines
+  `WikiAgentError` with `WikiAuthError`/`WikiRateLimitError`/`WikiConnectionError` subclasses so
+  `WikiQueryService` can map provider failures to typed `WikiStreamEvent`s without importing
+  `anthropic` outside `anthropic_wiki_agent_read_repository.py`. Follow this pattern (a base error
+  + specific subclasses in the owning module's `exceptions.py`) rather than a flat exception when a
+  new integration point needs to distinguish error types for its caller.
+- `ui/pages/` — never catches service exceptions directly; it only branches on
+  `result.status` from the typed schema and calls `render_error_banner()` + `st.stop()`.
+
 ## UI layer conventions
 
 - `app.py` registers every page explicitly via `st.navigation([st.Page("ui/pages/…")])` — pages are
