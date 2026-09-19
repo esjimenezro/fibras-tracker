@@ -54,26 +54,31 @@ fibras-tracker/
 │   │   │                     fundamentals_history_processor
 │   │   ├── schemas/        ← FundamentalsDataRetrieverServiceSchema
 │   │   └── services/       ← fundamentals_data_retriever_service
-│   ├── wiki/               ← "Pregúntale a la wiki" chat (embedded in Fundamentales → Detalle)
+│   ├── wiki/               ← "Pregúntale a la wiki" chat (embedded in Fundamentales → Detalle + Comparativa)
 │   │   ├── models/         ← WikiChatMessage, WikiQueryRequest, WikiAnswer, WikiQueryResponse,
 │   │   │                     WikiAgentEvent, WikiStreamEvent (+ their StrEnums), WikiToolUse
 │   │   ├── exceptions.py   ← WikiAgentError + WikiAuthError/WikiRateLimitError/WikiConnectionError
 │   │   ├── repositories/   ← file_system_wiki_{index,page,schema,catalog}, anthropic_wiki_agent (+ base/)
-│   │   ├── processors/     ← citation_processor, fundamentals_query_filter_processor, wiki_message_processor
+│   │   ├── processors/     ← citation_processor, fundamentals_query_filter_processor,
+│   │   │                     wiki_message_processor, wiki_roster_processor
 │   │   ├── schemas/        ← WikiQueryServiceSchema, WikiCatalogServiceSchema
 │   │   └── services/       ← wiki_query_service (+ _wiki_query_prompt: tool schemas, shell,
 │   │                         canned replies), wiki_catalog_service
 │   └── radar/              ← (empty — reserved)
+├── scripts/
+│   └── generate_wiki_root_index.py  ← regenerates wiki/index.md from catalog.json + the wiki roster
 ├── tests/
 │   ├── portfolio/          ← tests/portfolio/processors/ (all three portfolio processors)
 │   ├── fundamentals/       ← tests/fundamentals/processors/ (all three fundamentals processors)
 │   └── wiki/               ← tests/wiki/{repositories,processors,services}/ (mirrors modules/wiki/)
-└── data/
-    ├── catalog.json        ← static FIBRA catalog (name, frequency, sector weights)
-    ├── positions.json      ← portfolio holdings
-    ├── distributions.json  ← distribution payment history
-    ├── fundamentals.json   ← quarterly KPI history per FIBRA
-    └── inflation.json      ← annual Mexican inflation (INPC) history
+├── data/
+│   ├── catalog.json        ← static FIBRA catalog (name, frequency, sector weights)
+│   ├── positions.json      ← portfolio holdings
+│   ├── distributions.json  ← distribution payment history
+│   ├── fundamentals.json   ← quarterly KPI history per FIBRA
+│   └── inflation.json      ← annual Mexican inflation (INPC) history
+└── wiki/                   ← narrative content (see wiki/SCHEMA.md); index.md is the generated
+                               root aggregator (ticker/name/sector/link), one <ticker>/ per FIBRA with a wiki
 ```
 
 ## Layer flow
@@ -212,8 +217,9 @@ tab. Adding a FIBRA to the catalog does not make it a position, and vice versa.
 | FNOVA17 | Fibra Nova                       | Industrial / Agroindustrial | Quarterly |
 | NEXT25  | Nearshoring Experts & Technology | Industrial               | Quarterly |
 
-Only `fmty14` and `danhos13` have a `wiki/<ticker>/` directory so far (see `README.md` → "Data
-files" → `wiki/`); the other five show the "esta FIBRA aún no tiene wiki" notice.
+All 7 FIBRAs in the catalog now have a `wiki/<ticker>/` directory (see `README.md` → "Data files"
+→ `wiki/`), so the "esta FIBRA aún no tiene wiki" notice is currently dead code in practice — it
+still guards the case where a FIBRA is added to `catalog.json` before its wiki is ingested.
 
 yfinance tickers append `.MX` (e.g. `FMTY14.MX`).
 
@@ -243,17 +249,24 @@ Complete:
   `AnnualFundamentalsRecord`, `FibraMetrics`, `FundamentalsHistory`; repository; three processors
   (`FundamentalsProcessor`, `AnnualFundamentalsProcessor`, `FundamentalsHistoryProcessor`); service,
   schema.
-- `modules/wiki/` — full pipeline for the "Pregúntale a la wiki" chat: models + domain exceptions;
-  four `FileSystem*` content repositories (index / page / schema / catalog) and the thin
-  `AnthropicWikiAgentReadRepository` port; `CitationProcessor`, `FundamentalsQueryFilterProcessor`,
-  `WikiMessageProcessor`; `WikiQueryService` (agentic tool loop, dispatch, ticker-scope + grounding
-  guards, domain-error taxonomy); `WikiQueryServiceSchema`.
+- `modules/wiki/` — full pipeline for the "Pregúntale a la wiki" chat, now cross-FIBRA (ESJ-14):
+  models + domain exceptions; four `FileSystem*` content repositories (index / page / schema /
+  catalog) and the thin `AnthropicWikiAgentReadRepository` port; `CitationProcessor`,
+  `FundamentalsQueryFilterProcessor`, `WikiMessageProcessor`, `WikiRosterProcessor` (joins
+  `catalog.json` with the wiki ticker roster); `WikiQueryService` (agentic tool loop over four
+  tools — `read_wiki_catalog`, `read_index`, `read_page`, `read_fundamentals` — dispatch, a
+  set-membership scope guard over `WikiQueryRequest.tickers` + grounding guard, domain-error
+  taxonomy); `WikiQueryServiceSchema`. `scripts/generate_wiki_root_index.py` regenerates the
+  committed `wiki/index.md` root aggregator (same `WikiRosterProcessor` output as the tool).
 - UI — Portfolio page (summary, positions table, allocation donuts, distributions chart) and
   Fundamentals page (Detalle tab: KPI detail header + unified KPI_CONFIG chart + embedded
-  "Pregúntale a la wiki" chat; Comparativa tab: evaluative table + normalized comparison chart).
-- Unit tests — `tests/portfolio/` + `tests/fundamentals/` (five processors) + `tests/wiki/`
-  (content repos, processors, agent port, `WikiQueryService`).
-- Real data in all five `data/*.json` files. Formula-complete processor docstrings. `README.md`.
+  "Pregúntale a la wiki" chat, scope open to every FIBRA with a wiki but anchored on the selected
+  one; Comparativa tab: evaluative table + normalized comparison chart + a second wiki chat with
+  no anchor and no FIBRA picker).
+- Unit tests — `tests/portfolio/` (38) + `tests/fundamentals/` (86) + `tests/wiki/` (99: content
+  repos, processors including `WikiRosterProcessor`, agent port, `WikiQueryService`). 223 total.
+- Real data in all five `data/*.json` files; all 7 catalog FIBRAs have wiki content. Formula-complete
+  processor docstrings. `README.md`.
 
 ## modules/wiki/ conventions
 
@@ -264,8 +277,15 @@ Complete:
   service's job.
 - `WikiQueryService.stream(request) -> Iterator[WikiStreamEvent]` is the primary API (never raises,
   one terminal `FINAL`/`ERROR` event); `run(request) -> WikiQueryServiceSchema` drains it.
-- Ticker casing: `request.ticker` is upper-case BMV; `WikiQueryService` lower-cases it for the wiki
-  repos (dirs are `wiki/<ticker>/` lower-case) and upper-cases it for the fundamentals filter.
+- Scope, not a single ticker: `WikiQueryRequest.tickers: list[str]` is the allowed set for tool
+  calls (`_has_foreign_ticker` checks membership, case-insensitive); `primary_ticker: Optional[str]`
+  is the answer's default focus, `None` for an unanchored comparison. Every tool call carries its
+  own `ticker` in `tool_use.input` — `_run_tool` dispatches on that, never on a request-wide
+  default, since one query's tool calls can target different FIBRAs. `read_wiki_catalog` takes no
+  `ticker` at all; a `tool_use` missing that key never counts as foreign.
+- Ticker casing: tickers are upper-case BMV wherever the model or the UI see them;
+  `WikiQueryService` lower-cases a tool call's `ticker` for the wiki repos (dirs are
+  `wiki/<ticker>/` lower-case) and upper-cases it for the fundamentals filter.
   `WikiCatalogService.run()` upper-cases outward, so the UI never sees the lower-case slugs.
 - The UI asks `WikiCatalogService` (never a repository) whether a FIBRA has a wiki, and shows its
   own error banner when that read fails — distinct from the "esta FIBRA aún no tiene wiki" notice.
