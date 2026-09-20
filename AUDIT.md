@@ -18,10 +18,10 @@ issues, no blocking architecture violations. Findings cluster in three places:
   inflation-compounding math implemented three times, and threshold-based traffic-light coloring
   implemented three different ways in `src/modules/fundamentals/` (vs. clean centralization in
   `src/modules/portfolio/`).
-- Defense-in-depth gaps around model-supplied tool arguments in `src/modules/wiki/services/wiki_query_service.py`
-  (currently non-exploitable — absorbed by an outer catch-all — but implicit rather than intentional).
+- ~~Defense-in-depth gaps around model-supplied tool arguments in
+  `src/modules/wiki/services/wiki_query_service.py`~~ — ✅ resolved 2026-09-20.
 
-**Counts:** Security — 0 Critical, 0 High, 2 Medium, 3 Low/informational.
+**Counts:** Security — 0 Critical, 0 High, 2 Medium (✅ resolved), 3 Low/informational (won't fix).
 Architecture — 0 blocking violations, 5 long-term debt items, 4 minor items.
 Compliance — 5 clear rule violations, 3 documentation-completeness gaps, 1 naming nit,
 1 already-known/acknowledged debt item, 3 minor nits.
@@ -138,9 +138,15 @@ required no changes.
 
 ---
 
-## 2. Security audit
+## 2. Security audit — ✅ RESUELTO (2026-09-20)
 
 *Run by: `security-auditor` subagent.*
+
+**Status:** both Medium findings (1-2) fixed and verified (`flake8` clean, 226/226 tests passing,
+3 new tests added) as of 2026-09-20 — see each finding below. The 3 Low/Informational findings
+(3-5) are acknowledged but **won't be fixed**: no actionable path (5), a one-time dependency-advisory
+check rather than a code change (3), and a defense-in-depth-only note already covered by existing
+guards (4). Left as-is by decision.
 
 ### Findings
 
@@ -148,24 +154,31 @@ No Critical or High findings.
 
 **Medium**
 
-1. **Model-supplied tool arguments reach filesystem/equality operations without type validation
-   before use** — `src/modules/wiki/services/wiki_query_service.py:306-319` (`_run_tool`) and
-   `:241-258` (`_has_foreign_ticker`). `WikiToolUse.input` is a bare `dict` with no per-key schema;
-   `_run_tool` calls `.lower()`/`.upper()` directly on whatever the model sent without first
-   coercing/validating it's a string. A prompt-injected instruction inside a wiki page (indirect
-   injection via third-party PDF transcription) that gets the model to emit a non-string `ticker`
-   would raise `AttributeError`, not caught by `_dispatch`'s narrow `except (FileNotFoundError,
-   ValueError, KeyError)` — but it is still caught by the outer `except Exception` in `stream()`,
-   so not currently exploitable beyond terminating that one query. The type boundary is implicit
-   rather than enforced; a future narrowing of that outer catch would turn this into an unhandled
-   crash. **Fix direction:** validate `tool_use.input` shape (string type, non-empty) before
-   dispatch, independent of the existing `validate_wiki_slug` path-shape check.
+1. ✅ **RESUELTO (2026-09-20)** — **Model-supplied tool arguments reach filesystem/equality
+   operations without type validation before use** — `src/modules/wiki/services/wiki_query_service.py:306-319`
+   (`_run_tool`) and `:241-258` (`_has_foreign_ticker`). `WikiToolUse.input` is a bare `dict` with no
+   per-key schema; `_run_tool` calls `.lower()`/`.upper()` directly on whatever the model sent
+   without first coercing/validating it's a string. A prompt-injected instruction inside a wiki page
+   (indirect injection via third-party PDF transcription) that gets the model to emit a non-string
+   `ticker` would raise `AttributeError`, not caught by `_dispatch`'s narrow `except
+   (FileNotFoundError, ValueError, KeyError)` — but it is still caught by the outer `except
+   Exception` in `stream()`, so not currently exploitable beyond terminating that one query. The
+   type boundary is implicit rather than enforced; a future narrowing of that outer catch would turn
+   this into an unhandled crash. **Fix applied:** added `WikiQueryService._require_str(tool_use,
+   key)`, which type/non-blank-checks a required string argument and raises `ValueError` (caught by
+   `_dispatch` into a per-call `is_error` tool result) instead of letting a bad type reach
+   `.lower()`/`.upper()`. Used for `ticker` and `page_name` in `_run_tool`. Tests added in
+   `tests/wiki/services/test_wiki_query_service.py`
+   (`test_non_string_tool_argument_yields_is_error_without_aborting_query`).
 
-2. **`read_fundamentals`'s `period` argument is not run through any allowlist** —
-   `wiki_query_service.py:314-319` passes `tool_use.input.get("period")` straight into
+2. ✅ **RESUELTO (2026-09-20)** — **`read_fundamentals`'s `period` argument is not run through any
+   allowlist** — `wiki_query_service.py:314-319` passes `tool_use.input.get("period")` straight into
    `FundamentalsQueryFilterProcessor.process`, which only does an equality comparison — never
    builds a path, so no path-traversal or authorization impact. Noted only for consistency with the
-   validation pattern used for `ticker`/`page_name`.
+   validation pattern used for `ticker`/`page_name`. **Fix applied:** `period`, when present, is now
+   run through the same `_require_str` type check as `ticker`/`page_name` (values stay unconstrained
+   — periods are dynamic labels like "1T2026" — only the type is checked); `period=None` still means
+   "no filter" and skips the check.
 
 **Low / Informational**
 
@@ -320,8 +333,8 @@ its own tests, and an undocumented asymmetry in service-level test coverage.
 
 Roughly in priority order:
 
-1. Decide on the two Medium security findings in `wiki_query_service.py` (type-validate
-   `tool_use.input` before dispatch) — small, contained fix.
+1. ✅ **RESUELTO (2026-09-20)** — the two Medium security findings in `wiki_query_service.py`
+   (type-validate `tool_use.input` before dispatch).
 2. Consolidate the threshold traffic-light logic and inflation-compounding logic
    (architecture findings 1-2) — both are real duplication with a documented drift risk.
 3. Clean up the `src/ui/pages/radar.py` and Comparativa-component compliance violations (findings 2-5)

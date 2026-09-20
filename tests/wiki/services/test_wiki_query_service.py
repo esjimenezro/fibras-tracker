@@ -93,6 +93,19 @@ def _tool_use(block_id, name, **tool_input):
     return WikiToolUse(id=block_id, name=name, input=tool_input)
 
 
+class _StringsLikeAnAllowedTicker:
+    """A non-str object whose str() matches an allowed ticker.
+
+    Used to show that the foreign-ticker scope guard (which coerces via
+    ``str(...)``) and the type check in ``_require_str`` are independent: this
+    value passes the scope guard but is still rejected by ``_require_str``.
+    """
+
+    def __str__(self):
+        """Render as an allowed ticker, same as a scope-approved string would."""
+        return "DANHOS13"
+
+
 @pytest.fixture
 def make_service():
     """Return a factory that wires WikiQueryService with real content repos."""
@@ -323,6 +336,41 @@ def test_tool_call_outside_allowed_tickers_aborts_with_fixed_reply(make_service)
     assert result.status == ServiceStatus.OK
     assert result.data.answer_text == OUT_OF_SCOPE_MESSAGE.format(tickers="FMTY14, DANHOS13")
     assert len(agent.calls) == 1
+
+
+@pytest.mark.parametrize(
+    "tool_use, expected_snippet",
+    [
+        pytest.param(
+            _tool_use("t1", "read_index", ticker=_StringsLikeAnAllowedTicker()),
+            "'ticker'",
+            id="non_string_ticker",
+        ),
+        pytest.param(
+            _tool_use("t1", "read_page", ticker="DANHOS13", page_name=123),
+            "'page_name'",
+            id="non_string_page_name",
+        ),
+        pytest.param(
+            _tool_use("t1", "read_fundamentals", ticker="DANHOS13", period=2024),
+            "'period'",
+            id="non_string_period",
+        ),
+    ],
+)
+def test_non_string_tool_argument_yields_is_error_without_aborting_query(make_service, tool_use, expected_snippet):
+    """A non-string ticker/page_name/period becomes a per-call is_error, not a crash."""
+    agent = _FakeAgentRepository([
+        [_turn_tool_use(tool_use)],
+        [_turn_end("Listo.")],
+    ])
+
+    result = make_service(agent).run(request=_request())
+
+    assert result.status == ServiceStatus.OK
+    tool_result = agent.calls[1]["messages"][-1]["content"][0]
+    assert tool_result["is_error"] is True
+    assert expected_snippet in tool_result["content"]
 
 
 def test_read_wiki_catalog_dispatch_lists_wiki_tickers(make_service):

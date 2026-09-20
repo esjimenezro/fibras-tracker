@@ -295,7 +295,9 @@ class WikiQueryService:
 
         Raises:
             FileNotFoundError: If a wiki page or index is missing.
-            ValueError: If the page name is malformed, or the tool name is unknown.
+            ValueError: If the page name is malformed, the tool name is unknown,
+                or a required string argument (``ticker``, ``page_name``,
+                ``period``) is present but not a non-blank string.
             KeyError: If a required tool argument is absent.
         """
         if tool_use.name == "read_wiki_catalog":
@@ -303,19 +305,20 @@ class WikiQueryService:
                 fibras=self._catalog_repository.retrieve_data(),
                 wiki_tickers=self._wiki_catalog_repository.retrieve_data(),
             )
-        ticker = tool_use.input["ticker"]
+        ticker = self._require_str(tool_use=tool_use, key="ticker")
         if tool_use.name == "read_index":
             return self._index_repository.retrieve_data(ticker=ticker.lower())
         if tool_use.name == "read_page":
             return self._page_repository.retrieve_data(
                 ticker=ticker.lower(),
-                page_name=tool_use.input["page_name"],
+                page_name=self._require_str(tool_use=tool_use, key="page_name"),
             )
         if tool_use.name == "read_fundamentals":
+            period = tool_use.input.get("period")
             records = self._fundamentals_filter.process(
                 records=self._fundamentals_repository.retrieve_data(),
                 ticker=ticker.upper(),
-                period=tool_use.input.get("period"),
+                period=self._require_str(tool_use=tool_use, key="period") if period is not None else None,
             )
             return json.dumps(
                 [record.model_dump(mode="json") for record in records],
@@ -323,6 +326,33 @@ class WikiQueryService:
                 indent=2,
             )
         raise ValueError(f"Tool desconocida: {tool_use.name}")
+
+    def _require_str(self, tool_use: WikiToolUse, key: str) -> str:
+        """Read and type-check a required string argument from a tool call.
+
+        Model-supplied tool input is an untyped dict (``WikiToolUse.input:
+        dict``); nothing upstream guarantees a given key is a string before it
+        reaches ``.lower()``/``.upper()`` or an equality filter. Centralizing the
+        check here turns a malformed argument into a ``ValueError`` — caught by
+        ``_dispatch``'s narrow except clause into a per-call ``is_error`` tool
+        result — instead of an uncaught ``AttributeError`` that would abort the
+        whole query via ``stream()``'s outer catch-all.
+
+        Args:
+            tool_use: The tool call being validated.
+            key: The input key expected to hold a non-empty string.
+
+        Returns:
+            str: The validated argument value.
+
+        Raises:
+            KeyError: If key is absent from tool_use.input.
+            ValueError: If the value is present but not a non-blank string.
+        """
+        value = tool_use.input[key]
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"{key!r} debe ser un string no vacío en la llamada a {tool_use.name}")
+        return value
 
     def _fixed_answer_event(self, text: str) -> WikiStreamEvent:
         """Build a terminal FINAL event carrying a fixed (canned) reply.
