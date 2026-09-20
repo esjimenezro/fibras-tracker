@@ -7,7 +7,6 @@ from modules.common.repositories import JsonCatalogReadRepository
 from modules.common.repositories import JsonInflationReadRepository
 from modules.common.repositories import YFinanceMarketPriceReadRepository
 from modules.common.schemas import ServiceStatus
-
 from modules.fundamentals.processors import AnnualFundamentalsProcessor
 from modules.fundamentals.processors import FundamentalsHistoryProcessor
 from modules.fundamentals.processors import FundamentalsProcessor

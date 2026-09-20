@@ -20,6 +20,9 @@ class YFinanceMarketPriceReadRepository(BaseMarketPriceReadRepository):
         Returns:
             list[MarketPrice]: One entry per ticker, using the .MX suffix internally
                 to query BMV prices via Yahoo Finance.
+
+        Raises:
+            ValueError: If Yahoo Finance returns no price for any of the given tickers.
         """
         retrieved_at = datetime.now(timezone.utc)
         return [self._fetch(ticker=ticker, retrieved_at=retrieved_at) for ticker in tickers]
@@ -33,6 +36,9 @@ class YFinanceMarketPriceReadRepository(BaseMarketPriceReadRepository):
 
         Returns:
             MarketPrice: Populated model with the latest price data.
+
+        Raises:
+            ValueError: If Yahoo Finance returns no price for the given ticker.
         """
         info = yf.Ticker(f"{ticker}{TICKER_SUFFIX}").fast_info
         last_price = info.last_price

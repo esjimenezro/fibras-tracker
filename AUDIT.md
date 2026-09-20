@@ -32,15 +32,20 @@ concurrently writing setup/instruction files into this repo. Worth checking what
 
 ---
 
-## 1. Compliance audit
+## 1. Compliance audit — ✅ RESUELTO (2026-09-20)
 
 *Run by: `compliance-auditor` subagent.*
+
+**Status:** all 12 findings below (5 clear violations, 2 docstring-accuracy gaps, 1 naming nit,
+1 already-documented debt item, 3 minor nits) have been fixed and verified (`flake8` clean,
+223/223 tests passing) as of 2026-09-20. The "Verified compliant" section was already clean and
+required no changes.
 
 ### Findings
 
 #### Clear violations — import/code-style (CLAUDE.md "Code style")
 
-1. **One-import-per-line broken in 4 of 11 base repository interfaces.**
+1. ✅ **RESUELTO** — **One-import-per-line broken in 4 of 11 base repository interfaces.**
    - `src/modules/common/repositories/base/base_market_price_read_repository.py:1`
    - `src/modules/fundamentals/repositories/base/base_fundamentals_read_repository.py:1`
    - `src/modules/portfolio/repositories/base/base_distributions_read_repository.py:1`
@@ -49,14 +54,14 @@ concurrently writing setup/instruction files into this repo. Worth checking what
      `base_*_read_repository.py` files correctly split this onto two lines — these 4 are outliers
      against the majority pattern.
 
-2. **`src/ui/pages/radar.py:3`** imports `render_page_header` from the file
+2. ✅ **RESUELTO** — **`src/ui/pages/radar.py:3`** imports `render_page_header` from the file
    (`ui.components.common.page_header`) instead of the package (`ui.components.common`), unlike
    every other page.
 
-3. **`src/ui/pages/radar.py:5`** calls `render_page_header("Radar", "🔍")` with positional args instead
+3. ✅ **RESUELTO** — **`src/ui/pages/radar.py:5`** calls `render_page_header("Radar", "🔍")` with positional args instead
    of `page_title=`/`page_icon=` keywords, unlike every other page.
 
-4. **Cross-file, non-package imports of another component's internals:**
+4. ✅ **RESUELTO** — **Cross-file, non-package imports of another component's internals:**
    - `src/ui/components/fundamentals/comparison_table.py:9-12` imports `LTV_LOWER`, `LTV_UPPER`,
      `OCC_LOWER`, `OCC_UPPER` directly from the `detail_chart` file.
    - `src/ui/components/fundamentals/comparison_chart.py:12-15` imports `_add_threshold_bands`,
@@ -65,19 +70,19 @@ concurrently writing setup/instruction files into this repo. Worth checking what
 
 #### Clear violation — UI theming (CLAUDE.md "UI layer conventions")
 
-5. **`src/ui/components/fundamentals/comparison_table.py:19-23`** defines local color constants
+5. ✅ **RESUELTO** — **`src/ui/components/fundamentals/comparison_table.py:19-23`** defines local color constants
    (`_GREEN_BG`, `_YELLOW_BG`, `_RED_BG`, `_GRAY_BG`) instead of adding background-tint variants to
    `src/ui/styles/theme.py`.
 
 #### Docstring accuracy (mandatory Google-style docstrings)
 
-6. **Docstring contradicts implementation** —
+6. ✅ **RESUELTO** — **Docstring contradicts implementation** —
    `src/modules/fundamentals/processors/fundamentals_history_processor.py`: `Args:` (lines 47-53)
    describe `annual_records`/`inflation_records` as optional with defaults, but the signature has
    no defaults and the body raises `ValueError` if either is falsy/empty. Never bites in practice
    (the service always supplies non-empty lists), but the docstring is factually wrong.
 
-7. **Missing `Raises:` sections despite raising**, inconsistent with sibling repositories that do
+7. ✅ **RESUELTO** — **Missing `Raises:` sections despite raising**, inconsistent with sibling repositories that do
    document it:
    - `src/modules/portfolio/repositories/json_positions_read_repository.py:11-16` (raises
      `FileNotFoundError` at line 18)
@@ -89,29 +94,30 @@ concurrently writing setup/instruction files into this repo. Worth checking what
 
 #### Naming/structure nit
 
-8. **`src/modules/radar/repositories/base.py`** is an empty flat module instead of a `base/`
+8. ✅ **RESUELTO** — **`src/modules/radar/repositories/base.py`** is an empty flat module instead of a `base/`
    sub-package (the convention every other populated domain follows). Not a functional bug — Radar
    is documented as reserved/empty — but the placeholder itself already deviates from the pattern
    it will need once populated.
 
 #### Already-documented debt (confirmed present, not new)
 
-9. `src/modules/wiki/services/wiki_query_service.py:28-38` import-order violation — already
-   acknowledged in `.github/instructions/architecture.instructions.md` and `AGENTS.md`. Confirmed
-   still present, not worsened.
+9. ✅ **RESUELTO** — `src/modules/wiki/services/wiki_query_service.py:28-38` import-order violation — was
+   acknowledged in `.github/instructions/architecture.instructions.md` and `AGENTS.md`; fixed, and
+   both acknowledgment notes removed since the debt no longer exists.
 
 #### Minor nits
 
-10. `src/modules/wiki/services/wiki_query_service.py:119-120` — `run()`'s docstring still says "one
+10. ✅ **RESUELTO** — `src/modules/wiki/services/wiki_query_service.py:119-120` — `run()`'s docstring still said "one
     FIBRA" (pre-ESJ-14 language); `stream()`'s docstring two methods below correctly says "an
     allowed FIBRA scope."
-11. Cosmetic import-grouping inconsistency: `fundamentals_data_retriever_service.py`/
+11. ✅ **RESUELTO** — Cosmetic import-grouping inconsistency: `fundamentals_data_retriever_service.py`/
     `portfolio_data_retriever_service.py` insert an extra blank line between `modules.common.*`
     and domain-own imports; `src/ui/pages/fundamentals.py` keeps internal imports as one block. Neither
-    is explicitly disallowed by CLAUDE.md, but the two styles coexist undecided.
-12. `data/results/descargar_fmty.py`, `descargar_fnova.py`, `descargar_fibrapl_en.py` — offline PDF
+    was explicitly disallowed by CLAUDE.md, but the two styles coexisted undecided — standardized on
+    the single-block style and documented the rule explicitly in CLAUDE.md.
+12. ✅ **RESUELTO** — `data/results/descargar_fmty.py`, `descargar_fnova.py`, `descargar_fibrapl_en.py` — offline PDF
     downloader scripts live in a location (`data/results/`) not mentioned in CLAUDE.md's documented
-    tree. Harmless, just undocumented.
+    tree. Harmless, just undocumented — added to the CLAUDE.md architecture tree.
 
 ### Verified compliant (no deviation found)
 

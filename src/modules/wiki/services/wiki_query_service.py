@@ -9,6 +9,7 @@ from modules.common.repositories import JsonCatalogReadRepository
 from modules.common.repositories.base import BaseCatalogReadRepository
 from modules.common.schemas import ServiceStatus
 from modules.fundamentals.repositories import JsonFundamentalsReadRepository
+from modules.fundamentals.repositories.base import BaseFundamentalsReadRepository
 from modules.wiki.exceptions import WikiAgentError
 from modules.wiki.exceptions import WikiAuthError
 from modules.wiki.exceptions import WikiConnectionError
@@ -30,7 +31,6 @@ from modules.wiki.repositories.base import BaseWikiCatalogReadRepository
 from modules.wiki.repositories.base import BaseWikiIndexReadRepository
 from modules.wiki.repositories.base import BaseWikiPageReadRepository
 from modules.wiki.repositories.base import BaseWikiSchemaReadRepository
-from modules.fundamentals.repositories.base import BaseFundamentalsReadRepository
 from modules.wiki.repositories import AnthropicWikiAgentReadRepository
 from modules.wiki.repositories import FileSystemWikiCatalogReadRepository
 from modules.wiki.repositories import FileSystemWikiIndexReadRepository
@@ -117,7 +117,7 @@ class WikiQueryService:
         """Drain stream() and map its single terminal event to the output schema.
 
         Args:
-            request: The wiki query (one FIBRA, one question plus history).
+            request: The wiki query (an allowed FIBRA scope, one question plus history).
 
         Returns:
             WikiQueryServiceSchema: status OK with the enriched WikiQueryResponse

@@ -178,12 +178,3 @@ import streamlit as st
 from modules.common.schemas import ServiceStatus
 from modules.fundamentals.services import FundamentalsDataRetrieverService
 ```
-
-### Known architecture debt
-
-`src/modules/wiki/services/wiki_query_service.py` currently violates Rule 7: the internal-import
-block interleaves `modules.fundamentals.repositories(.base)` imports in the middle of a run of
-`modules.wiki.repositories.base` imports instead of grouping `modules.fundamentals` before
-`modules.wiki` (or otherwise keeping a stable, sorted order). This is **not** the pattern to
-copy — treat it as a pre-existing defect. Fix opportunistically if touching that import block;
-do not use it as precedent for a new file's import order.

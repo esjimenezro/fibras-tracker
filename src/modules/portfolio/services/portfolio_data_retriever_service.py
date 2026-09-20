@@ -5,7 +5,6 @@ from modules.common.repositories.base import BaseMarketPriceReadRepository
 from modules.common.repositories import JsonCatalogReadRepository
 from modules.common.repositories import YFinanceMarketPriceReadRepository
 from modules.common.schemas import ServiceStatus
-
 from modules.portfolio.processors import DistributionsProcessor
 from modules.portfolio.processors import PortfolioProcessor
 from modules.portfolio.processors import PositionsProcessor

@@ -6,21 +6,19 @@ from modules.common.models import Fibra
 from modules.fundamentals.models import AnnualFundamentalsRecord
 from modules.fundamentals.models import EnrichedFundamentalsRecord
 from modules.fundamentals.models import FibraMetrics
-from ui.components.fundamentals.detail_chart import LTV_LOWER
-from ui.components.fundamentals.detail_chart import LTV_UPPER
-from ui.components.fundamentals.detail_chart import OCC_LOWER
-from ui.components.fundamentals.detail_chart import OCC_UPPER
+from ui.components.fundamentals import LTV_LOWER
+from ui.components.fundamentals import LTV_UPPER
+from ui.components.fundamentals import OCC_LOWER
+from ui.components.fundamentals import OCC_UPPER
+from ui.styles.theme import COLOR_MUTED_BG
+from ui.styles.theme import COLOR_NEGATIVE_BG
+from ui.styles.theme import COLOR_POSITIVE_BG
+from ui.styles.theme import COLOR_WARNING_BG
 from ui.styles.theme import format_pct
 
 # Icon thresholds — single source of truth.
 _THRESHOLD_FULL: float = 1.0
 _THRESHOLD_WARN: float = 0.70
-
-# Background colour values.
-_GREEN_BG: str = "rgba(50,200,100,0.15)"
-_YELLOW_BG: str = "rgba(255,200,50,0.15)"
-_RED_BG: str = "rgba(255,99,99,0.15)"
-_GRAY_BG: str = "rgba(200,200,200,0.15)"
 
 _LOW_SAMPLE_CAPTION: str = (
     "* Esta FIBRA cuenta con menos de 3 años de historial completo. "
@@ -173,16 +171,16 @@ def _color_bg(value: Optional[float], lower: float, upper: float, inverse: bool)
         return ""
     if not inverse:
         if value < lower:
-            return _RED_BG
+            return COLOR_NEGATIVE_BG
         if value > upper:
-            return _GREEN_BG
-        return _YELLOW_BG
+            return COLOR_POSITIVE_BG
+        return COLOR_WARNING_BG
     else:
         if value < lower:
-            return _GREEN_BG
+            return COLOR_POSITIVE_BG
         if value > upper:
-            return _RED_BG
-        return _YELLOW_BG
+            return COLOR_NEGATIVE_BG
+        return COLOR_WARNING_BG
 
 
 def _td(content: str, bg: str = "") -> str:
@@ -233,7 +231,7 @@ def _build_table_html(
         if is_low_sample:
             has_low_sample = True
 
-        row_style = f' style="background-color: {_GRAY_BG};"' if is_low_sample else ""
+        row_style = f' style="background-color: {COLOR_MUTED_BG};"' if is_low_sample else ""
         ticker_display = f"{fibra.ticker}*" if is_low_sample else fibra.ticker
 
         # ── Propósito ──────────────────────────────────────────────────────────

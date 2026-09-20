@@ -226,7 +226,7 @@ def _period_sort_key(record: EnrichedFundamentalsRecord) -> tuple[int, int]:
     return (int(year), int(quarter))
 
 
-def _add_threshold_bands(
+def add_threshold_bands(
     fig: go.Figure,
     lower: float,
     upper: float,
@@ -260,7 +260,7 @@ def _add_threshold_bands(
         )
 
 
-def _apply_yaxis_format(fig: go.Figure, fmt: str, axis: str = "yaxis") -> None:
+def apply_yaxis_format(fig: go.Figure, fmt: str, axis: str = "yaxis") -> None:
     """Apply Plotly Y-axis tick formatting from _YAXIS_FORMAT to the specified axis.
 
     Args:
@@ -271,7 +271,7 @@ def _apply_yaxis_format(fig: go.Figure, fmt: str, axis: str = "yaxis") -> None:
     fig.update_layout({axis: _YAXIS_FORMAT.get(fmt, {})})
 
 
-def _base_layout(
+def base_layout(
     title: str,
     show_legend: bool,
     x_title: str = "Trimestre",
@@ -350,15 +350,15 @@ def _render_single(
                 )
             )
     if "lower" in config:
-        _add_threshold_bands(
+        add_threshold_bands(
             fig=fig,
             lower=config["lower"],
             upper=config["upper"],
             inverse=config.get("inverse", False),
         )
-    _apply_yaxis_format(fig=fig, fmt=fmt)
+    apply_yaxis_format(fig=fig, fmt=fmt)
     fig.update_layout(
-        **_base_layout(
+        **base_layout(
             title=config["label"],
             show_legend=show_legend,
             x_title="Año" if is_annual else "Trimestre",
@@ -403,9 +403,9 @@ def _render_combined(
                 name=line["label"],
             )
         )
-    _apply_yaxis_format(fig=fig, fmt=fmt)
+    apply_yaxis_format(fig=fig, fmt=fmt)
     fig.update_layout(
-        **_base_layout(
+        **base_layout(
             title=config["label"],
             show_legend=True,
             x_title="Año" if is_annual else "Trimestre",
@@ -456,11 +456,11 @@ def _render_dual_axis(
         connectgaps=False,
     )
     fig = go.Figure(data=[left_trace, right_trace])
-    _apply_yaxis_format(fig=fig, fmt=config["format_left"], axis="yaxis")
-    _apply_yaxis_format(fig=fig, fmt=config["format_right"], axis="yaxis2")
+    apply_yaxis_format(fig=fig, fmt=config["format_left"], axis="yaxis")
+    apply_yaxis_format(fig=fig, fmt=config["format_right"], axis="yaxis2")
     fig.update_layout(
         yaxis2={"overlaying": "y", "side": "right"},
-        **_base_layout(
+        **base_layout(
             title=config["label"],
             show_legend=True,
             x_title="Año" if is_annual else "Trimestre",

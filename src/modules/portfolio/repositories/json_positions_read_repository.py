@@ -13,6 +13,9 @@ class JsonPositionsReadRepository(BasePositionsReadRepository):
 
         Returns:
             list[Position]: All positions parsed from the JSON file.
+
+        Raises:
+            FileNotFoundError: If positions.json does not exist at the configured path.
         """
         if not POSITIONS_DATA_PATH.exists():
             raise FileNotFoundError(f"Positions data file not found: {POSITIONS_DATA_PATH}")

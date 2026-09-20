@@ -44,13 +44,12 @@ class FundamentalsHistoryProcessor:
                 Must not be empty.
             fibras: FIBRA catalog entries. Every ticker in fibras appears as a key in
                 latest_by_ticker; value is None if no record exists for that ticker.
-            annual_records: Optional annual aggregates per ticker produced by
-                AnnualFundamentalsProcessor. When provided, used to compute annual-period
-                FibraMetrics fields (growth counters, CAGRs). Defaults to None (all annual
-                FibraMetrics fields remain None).
-            inflation_records: Optional full annual Mexican inflation history (INPC).
-                Used alongside annual_records to compute cagr_inflation and
-                distribution_vs_inflation. Defaults to None (treated as empty list).
+            annual_records: Annual aggregates per ticker produced by AnnualFundamentalsProcessor,
+                used to compute annual-period FibraMetrics fields (growth counters, CAGRs).
+                Must not be empty.
+            inflation_records: Full annual Mexican inflation history (INPC), used alongside
+                annual_records to compute cagr_inflation and distribution_vs_inflation.
+                Must not be empty.
 
         Returns:
             FundamentalsHistory with the following fields:
@@ -62,11 +61,11 @@ class FundamentalsHistoryProcessor:
                                        None if no such record exists or the ticker has no records
                 fibra_metrics        = per-FIBRA aggregate metrics keyed by ticker; every ticker
                                        in fibras has an entry; AFFO Optional fields are None when
-                                       fewer than 4 records exist; annual fields are None when
-                                       annual_records is not provided or has fewer than 2 entries
+                                       fewer than 4 records exist; annual fields are None when a
+                                       given ticker has fewer than 2 annual_records entries
                 fibras               = the catalog Fibra list passed in directly
-                annual_records       = annual_records or empty dict
-                inflation_records    = inflation_records or empty list
+                annual_records       = annual_records passed in directly
+                inflation_records    = inflation_records passed in directly
 
         Raises:
             ValueError: If records is empty.

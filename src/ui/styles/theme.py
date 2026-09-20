@@ -5,6 +5,11 @@ COLOR_POSITIVE = "#2E7D32"
 COLOR_NEGATIVE = "#C62828"
 COLOR_NEUTRAL = "#1565C0"
 
+COLOR_POSITIVE_BG = "rgba(50,200,100,0.15)"
+COLOR_WARNING_BG = "rgba(255,200,50,0.15)"
+COLOR_NEGATIVE_BG = "rgba(255,99,99,0.15)"
+COLOR_MUTED_BG = "rgba(200,200,200,0.15)"
+
 
 def format_mxn(value: float) -> str:
     """Format a float as a MXN currency string.

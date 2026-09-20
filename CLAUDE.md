@@ -78,7 +78,10 @@ fibras-tracker/
 │   ├── positions.json      ← portfolio holdings
 │   ├── distributions.json  ← distribution payment history
 │   ├── fundamentals.json   ← quarterly KPI history per FIBRA
-│   └── inflation.json      ← annual Mexican inflation (INPC) history
+│   ├── inflation.json      ← annual Mexican inflation (INPC) history
+│   └── results/             ← offline PDF downloader scripts (descargar_<ticker>.py) + their
+│                               downloaded quarterly-report PDFs, one folder per FIBRA; not part
+│                               of the app's runtime data, used to feed wiki ingest
 └── wiki/                   ← narrative content (see wiki/SCHEMA.md); index.md is the generated
                                root aggregator (ticker/name/sector/link), one <ticker>/ per FIBRA with a wiki
 ```
@@ -219,7 +222,8 @@ from modules.fundamentals.models.fundamentals_record import FundamentalsRecord  
 **One import per line:** never combine names on a single `from … import` line.
 
 **Import order** (one blank line between groups): 1) standard library, 2) third-party,
-3) internal — `modules/common/` first, then other internal imports.
+3) internal — `modules/common/` first, then other internal imports. No blank line within the
+internal group itself — `modules/common/` and the rest of the internal imports stay one block.
 
 **Keyword arguments:** every function/method call uses explicit keyword arguments — never positional:
 ```python

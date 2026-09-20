@@ -9,10 +9,10 @@ import streamlit as st
 from modules.common.models import Fibra
 from modules.common.models import InflationRecord
 from modules.fundamentals.models import AnnualFundamentalsRecord
-from ui.components.fundamentals.detail_chart import _add_threshold_bands
-from ui.components.fundamentals.detail_chart import _apply_yaxis_format
-from ui.components.fundamentals.detail_chart import _base_layout
-from ui.components.fundamentals.detail_chart import KPI_CONFIG
+from ui.components.fundamentals import add_threshold_bands
+from ui.components.fundamentals import apply_yaxis_format
+from ui.components.fundamentals import base_layout
+from ui.components.fundamentals import KPI_CONFIG
 
 
 # Flat ordered list of KPI entries for the selector.
@@ -138,16 +138,16 @@ def _render_direct_chart(
         )
 
     if "lower" in config:
-        _add_threshold_bands(
+        add_threshold_bands(
             fig=fig,
             lower=config["lower"],
             upper=config["upper"],
             inverse=config.get("inverse", False),
         )
 
-    _apply_yaxis_format(fig=fig, fmt=fmt)
+    apply_yaxis_format(fig=fig, fmt=fmt)
     fig.update_layout(
-        **_base_layout(title=kpi["label"], show_legend=True, x_title="Año", x_type="category"),
+        **base_layout(title=kpi["label"], show_legend=True, x_title="Año", x_type="category"),
         yaxis_title=kpi["label"],
     )
     st.plotly_chart(figure_or_data=fig, width="stretch")
@@ -241,7 +241,7 @@ def _render_normalized_chart(
         st.caption(body=f"Sin datos en el año base ({base_year}): {', '.join(skipped_names)}.")
 
     fig.update_layout(
-        **_base_layout(title=kpi["label"], show_legend=True, x_title="Año", x_type="category"),
+        **base_layout(title=kpi["label"], show_legend=True, x_title="Año", x_type="category"),
         yaxis_title="Índice (base 1000)",
     )
     st.plotly_chart(figure_or_data=fig, width="stretch")

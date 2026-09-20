@@ -13,6 +13,9 @@ class JsonDistributionsReadRepository(BaseDistributionsReadRepository):
 
         Returns:
             list[Distribution]: All distribution records parsed from the JSON file.
+
+        Raises:
+            FileNotFoundError: If distributions.json does not exist at the configured path.
         """
         if not DISTRIBUTIONS_DATA_PATH.exists():
             raise FileNotFoundError(f"Distributions data file not found: {DISTRIBUTIONS_DATA_PATH}")
