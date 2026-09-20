@@ -11,10 +11,8 @@ from ui.components.fundamentals import LTV_UPPER
 from ui.components.fundamentals import OCC_LOWER
 from ui.components.fundamentals import OCC_UPPER
 from ui.styles.theme import COLOR_MUTED_BG
-from ui.styles.theme import COLOR_NEGATIVE_BG
-from ui.styles.theme import COLOR_POSITIVE_BG
-from ui.styles.theme import COLOR_WARNING_BG
 from ui.styles.theme import format_pct
+from ui.styles.theme import threshold_background
 
 # Icon thresholds — single source of truth.
 _THRESHOLD_FULL: float = 1.0
@@ -169,18 +167,7 @@ def _color_bg(value: Optional[float], lower: float, upper: float, inverse: bool)
     """
     if value is None:
         return ""
-    if not inverse:
-        if value < lower:
-            return COLOR_NEGATIVE_BG
-        if value > upper:
-            return COLOR_POSITIVE_BG
-        return COLOR_WARNING_BG
-    else:
-        if value < lower:
-            return COLOR_POSITIVE_BG
-        if value > upper:
-            return COLOR_NEGATIVE_BG
-        return COLOR_WARNING_BG
+    return threshold_background(value=value, lower=lower, upper=upper, inverse=inverse)
 
 
 def _td(content: str, bg: str = "") -> str:

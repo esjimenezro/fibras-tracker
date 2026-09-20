@@ -2,6 +2,7 @@ from typing import Optional
 
 from modules.common.models import Fibra
 from modules.common.models import InflationRecord
+from modules.common.processors import InflationIndexProcessor
 from modules.fundamentals.models import AnnualFundamentalsRecord
 from modules.fundamentals.models import EnrichedFundamentalsRecord
 from modules.fundamentals.models import FibraMetrics
@@ -22,7 +23,9 @@ class FundamentalsHistoryProcessor:
         fibra_metrics        = per-FIBRA aggregate metrics keyed by ticker;
                                every ticker in fibras has an entry
         fibras               = catalog Fibra list passed in directly
-        annual_records       = annual aggregates per ticker (passed through from caller)
+        annual_records       = the caller's flat annual list, grouped by ticker and sorted
+                               by year ascending within each group; only tickers with at
+                               least one complete year appear as keys
         inflation_records    = full inflation history (passed through from caller)
 
     Invariant: period strings (e.g. "1T2026") are parsed as (year, quarter) integers —
@@ -44,9 +47,10 @@ class FundamentalsHistoryProcessor:
                 Must not be empty.
             fibras: FIBRA catalog entries. Every ticker in fibras appears as a key in
                 latest_by_ticker; value is None if no record exists for that ticker.
-            annual_records: Annual aggregates per ticker produced by AnnualFundamentalsProcessor,
-                used to compute annual-period FibraMetrics fields (growth counters, CAGRs).
-                Must not be empty.
+            annual_records: Flat annual aggregates across all tickers, produced by
+                AnnualFundamentalsProcessor, used to compute annual-period FibraMetrics
+                fields (growth counters, CAGRs) and grouped by ticker for the output's
+                annual_records. Must not be empty.
             inflation_records: Full annual Mexican inflation history (INPC), used alongside
                 annual_records to compute cagr_inflation and distribution_vs_inflation.
                 Must not be empty.
@@ -64,7 +68,9 @@ class FundamentalsHistoryProcessor:
                                        fewer than 4 records exist; annual fields are None when a
                                        given ticker has fewer than 2 annual_records entries
                 fibras               = the catalog Fibra list passed in directly
-                annual_records       = annual_records passed in directly
+                annual_records       = annual_records grouped by ticker, each group sorted by
+                                       year ascending; only tickers with at least one complete
+                                       year appear as keys
                 inflation_records    = inflation_records passed in directly
 
         Raises:
@@ -87,6 +93,12 @@ class FundamentalsHistoryProcessor:
             key=lambda r: (r.ticker, *self._parse_period(period=r.period)),
         )
 
+        annual_records_by_ticker: dict[str, list[AnnualFundamentalsRecord]] = {}
+        for annual_record in annual_records:
+            annual_records_by_ticker.setdefault(annual_record.ticker, []).append(annual_record)
+        for ticker_annual_records in annual_records_by_ticker.values():
+            ticker_annual_records.sort(key=lambda r: r.year)
+
         latest_by_ticker: dict[str, Optional[EnrichedFundamentalsRecord]] = {f.ticker: None for f in fibras}
         for record in sorted_records:
             if record.ticker in latest_by_ticker:
@@ -108,7 +120,7 @@ class FundamentalsHistoryProcessor:
             f.ticker: self._compute_fibra_metrics(
                 ticker=f.ticker,
                 sorted_records=sorted_records,
-                annual_records=annual_records,
+                ticker_annual_records=annual_records_by_ticker.get(f.ticker, []),
                 inflation_records=inflation_records,
             )
             for f in fibras
@@ -120,7 +132,7 @@ class FundamentalsHistoryProcessor:
             prior_year_by_ticker=prior_year_by_ticker,
             fibra_metrics=fibra_metrics,
             fibras=fibras,
-            annual_records=annual_records,
+            annual_records=annual_records_by_ticker,
             inflation_records=inflation_records,
         )
 
@@ -128,7 +140,7 @@ class FundamentalsHistoryProcessor:
         self,
         ticker: str,
         sorted_records: list[EnrichedFundamentalsRecord],
-        annual_records: list[AnnualFundamentalsRecord],
+        ticker_annual_records: list[AnnualFundamentalsRecord],
         inflation_records: list[InflationRecord],
     ) -> FibraMetrics:
         """Compute aggregate metrics for a single ticker from its sorted historical records.
@@ -137,9 +149,9 @@ class FundamentalsHistoryProcessor:
             ticker: BMV ticker string.
             sorted_records: All records across all tickers, already sorted by
                 (ticker, year, quarter) — used to filter by ticker in order.
-            annual_records: Optional annual aggregated records for this ticker only,
-                sorted by year ascending. When provided, used to compute growth counters
-                and annual-period CAGRs. When None or empty, all 10 annual fields are None.
+            ticker_annual_records: Annual aggregated records for this ticker only, sorted
+                by year ascending. Used to compute growth counters and annual-period
+                CAGRs. When empty, all 10 annual fields are None.
             inflation_records: Annual inflation records used to compute cagr_inflation.
                 When None or empty, cagr_inflation and distribution_vs_inflation are None.
 
@@ -147,12 +159,10 @@ class FundamentalsHistoryProcessor:
             FibraMetrics with periods_count and years_of_history always set.
             AFFO Optional fields are None when fewer than 4 records exist for the ticker
             or when the source field is None in the first or last record.
-            Annual fields are None when annual_records is not provided or has fewer than 2 entries.
+            Annual fields are None when ticker_annual_records has fewer than 2 entries.
         """
         ticker_records = [r for r in sorted_records if r.ticker == ticker]
         periods_count = len(ticker_records)
-
-        ticker_annual_records = [r for r in annual_records if r.ticker == ticker]
 
         if periods_count == 0:
             return FibraMetrics(
@@ -358,7 +368,13 @@ class FundamentalsHistoryProcessor:
         """Geometric mean annual inflation rate over [first_year, last_year).
 
         Multiplies (1 + rate) for each year in [first_year, last_year), then raises
-        the product to 1/years.
+        the product to 1/years, via InflationIndexProcessor (this method's own
+        rate_years choice: the range excludes last_year — the CAGR spans years but
+        only years - 1 of them actually own a distinct rate under this range).
+        detail_chart's reference line and comparison_chart's normalized index compute
+        the same kind of series but cannot share InflationIndexProcessor — ui/components
+        may depend only on modules/*/models, never on modules/*/processors — so they
+        use their own compound_inflation_series copy of this loop instead.
 
         Args:
             first_year: Start year (inclusive).
@@ -372,10 +388,14 @@ class FundamentalsHistoryProcessor:
         years = last_year - first_year
         if years == 0:
             return None
-        inflation_map = {r.year: r.annual_inflation for r in inflation_records}
-        compound = 1.0
-        for y in range(first_year, last_year):
-            if y not in inflation_map:
-                return None
-            compound *= (1 + inflation_map[y])
+        rate_years = list(range(first_year, last_year))
+        series = InflationIndexProcessor().process(
+            base_year=first_year,
+            base_value=1.0,
+            rate_years=rate_years,
+            inflation_records=inflation_records,
+        )
+        if len(series) != len(rate_years) + 1:
+            return None
+        _, compound = series[-1]
         return compound ** (1 / years) - 1

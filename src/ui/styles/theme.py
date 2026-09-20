@@ -1,3 +1,5 @@
+from typing import Literal
+
 import streamlit as st
 
 
@@ -5,10 +7,109 @@ COLOR_POSITIVE = "#2E7D32"
 COLOR_NEGATIVE = "#C62828"
 COLOR_NEUTRAL = "#1565C0"
 
-COLOR_POSITIVE_BG = "rgba(50,200,100,0.15)"
-COLOR_WARNING_BG = "rgba(255,200,50,0.15)"
-COLOR_NEGATIVE_BG = "rgba(255,99,99,0.15)"
 COLOR_MUTED_BG = "rgba(200,200,200,0.15)"
+
+ThresholdZone = Literal["positive", "warning", "negative"]
+
+_ZONE_RGB: dict[ThresholdZone, tuple[int, int, int]] = {
+    "positive": (50, 200, 100),
+    "warning": (255, 200, 50),
+    "negative": (255, 99, 99),
+}
+
+_ZONE_EMOJI: dict[ThresholdZone, str] = {
+    "positive": "🟢",
+    "warning": "🟡",
+    "negative": "🔴",
+}
+
+
+def zone_background(zone: ThresholdZone, alpha: float = 0.15) -> str:
+    """Return an rgba() background-color string for a threshold zone at a given opacity.
+
+    Args:
+        zone: One of "positive", "warning", "negative" (see threshold_zone()).
+        alpha: Opacity, 0-1. Defaults to 0.15, matching table-cell/metric-card usage;
+            a chart background wash typically wants something lower (e.g. 0.06) so it
+            doesn't overpower the plotted line.
+
+    Returns:
+        str: e.g. 'rgba(50,200,100,0.15)'.
+    """
+    r, g, b = _ZONE_RGB[zone]
+    return f"rgba({r},{g},{b},{alpha})"
+
+
+COLOR_POSITIVE_BG = zone_background(zone="positive")
+COLOR_WARNING_BG = zone_background(zone="warning")
+COLOR_NEGATIVE_BG = zone_background(zone="negative")
+
+
+def threshold_zone(value: float, lower: float, upper: float, inverse: bool = False) -> ThresholdZone:
+    """Classify a value into a red/yellow/green threshold zone.
+
+    The single shared decision behind every traffic-light KPI in the app (occupancy,
+    LTV, NOI/EBITDA margins, ...): previously reimplemented independently by
+    detail_header's metric badges, detail_chart's chart background bands, and
+    comparison_table's cell background colouring, with nothing enforcing the three
+    stayed in agreement.
+
+    Args:
+        value: Metric value to classify.
+        lower: Lower threshold boundary (boundary between the negative and warning
+            zones for a normal, higher-is-better metric).
+        upper: Upper threshold boundary (boundary between the warning and positive
+            zones for a normal metric).
+        inverse: When True the metric is lower-is-better (e.g. LTV): value < lower is
+            the positive zone, value > upper is the negative zone. Defaults to False.
+
+    Returns:
+        ThresholdZone: "positive", "warning", or "negative". A value exactly on a
+            boundary falls in the warning zone.
+    """
+    if not inverse:
+        if value > upper:
+            return "positive"
+        if value < lower:
+            return "negative"
+        return "warning"
+    if value < lower:
+        return "positive"
+    if value > upper:
+        return "negative"
+    return "warning"
+
+
+def threshold_emoji(value: float, lower: float, upper: float, inverse: bool = False) -> str:
+    """Traffic-light emoji for a value against threshold boundaries.
+
+    Args:
+        value: Metric value to classify.
+        lower: Lower threshold boundary. See threshold_zone().
+        upper: Upper threshold boundary. See threshold_zone().
+        inverse: When True the metric is lower-is-better. See threshold_zone().
+
+    Returns:
+        str: '🟢', '🟡', or '🔴' per threshold_zone().
+    """
+    return _ZONE_EMOJI[threshold_zone(value=value, lower=lower, upper=upper, inverse=inverse)]
+
+
+def threshold_background(value: float, lower: float, upper: float, inverse: bool = False) -> str:
+    """Traffic-light CSS background-color for a value against threshold boundaries.
+
+    Args:
+        value: Metric value to classify.
+        lower: Lower threshold boundary. See threshold_zone().
+        upper: Upper threshold boundary. See threshold_zone().
+        inverse: When True the metric is lower-is-better. See threshold_zone().
+
+    Returns:
+        str: One of COLOR_POSITIVE_BG / COLOR_WARNING_BG / COLOR_NEGATIVE_BG per
+            threshold_zone().
+    """
+    zone = threshold_zone(value=value, lower=lower, upper=upper, inverse=inverse)
+    return zone_background(zone=zone)
 
 
 def format_mxn(value: float) -> str:

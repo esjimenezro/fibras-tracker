@@ -4,8 +4,13 @@ import streamlit as st
 
 from modules.common.models import Fibra
 from modules.fundamentals.models import EnrichedFundamentalsRecord
+from ui.components.fundamentals import LTV_LOWER
+from ui.components.fundamentals import LTV_UPPER
+from ui.components.fundamentals import OCC_LOWER
+from ui.components.fundamentals import OCC_UPPER
 from ui.styles.theme import format_mxn
 from ui.styles.theme import format_pct
+from ui.styles.theme import threshold_emoji
 
 
 def _pct(value: Optional[float]) -> str:
@@ -36,10 +41,7 @@ def _traffic_light(value: Optional[float], thresholds: tuple, inverse: bool = Fa
     if value is None:
         return "N/D"
     lower, upper = thresholds
-    if not inverse:
-        emoji = "🟢" if value > upper else "🔴" if value < lower else "🟡"
-    else:
-        emoji = "🟢" if value < lower else "🔴" if value > upper else "🟡"
+    emoji = threshold_emoji(value=value, lower=lower, upper=upper, inverse=inverse)
     return f"{emoji} {_pct(value=value)}"
 
 
@@ -144,7 +146,7 @@ def render_detail_header(
     with col3:
         st.metric(
             label="Ocupación",
-            value=_traffic_light(value=record.occupancy_rate, thresholds=(0.80, 0.85)),
+            value=_traffic_light(value=record.occupancy_rate, thresholds=(OCC_LOWER, OCC_UPPER)),
             help=(
                 "Porcentaje del Área Bruta Rentable efectivamente arrendada. "
                 "Por encima del 90% se considera saludable."
@@ -153,7 +155,7 @@ def render_detail_header(
     with col4:
         st.metric(
             label="LTV",
-            value=_traffic_light(value=record.ltv, thresholds=(0.35, 0.45), inverse=True),
+            value=_traffic_light(value=record.ltv, thresholds=(LTV_LOWER, LTV_UPPER), inverse=True),
             help=(
                 "Deuda financiera / Activos totales. Mide el apalancamiento. "
                 "Por debajo del 40% se considera conservador en FIBRAs mexicanas."

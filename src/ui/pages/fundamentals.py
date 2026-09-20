@@ -5,7 +5,6 @@ import streamlit as st
 
 import config  # noqa: F401 - ensures load_dotenv() has run before reading ANTHROPIC_API_KEY
 from modules.common.schemas import ServiceStatus
-from modules.fundamentals.models import AnnualFundamentalsRecord
 from modules.fundamentals.models import EnrichedFundamentalsRecord
 from modules.fundamentals.models import FundamentalsHistory
 from modules.fundamentals.schemas import FundamentalsDataRetrieverServiceSchema
@@ -135,12 +134,6 @@ if result.status == ServiceStatus.ERROR:
 
 history: FundamentalsHistory = result.data
 
-annual_records_by_ticker: dict[str, list[AnnualFundamentalsRecord]] = {}
-for _rec in history.annual_records:
-    annual_records_by_ticker.setdefault(_rec.ticker, []).append(_rec)
-for _ticker in annual_records_by_ticker:
-    annual_records_by_ticker[_ticker].sort(key=lambda r: r.year)
-
 [detalle_tab, comparativa_tab] = st.tabs(["Detalle", "Comparativa"])
 
 with detalle_tab:
@@ -167,7 +160,7 @@ with detalle_tab:
 
     st.divider()
     ticker_records = [r for r in history.records if r.ticker == selected_ticker]
-    annual_ticker_records = [r for r in history.annual_records if r.ticker == selected_ticker]
+    annual_ticker_records = history.annual_records.get(selected_ticker, [])
     render_detail_chart(
         records=ticker_records,
         annual_records=annual_ticker_records,
@@ -200,11 +193,11 @@ with comparativa_tab:
         latest_by_ticker=history.latest_by_ticker,
         fibras=history.fibras,
         fibra_metrics=history.fibra_metrics,
-        annual_records=annual_records_by_ticker,
+        annual_records=history.annual_records,
     )
     st.divider()
     render_comparison_chart(
-        annual_records=annual_records_by_ticker,
+        annual_records=history.annual_records,
         fibras=history.fibras,
         inflation_records=history.inflation_records,
     )

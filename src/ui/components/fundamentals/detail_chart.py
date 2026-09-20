@@ -7,6 +7,7 @@ import streamlit as st
 from modules.common.models import InflationRecord
 from modules.fundamentals.models import AnnualFundamentalsRecord
 from modules.fundamentals.models import EnrichedFundamentalsRecord
+from ui.styles.theme import zone_background
 
 
 LTV_LOWER: float = 0.35
@@ -181,6 +182,51 @@ def _extract_values(
     return result
 
 
+def compound_inflation_series(
+    base_year: int,
+    base_value: float,
+    rate_years: list[int],
+    inflation_records: list[InflationRecord],
+) -> list[tuple[int, float]]:
+    """Compound base_value forward, applying one inflation rate per entry in rate_years.
+
+    The shared compounding-and-truncation primitive behind this module's inflation
+    reference line and comparison_chart's base-1000 normalized index — both pure UI
+    calculations over already-fetched models, so this stays a UI-layer helper (never
+    imported by modules/*/processors, which cannot depend on ui/) rather than a
+    modules/common/processors class; each caller supplies its own rate_years, which
+    is where the two call sites' differing conventions (this module only steps
+    through years that have an annual record; comparison_chart walks every calendar
+    year) actually live.
+
+    Args:
+        base_year: The starting year, paired unchanged with base_value as the
+            series' first entry — no rate is applied to it.
+        base_value: The starting value (e.g. an actual per-CBFI figure here, or
+            1000.0 for comparison_chart's base-1000 index).
+        rate_years: Years to look up in inflation_records and multiply in, in
+            order. Not necessarily consecutive — the caller decides which year's
+            rate lands on which step, and whether intervening years may be skipped.
+        inflation_records: Annual inflation history to look up rates from.
+
+    Returns:
+        list[tuple[int, float]]: [(base_year, base_value), (rate_years[0], value
+            after that rate), ...], truncated before the first entry of rate_years
+            missing from inflation_records — never raises on a gap.
+    """
+    inflation_by_year: dict[int, float] = {
+        record.year: record.annual_inflation for record in inflation_records
+    }
+    series: list[tuple[int, float]] = [(base_year, base_value)]
+    current = base_value
+    for year in rate_years:
+        if year not in inflation_by_year:
+            break
+        current *= (1.0 + inflation_by_year[year])
+        series.append((year, current))
+    return series
+
+
 def _compute_inflation_reference(
     sorted_annual: list[AnnualFundamentalsRecord],
     inflation_records: list[InflationRecord],
@@ -188,9 +234,11 @@ def _compute_inflation_reference(
     """Compute the inflation-adjusted reference series for distribution_per_cbfi_annual.
 
     Starts at the first year's distribution value and compounds it forward using the
-    annual Mexican inflation rate for each subsequent year. Stops at the last year
-    for which inflation data is available; missing years truncate the series rather
-    than raising an error.
+    annual Mexican inflation rate for each subsequent *annual-record* year — a gap
+    year with no annual record is skipped rather than walked through, unlike
+    comparison_chart's base-1000 index, which walks every calendar year. Stops at
+    the first of those years missing from inflation_records; missing years truncate
+    the series rather than raising an error.
 
     Args:
         sorted_annual: Annual records sorted ascending by year; must be non-empty.
@@ -203,21 +251,14 @@ def _compute_inflation_reference(
     if not sorted_annual or sorted_annual[0].distribution_per_cbfi_annual is None:
         return [], []
 
-    inflation_by_year: dict[int, float] = {
-        r.year: r.annual_inflation for r in inflation_records
-    }
-
-    ref_years: list[int] = [sorted_annual[0].year]
-    ref_values: list[float] = [sorted_annual[0].distribution_per_cbfi_annual]
-
-    for record in sorted_annual[1:]:
-        year = record.year
-        if year not in inflation_by_year:
-            break
-        ref_values.append(ref_values[-1] * (1.0 + inflation_by_year[year]))
-        ref_years.append(year)
-
-    return ref_years, ref_values
+    series = compound_inflation_series(
+        base_year=sorted_annual[0].year,
+        base_value=sorted_annual[0].distribution_per_cbfi_annual,
+        rate_years=[record.year for record in sorted_annual[1:]],
+        inflation_records=inflation_records,
+    )
+    ref_years, ref_values = zip(*series)
+    return list(ref_years), list(ref_values)
 
 
 def _period_sort_key(record: EnrichedFundamentalsRecord) -> tuple[int, int]:
@@ -234,15 +275,21 @@ def add_threshold_bands(
 ) -> None:
     """Add coloured background bands and dashed reference lines at threshold boundaries.
 
+    Colours come from ui.styles.theme.zone_background at a lower opacity (0.06) than
+    the same positive/warning/negative zones used elsewhere (table cells, metric
+    badges), which default to 0.15 — a chart background wash needs to stay faint so
+    it doesn't overpower the plotted line.
+
     Args:
         fig: Plotly figure to mutate.
         lower: Lower threshold boundary (boundary between red/yellow zones for normal metrics).
         upper: Upper threshold boundary (boundary between yellow/green zones for normal metrics).
         inverse: When True, green is below lower and red is above upper (e.g. LTV).
     """
-    red_fill = "rgba(255, 99, 99, 0.06)"
-    yellow_fill = "rgba(255, 200, 50, 0.06)"
-    green_fill = "rgba(50, 200, 100, 0.06)"
+    band_alpha = 0.06
+    red_fill = zone_background(zone="negative", alpha=band_alpha)
+    yellow_fill = zone_background(zone="warning", alpha=band_alpha)
+    green_fill = zone_background(zone="positive", alpha=band_alpha)
 
     if not inverse:
         bands = [(0, lower, red_fill), (lower, upper, yellow_fill), (upper, 1.0, green_fill)]

@@ -1,6 +1,7 @@
 from ui.components.fundamentals.detail_chart import add_threshold_bands
 from ui.components.fundamentals.detail_chart import apply_yaxis_format
 from ui.components.fundamentals.detail_chart import base_layout
+from ui.components.fundamentals.detail_chart import compound_inflation_series
 from ui.components.fundamentals.detail_chart import KPI_CONFIG
 from ui.components.fundamentals.detail_chart import LTV_LOWER
 from ui.components.fundamentals.detail_chart import LTV_UPPER
@@ -27,4 +28,5 @@ __all__ = [
     "add_threshold_bands",
     "apply_yaxis_format",
     "base_layout",
+    "compound_inflation_series",
 ]

@@ -26,11 +26,11 @@ class FundamentalsHistory(BaseModel):
         fibra_metrics: Per-FIBRA aggregate metrics keyed by ticker string. Every ticker present
             in fibras appears as a key.
         fibras: FIBRA catalog entries that define which tickers appear in latest_by_ticker.
-        annual_records: Annual aggregated records per ticker, produced by AnnualFundamentalsProcessor.
-            Only tickers with at least one complete year (all four quarters present) appear as keys.
-            Empty dict when not provided.
+        annual_records: Annual aggregated records keyed by ticker string, each list sorted by
+            year ascending. Only tickers with at least one complete year (all four quarters
+            present) appear as keys — a ticker with no complete year is simply absent, not
+            mapped to an empty list.
         inflation_records: Full annual Mexican inflation history (INPC, INEGI/Banxico).
-            Empty list when not provided.
     """
 
     records: list[EnrichedFundamentalsRecord]
@@ -38,5 +38,5 @@ class FundamentalsHistory(BaseModel):
     prior_year_by_ticker: dict[str, Optional[EnrichedFundamentalsRecord]]
     fibra_metrics: dict[str, FibraMetrics]
     fibras: list[Fibra]
-    annual_records: list[AnnualFundamentalsRecord]
+    annual_records: dict[str, list[AnnualFundamentalsRecord]]
     inflation_records: list[InflationRecord]

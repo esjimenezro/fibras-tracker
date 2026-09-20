@@ -14,15 +14,15 @@ issues, no blocking architecture violations. Findings cluster in three places:
 - The less-exercised UI corners — `src/ui/pages/radar.py` (placeholder page) and the Comparativa-tab
   fundamentals components — account for most compliance violations (cross-file/private imports,
   positional args, local color constants instead of `theme.py`).
-- Real, evidenced duplication of business/presentation logic that has drifted into the UI layer:
+- ~~Real, evidenced duplication of business/presentation logic that had drifted into the UI layer:
   inflation-compounding math implemented three times, and threshold-based traffic-light coloring
-  implemented three different ways in `src/modules/fundamentals/` (vs. clean centralization in
-  `src/modules/portfolio/`).
+  implemented three different ways in `src/modules/fundamentals/`~~ — both ✅ resolved 2026-09-20
+  (architecture findings 1-2).
 - ~~Defense-in-depth gaps around model-supplied tool arguments in
   `src/modules/wiki/services/wiki_query_service.py`~~ — ✅ resolved 2026-09-20.
 
 **Counts:** Security — 0 Critical, 0 High, 2 Medium (✅ resolved), 3 Low/informational (won't fix).
-Architecture — 0 blocking violations, 5 long-term debt items, 4 minor items.
+Architecture — 0 blocking violations, 5 long-term debt items (all 5 ✅ resolved), 4 minor items.
 Compliance — 5 clear rule violations, 3 documentation-completeness gaps, 1 naming nit,
 1 already-known/acknowledged debt item, 3 minor nits.
 
@@ -240,49 +240,144 @@ full read of `src/modules/`, `src/ui/`, `src/config.py`; `flake8` clean; full te
 
 #### Long-term debt (worth tracking)
 
-1. **Inflation-compounding logic duplicated three times, two copies in the UI layer:**
-   `src/modules/fundamentals/processors/fundamentals_history_processor.py:353-382` (`_cagr_inflation`,
-   a CAGR), `src/ui/components/fundamentals/detail_chart.py:184-220` (`_compute_inflation_reference`,
-   a full reference series), and `src/ui/components/fundamentals/comparison_chart.py:65-92`
-   (`_build_inflation_index`, a base-1000 index) — three independent implementations of the same
-   compounding loop with three different output shapes. `_compute_base_year`
-   (`comparison_chart.py:33-62`) is further non-duplicated calculation logic living in the UI
-   layer with no processor equivalent. **Direction:** extract one shared inflation-index utility
-   and have all three call sites consume its pre-shaped output.
+1. ✅ **RESUELTO (2026-09-20)** — **Inflation-compounding logic duplicated three times, two copies
+   in the UI layer:** `src/modules/fundamentals/processors/fundamentals_history_processor.py:353-382`
+   (`_cagr_inflation`, a CAGR), `src/ui/components/fundamentals/detail_chart.py:184-220`
+   (`_compute_inflation_reference`, a full reference series), and
+   `src/ui/components/fundamentals/comparison_chart.py:65-92` (`_build_inflation_index`, a base-1000
+   index) — three independent implementations of the same compounding loop with three different
+   output shapes. `_compute_base_year` (`comparison_chart.py:33-62`) is further non-duplicated
+   calculation logic living in the UI layer with no processor equivalent (left as-is — it isn't
+   duplicated anywhere, so there was nothing to consolidate). **Fix applied:** three copies reduced
+   to two, split along the layer boundary that `ui/components/**` may depend only on
+   `modules/*/models`/`schemas`, never on `modules/*/processors` (`.github/instructions/architecture.instructions.md`
+   Rule 1) — a single shared `modules/common/processors` utility reachable from both sides was
+   considered first and reverted once that boundary was pointed out. Landed instead: (a)
+   `InflationIndexProcessor` (`src/modules/common/processors/inflation_index_processor.py`, new
+   `modules/common/processors/` package) — a stateless `process(base_year, base_value, rate_years,
+   inflation_records)` used only by `FundamentalsHistoryProcessor._cagr_inflation`; and (b)
+   `compound_inflation_series`, the same compounding-and-truncation loop kept as a second,
+   intentionally separate copy in `ui/components/fundamentals/detail_chart.py`, exported through
+   `ui/components/fundamentals/__init__.py` (the same pattern already used there for
+   `add_threshold_bands`/`apply_yaxis_format`/`base_layout`) and consumed by both
+   `_compute_inflation_reference` (detail_chart) and `_build_inflation_index` (comparison_chart).
+   Each call site still builds its own `rate_years`. Investigation while consolidating surfaced that
+   the three sites' *conventions* for which years' rates apply already diverged before this fix (the
+   CAGR excludes the end year and includes the start year, `detail_chart` only steps through years
+   that have an annual record — skipping gap years — while `comparison_chart` walks every calendar
+   year) — each site's exact prior numeric behavior was preserved deliberately (verified: existing
+   `test_cagr_inflation_computed_correctly` still passes unchanged; a manual equivalence check
+   confirmed the UI call sites too) rather than silently unified, since picking one convention would
+   change displayed inflation figures and is a product decision, not a duplication cleanup. Each
+   function's docstring now states its own convention explicitly, and both `InflationIndexProcessor`
+   and `compound_inflation_series` cross-reference each other and explain why they can't merge into
+   one. Tests added in `tests/common/processors/test_inflation_index_processor.py` (5 cases: base
+   entry, consecutive compounding, arbitrary/repeated `rate_years`, truncation on a missing year,
+   empty inflation history); the UI copy has no dedicated tests, consistent with this repo's existing
+   UI-component test coverage (none), verified instead by a manual equivalence check against the
+   pre-refactor output.
 
-2. **Duplicated/drifted threshold-based traffic-light color/icon logic.** `src/modules/portfolio/`
-   components comply cleanly with the `theme.py`-is-the-source-of-truth rule
-   (`positions_table.py`, `summary_card.py`). `src/modules/fundamentals/` does not, three different
-   ways: `detail_header.py:23-43,128,138,147,156` hardcodes threshold tuples inline instead of
-   importing the `OCC_LOWER/UPPER`/`LTV_LOWER/UPPER` constants that already exist in
+2. ✅ **RESUELTO (2026-09-20)** — **Duplicated/drifted threshold-based traffic-light color/icon
+   logic.** `src/modules/portfolio/` components comply cleanly with the `theme.py`-is-the-source-of-truth
+   rule (`positions_table.py`, `summary_card.py`). `src/modules/fundamentals/` does not, three
+   different ways: `detail_header.py:23-43,128,138,147,156` hardcodes threshold tuples inline
+   instead of importing the `OCC_LOWER/UPPER`/`LTV_LOWER/UPPER` constants that already exist in
    `detail_chart.py:12-15`; `detail_chart.py:229-260` (`_add_threshold_bands`) is a second,
    Plotly-specific implementation; `comparison_table.py:88-101,160-185` is a third, with its own
    separate `_THRESHOLD_FULL/_THRESHOLD_WARN` constants on a different scale. The
    `detail_header.py` literals currently happen to match `detail_chart.py`'s constants, but nothing
    enforces that — a future threshold change would silently desync the KPI header from the KPI
-   chart/table. **Direction:** add a shared threshold→color/icon helper to `src/ui/styles/` and have all
-   three call it.
+   chart/table. **Note:** `comparison_table.py`'s `_THRESHOLD_FULL`/`_THRESHOLD_WARN` (1.0/0.70)
+   back a *different* concept — a pass/warn/fail icon on a fraction-of-years-meeting-a-growth-criterion,
+   not a KPI-value traffic light — and were left untouched; they were never actually a third copy of
+   the same red/yellow/green decision, just a similarly-shaped one on an unrelated scale. **Fix
+   applied:** the three implementations that *were* the same decision (given a value, lower, upper,
+   and an inverse flag, which of the three zones does it fall in) now all call one shared
+   `threshold_zone(value, lower, upper, inverse) -> "positive"|"warning"|"negative"` in
+   `src/ui/styles/theme.py`, plus two thin encoders built on it —
+   `threshold_emoji` (used by `detail_header._traffic_light`) and `threshold_background` (used by
+   `comparison_table._color_bg`). `detail_chart.add_threshold_bands` isn't a per-value classification
+   (it draws static background bands from the raw `lower`/`upper` range, no `threshold_zone` call
+   fits), but its hardcoded red/yellow/green `rgba(...)` fill strings — which duplicated the same RGB
+   triples as `theme.py`'s existing `COLOR_*_BG` constants at a different alpha — now come from a new
+   `zone_background(zone, alpha)` helper (also in `theme.py`; `COLOR_POSITIVE_BG`/`COLOR_WARNING_BG`/
+   `COLOR_NEGATIVE_BG` are now derived from it, unchanged values). `detail_header.py`'s inline OCC/LTV
+   threshold tuples were replaced with the existing `OCC_LOWER`/`OCC_UPPER`/`LTV_LOWER`/`LTV_UPPER`
+   imports from `ui.components.fundamentals` (NOI-margin/EBITDA-margin thresholds have no chart
+   equivalent to import, so those two stay as local literals — nothing to desync from). Verified: all
+   three zone boundaries (`> upper`/`< lower`, both `inverse` values) checked exhaustively against
+   both pre-refactor formulas over a value grid — 0 mismatches; `render_detail_header` smoke-called
+   directly with a constructed record — no exception. No dedicated tests added (`ui/styles/` and
+   `ui/components/` have no existing test coverage in this repo; consistent with that, left
+   unchanged).
+   **Layering note:** a first attempt at consolidating *inflation-compounding* logic (finding 1,
+   above) mistakenly imported a `modules/common/processors` class into `ui/components/`, which the
+   user caught and corrected — `ui/components/**` may depend only on `modules/*/models`/`schemas`,
+   never `modules/*/processors`. This fix stayed inside `ui/styles/`, so no such boundary applies here.
 
-3. **`FundamentalsHistory`'s shape is inconsistent** (three ticker-keyed dicts, two flat lists),
-   forcing `src/ui/pages/fundamentals.py:138-142,169-170` to re-derive a per-ticker grouping that
-   `FundamentalsHistoryProcessor._compute_fibra_metrics` (`fundamentals_history_processor.py:156`)
-   already builds internally once and discards. **Direction:** expose the pre-grouped/sorted
-   `annual_records` shape from the processor, or add a small tested processor method the page calls
-   instead of inlining groupby/sort.
+3. ✅ **RESUELTO (2026-09-20)** — **`FundamentalsHistory`'s shape is inconsistent** (three
+   ticker-keyed dicts, two flat lists), forcing `src/ui/pages/fundamentals.py:138-142,169-170` to
+   re-derive a per-ticker grouping that `FundamentalsHistoryProcessor._compute_fibra_metrics`
+   (`fundamentals_history_processor.py:156`) already builds internally once and discards.
+   **Fix applied:** `FundamentalsHistory.annual_records` changed from
+   `list[AnnualFundamentalsRecord]` to `dict[str, list[AnnualFundamentalsRecord]]`
+   (ticker-keyed, each list year-ascending — matching `latest_by_ticker`/`prior_year_by_ticker`/
+   `fibra_metrics`, and matching what the model's own docstring already claimed before this fix,
+   a second instance of docstring/implementation drift alongside compliance finding 6).
+   `FundamentalsHistoryProcessor.process()` now groups the caller's flat `annual_records` input by
+   ticker once and hands each ticker's slice both to `_compute_fibra_metrics` (whose own
+   internal `[r for r in annual_records if r.ticker == ticker]` filter is gone — it now takes
+   the pre-filtered `ticker_annual_records` directly) and to the `FundamentalsHistory` output.
+   `ui/pages/fundamentals.py`'s lines 138-142 (the manual groupby+sort building
+   `annual_records_by_ticker`) were deleted entirely; its Comparativa-tab call sites now pass
+   `history.annual_records` straight through, and its Detalle-tab line 170 became
+   `history.annual_records.get(selected_ticker, [])`. `comparison_table.py`/`comparison_chart.py`
+   needed no changes — they already expected this exact `dict[str, list[...]]` shape. Verified:
+   full suite green (232/232, one existing test —
+   `test_annual_records_passed_through_to_history` — replaced with two that assert the new
+   grouped/sorted shape and that a ticker with no complete year is simply absent from the dict);
+   an end-to-end run against the real `FundamentalsDataRetrieverService` pipeline and the three
+   UI consumers (`render_comparison_table`, `render_comparison_chart`, `render_detail_chart`)
+   confirmed no exception and correctly ordered per-ticker groups.
 
-4. **Dead aggregation methods in `DistributionsProcessor`** — `total_net_income`,
-   `total_gross_income`, `total_withholding`
-   (`src/modules/portfolio/processors/distributions_processor.py:71-102`) have no caller besides their
-   own unit tests; `PortfolioProcessor.process()` computes the equivalent totals independently via
-   a different, already-correct path. **Direction:** remove them and their tests, or wire them into
-   the service pipeline if there's a near-term use planned.
+4. ✅ **RESUELTO (2026-09-20)** — **Dead aggregation methods in `DistributionsProcessor`** —
+   `total_net_income`, `total_gross_income`, `total_withholding`
+   (`src/modules/portfolio/processors/distributions_processor.py:71-102`) had no caller besides their
+   own unit tests. **Correction:** the equivalent-totals path is actually `PositionsProcessor`
+   (`total_net_fiscal_result_received = sum(d.net_fiscal_result_income for d in distributions)`),
+   not `PortfolioProcessor` as originally written above — confirmed by grep, no other reference to
+   these three names existed anywhere outside this file and its tests. **Fix applied:** removed
+   rather than wired in — beyond being unused, `total_net_income`/`total_gross_income` aggregate
+   `net_income`/`gross_income` globally across all positions, which is exactly the pattern
+   CLAUDE.md's business-rules section warns against ("Use net_fiscal_result_income, never
+   net_income, when aggregating fiscal-result income — net_income includes the non-taxable
+   reimbursement component"); wiring dead code back in that contradicts a documented invariant
+   would have been worse than deleting it. Removed the three methods and their three tests
+   (`test_total_net_income`, `test_total_gross_income`, `test_total_withholding`); the
+   `dist_mixed`/`dist_fiscal_only` fixtures they used stay, since other tests in the same file
+   still use them. Verified: `grep` confirms zero remaining references anywhere in `src/`/`tests/`;
+   full suite green (229/229, down from 232 — exactly the 3 removed tests); `flake8` clean.
 
-5. **Asymmetric test coverage:** `tests/portfolio/` and `tests/fundamentals/` only test
-   `processors/` — no test exercises `PortfolioDataRetrieverService`/
-   `FundamentalsDataRetrieverService` directly, while `tests/wiki/services/` fully tests both wiki
-   services. These two services are also documented as the **reference implementations** for the
-   service pattern, yet are the only two with zero direct tests. **Direction:** add a thin
-   service-level test per domain, or explicitly document the coverage decision.
+5. ✅ **RESUELTO (2026-09-20)** — **Asymmetric test coverage:** `tests/portfolio/` and
+   `tests/fundamentals/` only tested `processors/` — no test exercised
+   `PortfolioDataRetrieverService`/`FundamentalsDataRetrieverService` directly, while
+   `tests/wiki/services/` fully tested both wiki services. These two services are also documented
+   as the **reference implementations** for the service pattern, yet were the only two with zero
+   direct tests. **Fix applied:** added `tests/portfolio/services/test_portfolio_data_retriever_service.py`
+   and `tests/fundamentals/services/test_fundamentals_data_retriever_service.py` (4 tests each),
+   following the same constructor-injected-fakes convention as `tests/wiki/services/` (no mocking
+   library) — each domain's four repositories get a small hand-built fake, injected via the
+   service's existing constructor-injection seam. Coverage per service: (1) a happy path with
+   consistent fake data asserting `status=OK` and key assembled-output fields; (2) the
+   service-specific ticker-derivation logic that only lives in `run()`, not in any processor —
+   portfolio passes `[p.ticker for p in positions]` unmodified, fundamentals passes
+   `sorted({r.ticker for r in records})` (deduplicated and sorted) — to the market price
+   repository, verified via a fake that logs its calls; (3) a repository raising `FileNotFoundError`
+   (matching the real JSON repositories' documented failure mode) becomes `status=ERROR` with
+   `error_message` set, never raises past `run()`; (4) a downstream processor `ValueError`
+   (`PortfolioProcessor` on empty positions; `FundamentalsHistoryProcessor` on an incomplete year
+   producing no `AnnualFundamentalsRecord`) is caught the same way, not just repository-level
+   failures. Verified: full suite green (237/237, 8 new); `flake8` clean.
 
 #### Minor
 
@@ -321,11 +416,13 @@ full read of `src/modules/`, `src/ui/`, `src/config.py`; `flake8` clean; full te
 Genuinely good architectural health relative to its own documented rules: hard layering boundaries
 are followed with zero exceptions across all four domains, and both reference-implementation
 services match their documented pattern exactly. Debt is concentrated at the *edges* of the
-documented rules rather than the core layering — real duplication that has drifted into the UI
-layer three separate times (inflation math, threshold coloring), an inconsistent aggregate-model
-shape forcing the page to redo processor-internal work, dead aggregation code kept alive only by
-its own tests, and an undocumented asymmetry in service-level test coverage.
-**Counts:** 0 blocking-quality violations · 5 long-term debt items · 4 minor items.
+documented rules rather than the core layering — real duplication that had drifted into the UI
+layer three separate times (inflation math and threshold coloring, both ✅ resolved 2026-09-20), an
+inconsistent aggregate-model shape that forced the page to redo processor-internal work (✅ resolved
+2026-09-20), dead aggregation code kept alive only by its own tests (✅ resolved 2026-09-20), and an
+undocumented asymmetry in service-level test coverage (✅ resolved 2026-09-20). All 5 long-term
+debt items are now resolved.
+**Counts:** 0 blocking-quality violations · 5 long-term debt items (all 5 ✅ resolved) · 4 minor items.
 
 ---
 
@@ -335,12 +432,13 @@ Roughly in priority order:
 
 1. ✅ **RESUELTO (2026-09-20)** — the two Medium security findings in `wiki_query_service.py`
    (type-validate `tool_use.input` before dispatch).
-2. Consolidate the threshold traffic-light logic and inflation-compounding logic
-   (architecture findings 1-2) — both are real duplication with a documented drift risk.
-3. Clean up the `src/ui/pages/radar.py` and Comparativa-component compliance violations (findings 2-5)
+2. ✅ **RESUELTO (2026-09-20)** — inflation-compounding logic (architecture finding 1) and threshold
+   traffic-light logic (architecture finding 2) both consolidated.
+3. ✅ **RESUELTO (2026-09-20)** — Clean up the `src/ui/pages/radar.py` and Comparativa-component compliance violations (findings 2-5)
    next time either file is touched.
-4. Address the `Raises:`/docstring-accuracy gaps (compliance findings 6-7) as low-effort doc fixes.
-5. Decide the fate of `DistributionsProcessor`'s dead methods and the service-level test-coverage
-   gap (architecture findings 4-5) — both are judgment calls, not obvious bugs.
-6. Investigate what is concurrently writing to `.github/instructions/` and `AGENTS.md` in this
+4. ✅ **RESUELTO (2026-09-20)** Address the `Raises:`/docstring-accuracy gaps (compliance findings 6-7) as low-effort doc fixes.
+5. ✅ **RESUELTO (2026-09-20)** — `DistributionsProcessor`'s dead methods removed (architecture
+   finding 4) and the service-level test-coverage gap closed with a thin service-level test per
+   domain (architecture finding 5).
+6. ✅ **RESUELTO (2026-09-20)** Investigate what is concurrently writing to `.github/instructions/` and `AGENTS.md` in this
    repo outside of this session, to avoid the review-config setup drifting out of sync with itself.

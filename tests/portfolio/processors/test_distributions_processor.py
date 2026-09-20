@@ -104,33 +104,3 @@ def test_process_returns_one_per_input(processor, dist_mixed, dist_fiscal_only):
 def test_process_empty_list(processor):
     """process() on an empty list returns an empty list."""
     assert processor.process(distributions=[]) == []
-
-
-def test_total_net_income(processor, dist_mixed, dist_fiscal_only):
-    """total_net_income() sums net_income across all enriched distributions.
-
-    dist_mixed: net_income = 100.365
-    dist_fiscal_only: net_income = fiscal_result_total=100.0 - 0.30 * 100.0 = 70.0
-    """
-    enriched = processor.process(distributions=[dist_mixed, dist_fiscal_only])
-    assert processor.total_net_income(enriched=enriched) == pytest.approx(170.365, rel=1e-6)
-
-
-def test_total_gross_income(processor, dist_mixed, dist_fiscal_only):
-    """total_gross_income() sums gross_income across all enriched distributions.
-
-    dist_mixed: gross_income = 122.10
-    dist_fiscal_only: gross_income = reimbursement_total=0.0 + fiscal_result_total=100.0 = 100.0
-    """
-    enriched = processor.process(distributions=[dist_mixed, dist_fiscal_only])
-    assert processor.total_gross_income(enriched=enriched) == pytest.approx(222.10, rel=1e-6)
-
-
-def test_total_withholding(processor, dist_mixed, dist_fiscal_only):
-    """total_withholding() sums fiscal_result_withholding across all enriched distributions.
-
-    dist_mixed: withholding = 21.735
-    dist_fiscal_only: withholding = 0.30 * fiscal_result_total=100.0 = 30.0
-    """
-    enriched = processor.process(distributions=[dist_mixed, dist_fiscal_only])
-    assert processor.total_withholding(enriched=enriched) == pytest.approx(51.735, rel=1e-6)

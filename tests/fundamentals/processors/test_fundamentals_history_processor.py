@@ -725,7 +725,7 @@ def test_all_cagr_fields_none_when_fewer_than_2_annual_records(
 
 # ── Pass-through fields ────────────────────────────────────────────────────────
 
-def test_annual_records_passed_through_to_history(
+def test_annual_records_grouped_by_ticker_and_sorted_by_year(
     processor,
     record_fmty14_1t2026,
     fibra_fmty14,
@@ -733,15 +733,39 @@ def test_annual_records_passed_through_to_history(
     fibra_fibrapl14,
     minimal_inflation_records,
 ):
-    """result.annual_records equals the list passed to process()."""
-    annual = [_make_annual(ticker="FMTY14", year=2024)]
+    """result.annual_records groups the flat input by ticker, each group year-ascending."""
+    fmty_2024 = _make_annual(ticker="FMTY14", year=2024)
+    fmty_2023 = _make_annual(ticker="FMTY14", year=2023)
+    danhos_2024 = _make_annual(ticker="DANHOS13", year=2024)
     result = processor.process(
         records=[record_fmty14_1t2026],
         fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
-        annual_records=annual,
+        annual_records=[fmty_2024, fmty_2023, danhos_2024],
         inflation_records=minimal_inflation_records,
     )
-    assert result.annual_records == annual
+    assert result.annual_records == {
+        "FMTY14": [fmty_2023, fmty_2024],
+        "DANHOS13": [danhos_2024],
+    }
+
+
+def test_annual_records_omits_tickers_with_no_complete_year(
+    processor,
+    record_fmty14_1t2026,
+    fibra_fmty14,
+    fibra_danhos13,
+    fibra_fibrapl14,
+    minimal_inflation_records,
+):
+    """A fibra with no annual records is simply absent from the keyed dict, not [] or None."""
+    result = processor.process(
+        records=[record_fmty14_1t2026],
+        fibras=[fibra_fmty14, fibra_danhos13, fibra_fibrapl14],
+        annual_records=[_make_annual(ticker="FMTY14", year=2024)],
+        inflation_records=minimal_inflation_records,
+    )
+    assert "DANHOS13" not in result.annual_records
+    assert "FIBRAPL14" not in result.annual_records
 
 
 def test_inflation_records_passed_through_to_history(

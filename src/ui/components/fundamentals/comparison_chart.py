@@ -12,6 +12,7 @@ from modules.fundamentals.models import AnnualFundamentalsRecord
 from ui.components.fundamentals import add_threshold_bands
 from ui.components.fundamentals import apply_yaxis_format
 from ui.components.fundamentals import base_layout
+from ui.components.fundamentals import compound_inflation_series
 from ui.components.fundamentals import KPI_CONFIG
 
 
@@ -69,8 +70,12 @@ def _build_inflation_index(
 ) -> dict[int, float]:
     """Compute a base-1000 inflation index from base_year forward.
 
-    Starts at 1000 and compounds using annual Mexican inflation rates. Stops at the
-    first year missing from inflation_records rather than raising an error.
+    Starts at 1000 and compounds using annual Mexican inflation rates for every
+    calendar year through end_year, gaps included (unlike detail_chart's reference
+    line, which only steps through years that have an annual record). Stops at the
+    first year missing from inflation_records rather than raising an error. The
+    compounding-and-truncation loop itself is shared with that reference line via
+    detail_chart.compound_inflation_series.
 
     Args:
         base_year: Starting year; receives index value 1000.
@@ -81,15 +86,13 @@ def _build_inflation_index(
         Dict mapping year to indexed value. May be shorter than base_year..end_year
         if inflation data is unavailable for some years.
     """
-    inflation_by_year: dict[int, float] = {r.year: r.annual_inflation for r in inflation_records}
-    result: dict[int, float] = {base_year: 1000.0}
-    current: float = 1000.0
-    for year in range(base_year + 1, end_year + 1):
-        if year not in inflation_by_year:
-            break
-        current = current * (1.0 + inflation_by_year[year])
-        result[year] = current
-    return result
+    series = compound_inflation_series(
+        base_year=base_year,
+        base_value=1000.0,
+        rate_years=list(range(base_year + 1, end_year + 1)),
+        inflation_records=inflation_records,
+    )
+    return dict(series)
 
 
 def _render_direct_chart(

@@ -67,36 +67,3 @@ class DistributionsProcessor:
             net_fiscal_result_income=net_fiscal_result_income,
             net_income=net_income,
         )
-
-    def total_net_income(self, enriched: list[EnrichedDistribution]) -> float:
-        """Sum net_income across all enriched distribution records.
-
-        Args:
-            enriched: Enriched distribution records.
-
-        Returns:
-            float: Total net income in MXN after ISR withholding.
-        """
-        return sum(e.net_income for e in enriched)
-
-    def total_gross_income(self, enriched: list[EnrichedDistribution]) -> float:
-        """Sum gross_income across all enriched distribution records.
-
-        Args:
-            enriched: Enriched distribution records.
-
-        Returns:
-            float: Total gross income in MXN before withholding.
-        """
-        return sum(e.gross_income for e in enriched)
-
-    def total_withholding(self, enriched: list[EnrichedDistribution]) -> float:
-        """Sum fiscal_result_withholding across all enriched distribution records.
-
-        Args:
-            enriched: Enriched distribution records.
-
-        Returns:
-            float: Total ISR withheld in MXN.
-        """
-        return sum(e.fiscal_result_withholding for e in enriched)
